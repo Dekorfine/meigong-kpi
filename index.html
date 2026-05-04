@@ -1,424 +1,2017 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>美工团队统一工作量化统计表</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      background: #f1f5f9;
-      font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilingual Quotation, PO, PI & Packing List Generator</title>
+    <style>
+        /* ── Tailwind-equivalent utilities (no CDN needed) ── */
+        .flex { display: flex; } .flex-grow { flex: 1; } .flex-col { flex-direction: column; }
+        .items-end { align-items: flex-end; } .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; } .space-x-2 { gap: 0.5rem; }
+        .mt-auto { margin-top: auto; } .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; }
+        .mb-6 { margin-bottom: 1.5rem; } .pt-2 { padding-top: 0.5rem; }
+        .text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-white { color: #fff; } .text-red-500 { color: #ef4444; } .text-gray-600 { color: #4b5563; }
+        .font-bold { font-weight: bold; } .font-semibold { font-weight: 600; }
+        .bg-green-500 { background: #22c55e; } .bg-blue-500 { background: #3b82f6; }
+        .bg-red-500 { background: #ef4444; } .bg-gray-100 { background: #f3f4f6; }
+        .bg-gray-50 { background: #f9fafb; }
+        .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .p-2 { padding: 0.5rem; } .p-4 { padding: 1rem; }
+        .rounded { border-radius: 0.375rem; } .h-10 { height: 2.5rem; }
+        .w-full { width: 100%; } .h-full { height: 100%; }
+        .object-contain { object-fit: contain; }
+        .hidden { display: none !important; }
+        button { cursor: pointer; border: none; font-family: inherit; }
+        button:hover { opacity: 0.88; }
 
-    /* ── Wrapper & Card ── */
-    .mg-wrapper {
-      font-size: 14px;
-      line-height: 1.5;
-      color: #1e293b;
-      padding: 32px 16px;
-      min-height: 100vh;
-    }
-    .mg-card {
-      max-width: 1080px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 4px 32px rgba(0,0,0,0.10);
-    }
+        /* ── Auto-save UI ── */
+        .autosave-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;
+            padding: 8px 12px; margin-bottom: 12px; gap: 8px;
+        }
+        .autosave-dot {
+            font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 5px;
+        }
+        .autosave-dot.saved   { color: #16a34a; }
+        .autosave-dot.saving  { color: #ca8a04; background: #fefce8; }
+        .autosave-dot.restored { color: #0369a1; }
+        .autosave-dot::before { content: '●'; margin-right: 3px; }
+        .btn-new-quote {
+            background: #fff; border: 1px solid #d1d5db; color: #374151;
+            padding: 4px 12px; border-radius: 5px; font-size: 12px; font-weight: 500;
+        }
+        .btn-new-quote:hover { background: #f9fafb; border-color: #9ca3af; }
+        .save-search-row { margin-bottom: 8px; }
+        .save-search-row input {
+            width: 100%; padding: 6px 10px; border: 1px solid #d1d5db;
+            border-radius: 6px; font-size: 13px; margin-top: 3px;
+        }
+        .save-count-badge {
+            display: inline-block; background: #e0e7ff; color: #3730a3;
+            font-size: 11px; font-weight: 600; border-radius: 99px;
+            padding: 1px 7px; margin-left: 6px;
+        }
 
-    /* ── Header ── */
-    .mg-header {
-      padding: 22px 28px;
-      background: #1e293b;
-      color: #ffffff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .mg-header h1 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #ffffff;
-    }
-    .mg-header-ver { font-size: 12px; opacity: 0.55; }
+        /* ── Settings Modal ── */
+        .settings-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+        }
+        .settings-modal {
+            background: #fff; border-radius: 12px; padding: 28px 32px;
+            width: 420px; max-width: 95vw; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .settings-modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; color: #111; }
+        .settings-modal p  { font-size: 13px; color: #6b7280; margin-bottom: 18px; }
+        .settings-modal label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin: 10px 0 4px; }
+        .settings-modal input {
+            width: 100%; padding: 8px 10px; border: 1px solid #d1d5db;
+            border-radius: 6px; font-size: 14px; box-sizing: border-box;
+        }
+        .settings-modal input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+        .setup-actions { display: flex; gap: 8px; margin-top: 18px; }
+        .btn-setup-save {
+            flex: 1; background: #1e293b; color: #fff; padding: 10px;
+            border: none; border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer;
+        }
+        .btn-setup-save:hover { background: #0f172a; }
+        .btn-setup-cancel {
+            background: #f3f4f6; color: #374151; padding: 10px 18px;
+            border: 1px solid #d1d5db; border-radius: 7px; font-size: 14px; cursor: pointer;
+        }
+        .setup-note { font-size: 11px; color: #9ca3af; margin-top: 12px; line-height: 1.5; }
 
-    /* ── Body ── */
-    .mg-body { padding: 22px 28px; }
+        /* ── User Identity Bar ── */
+        .user-identity-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #1e293b; color: #fff; border-radius: 8px;
+            padding: 10px 16px; margin-bottom: 14px;
+        }
+        .user-identity-bar .user-info { display: flex; align-items: center; gap: 8px; }
+        .user-avatar {
+            width: 30px; height: 30px; background: #3b82f6; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .user-name-label { font-size: 14px; font-weight: 600; }
+        .user-sub-label  { font-size: 11px; opacity: 0.6; }
+        .btn-settings {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; padding: 4px 10px; border-radius: 5px; font-size: 12px; cursor: pointer;
+        }
+        .btn-settings:hover { background: rgba(255,255,255,0.2); }
 
-    /* ── Selector Row ── */
-    .mg-selector-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-    .mg-selector-group { flex: 1; min-width: 200px; }
-    .mg-selector-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 6px;
-    }
-    .mg-select {
-      width: 100%;
-      padding: 10px 32px 10px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
-      background: #ffffff;
-      color: #1e293b;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      cursor: pointer;
-    }
-    .mg-select:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
-    }
-    .mg-hint { font-size: 12px; color: #9ca3af; margin-bottom: 6px; }
+        /* ── Cloud Save Panel ── */
+        .cloud-list {
+            max-height: 220px; overflow-y: auto; border: 1px solid #e5e7eb;
+            border-radius: 7px; background: #fff;
+        }
+        .cloud-list-empty { padding: 20px; text-align: center; color: #9ca3af; font-size: 13px; }
+        .cloud-list-item {
+            display: flex; align-items: center; padding: 9px 12px;
+            border-bottom: 1px solid #f3f4f6; cursor: pointer; gap: 10px; transition: background 0.1s;
+        }
+        .cloud-list-item:last-child { border-bottom: none; }
+        .cloud-list-item:hover { background: #f0f9ff; }
+        .cloud-list-item.selected { background: #eff6ff; border-left: 3px solid #3b82f6; }
+        .cloud-item-avatar {
+            width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; color: #fff;
+        }
+        .cloud-item-info { flex: 1; min-width: 0; }
+        .cloud-item-name { font-size: 13px; font-weight: 500; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cloud-item-meta { font-size: 11px; color: #9ca3af; }
+        .cloud-item-del { background: none; border: none; color: #d1d5db; font-size: 15px; cursor: pointer; padding: 2px 4px; border-radius: 3px; }
+        .cloud-item-del:hover { color: #ef4444; background: #fee2e2; }
+        .cloud-action-row { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-cloud-load { flex: 1; background: #16a34a; color: #fff; padding: 9px; border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn-cloud-load:hover { background: #15803d; }
+        .btn-cloud-load:disabled { background: #d1d5db; cursor: not-allowed; }
+        .btn-cloud-save { flex: 1; background: #2563eb; color: #fff; padding: 9px; border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn-cloud-save:hover { background: #1d4ed8; }
+        .cloud-filter-row { display: flex; gap: 6px; margin-bottom: 8px; }
+        .cloud-filter-row input, .cloud-filter-row select { padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; font-family: inherit; }
+        .cloud-filter-row input { flex: 1; }
+        .cloud-status-msg { font-size: 12px; color: #6b7280; margin-top: 6px; min-height: 16px; }
+        .cloud-status-ok  { color: #16a34a; }
+        .cloud-status-err { color: #dc2626; }
+        .loading-spinner {
+            display: inline-block; width: 12px; height: 12px;
+            border: 2px solid #e5e7eb; border-top-color: #3b82f6;
+            border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 5px; vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .tab-row { display: flex; margin-bottom: 14px; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+        .tab-btn { flex: 1; padding: 8px; font-size: 12px; font-weight: 600; background: #f9fafb; color: #6b7280; border: none; cursor: pointer; }
+        .tab-btn.active { background: #1e293b; color: #fff; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+    <style>
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            background-color: #e9ecef;
+        }
+        .master-form {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .master-form h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #343a40;
+            border-bottom: 2px solid #4299e1;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .form-section {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        .form-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .form-section label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        .form-section input, .form-section textarea, .form-section select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        .document-container {
+            max-width: 8.5in;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            transition: border-color 0.3s;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        .document-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #1a202c;
+            transition: color 0.3s;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .info-box {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .info-box h3 {
+            font-weight: bold;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.4rem;
+            margin-bottom: 0.4rem;
+            transition: border-color 0.3s;
+        }
+        .info-box p, .info-box div {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #4a5568;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .info-box .manual-input {
+             font-size: 0.8rem;
+             border: 1px solid #d1d5db;
+             padding: 0.25rem;
+             border-radius: 3px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem;
+            text-align: left;
+            font-size: 0.8rem;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+        th {
+            background-color: #f7fafc;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .total-section {
+            margin-top: 1rem;
+            text-align: right;
+        }
+        .total-section p {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin: 0.25rem 0;
+        }
+        .print-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4299e1;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
 
-    /* ── Table ── */
-    .mg-table-wrap {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      overflow-x: auto;
-    }
-    .mg-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-    }
-    .mg-table th,
-    .mg-table td {
-      border: 1px solid #e2e8f0;
-      padding: 9px 10px;
-      text-align: center;
-      vertical-align: middle;
-      font-size: 13px;
-    }
-    .mg-table th {
-      background: #1e293b;
-      color: #ffffff;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .mg-table th:first-child,
-    .mg-table td:first-child { text-align: left; padding-left: 14px; }
-    .mg-table td:first-child { font-weight: 500; }
-    .mg-table td:nth-child(2) {
-      color: #6b7280;
-      font-family: 'SF Mono', 'Courier New', monospace;
-    }
-    .mg-table td:nth-child(3) { color: #9ca3af; font-style: italic; }
-    .mg-table tbody tr:hover { background: #f8fafc; }
+        #item-table input, #item-table textarea {
+            width: 100%;
+            padding: 0.25rem;
+        }
+        .paste-area {
+            border: 2px dashed #cbd5e0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .paste-area img {
+            max-width: 100%;
+            max-height: 60px;
+            object-fit: contain;
+        }
+        .quote-item-image {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: contain;
+        }
+        
+        /* --- Theme Styles --- */
+        .theme-blue .document-title { color: #2b6cb0; }
+        .theme-blue .info-box h3 { border-bottom-color: #4299e1; }
+        .theme-blue th { background-color: #ebf8ff; }
 
-    .mg-col-name   { width: 30%; }
-    .mg-col-pts    { width: 12%; }
-    .mg-col-target { width: 25%; }
-    .mg-col-qty    { width: 18%; }
-    .mg-col-sub    { width: 15%; }
+        .theme-green .document-title { color: #2f855a; }
+        .theme-green .info-box h3 { border-bottom-color: #48bb78; }
+        .theme-green th { background-color: #f0fff4; }
 
-    /* Input */
-    .mg-qty-input {
-      width: 100%;
-      padding: 6px 8px;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      text-align: center;
-      font-size: 13px;
-      font-family: inherit;
-      background: #f8fafc;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .mg-qty-input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
-      background: #ffffff;
-    }
+        .theme-gray .document-title { color: #4a5568; }
+        .theme-gray .info-box h3 { border-bottom-color: #a0aec0; }
+        .theme-gray th { background-color: #f7fafc; }
+        
+        .theme-purple .document-title { color: #553c9a; }
+        .theme-purple .info-box h3 { border-bottom-color: #805ad5; }
+        .theme-purple th { background-color: #faf5ff; }
 
-    /* Subtotal */
-    .mg-subtotal { font-weight: 600; font-size: 14px; color: #1d4ed8; }
+        .theme-red .document-title { color: #c53030; }
+        .theme-red .info-box h3 { border-bottom-color: #f56565; }
+        .theme-red th { background-color: #fff5f5; }
 
-    /* ── Footer ── */
-    .mg-footer {
-      padding: 22px 28px;
-      background: #f8fafc;
-      border-top: 1px solid #e2e8f0;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      align-items: start;
-    }
-    @media (max-width: 640px) {
-      .mg-footer { grid-template-columns: 1fr; }
-    }
 
-    /* Notes */
-    .mg-notes-box {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      background: #ffffff;
-      overflow: hidden;
-    }
-    .mg-notes-header {
-      background: #f1f5f9;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      border-bottom: 1px solid #e2e8f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .mg-notes-header span:last-child {
-      font-weight: 400;
-      font-size: 11px;
-      color: #9ca3af;
-    }
-    .mg-notes-textarea {
-      width: 100%;
-      border: none;
-      padding: 14px;
-      min-height: 110px;
-      resize: vertical;
-      display: block;
-      font-size: 13px;
-      font-family: inherit;
-      color: #374151;
-      background: #ffffff;
-    }
-    .mg-notes-textarea:focus { outline: none; }
-
-    /* Total box */
-    .mg-total-box {
-      padding: 28px 16px;
-      border-radius: 10px;
-      text-align: center;
-      background: #ffffff;
-      border: 2px solid #e2e8f0;
-      transition: border-color 0.3s, background 0.3s;
-    }
-    .mg-total-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #64748b;
-      margin-bottom: 8px;
-    }
-    .mg-total-value {
-      font-size: 60px;
-      font-weight: 900;
-      line-height: 1;
-      transition: color 0.3s;
-    }
-
-    /* Theme variants */
-    .mg-total-box.official { background: #f0fdf4; border-color: #bbf7d0; }
-    .mg-total-box.official .mg-total-label { color: #166534; }
-    .mg-total-box.official .mg-total-value { color: #16a34a; }
-
-    .mg-total-box.newbie { background: #f0f9ff; border-color: #bae6fd; }
-    .mg-total-box.newbie .mg-total-label { color: #075985; }
-    .mg-total-box.newbie .mg-total-value { color: #0284c7; }
-
-    .mg-total-box.intern { background: #fffbeb; border-color: #fde68a; }
-    .mg-total-box.intern .mg-total-label { color: #92400e; }
-    .mg-total-box.intern .mg-total-value { color: #d97706; }
-  </style>
+        @media print {
+            body { background-color: white; margin: 0; }
+            .master-form, .print-button { display: none; }
+            .document-container { 
+                margin: 0; 
+                padding: 0; 
+                border: none; 
+                box-shadow: none; 
+                width: 100%; 
+                page-break-inside: avoid;
+            }
+            #quotation-section, #po-section, #pi-section {
+                page-break-after: always;
+            }
+            #packing-list-section {
+                 page-break-before: avoid;
+            }
+            .info-box, tr {
+                page-break-inside: avoid;
+            }
+            .manual-input { border-color: transparent; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="mg-wrapper">
-  <div class="mg-card">
-
-    <div class="mg-header">
-      <h1>美工团队统一工作量化统计表</h1>
-      <span class="mg-header-ver">v2.5 更新版</span>
+<div class="master-form">
+    <h2 data-lang-key="master_form_title">Master Input Form</h2>
+    
+    <div class="form-section mb-6">
+        <label for="language_select" data-lang-key="language">Language</label>
+        <select id="language_select">
+            <option value="en">English</option>
+            <option value="bilingual">English / 中文</option>
+            <option value="es">Spanish</option>
+            <option value="de">German</option>
+            <option value="fr">French</option>
+            <option value="ar">Arabic</option>
+            <option value="ru">Russian</option>
+        </select>
     </div>
 
-    <div class="mg-body">
-      <div class="mg-selector-row">
-        <div class="mg-selector-group">
-          <label for="mg-role-selector">切换岗位模板：</label>
-          <select id="mg-role-selector" class="mg-select">
-            <option value="official" selected>正式美工</option>
-            <option value="newbie">新晋美工</option>
-            <option value="intern">实习美工</option>
-          </select>
-        </div>
-        <div class="mg-hint">* 实际完成数量支持输入小数（如 0.5 小时）</div>
-      </div>
+    <!-- Cloud Save / Load Panel -->
+    <div class="form-section mb-6">
+        <h3 style="margin-bottom:12px;">☁️ Cloud Save &amp; Load</h3>
 
-      <div class="mg-table-wrap">
-        <table class="mg-table">
-          <thead>
-            <tr>
-              <th class="mg-col-name">具体工作内容</th>
-              <th class="mg-col-pts">分值 / 单位</th>
-              <th class="mg-col-target">月度目标参考</th>
-              <th class="mg-col-qty">实际完成数量</th>
-              <th class="mg-col-sub">积分小计</th>
-            </tr>
-          </thead>
-          <tbody id="mg-kpi-tbody"></tbody>
+        <!-- User identity bar -->
+        <div class="user-identity-bar" id="user-bar">
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">?</div>
+                <div>
+                    <div class="user-name-label" id="user-name-label">Not set up</div>
+                    <div class="user-sub-label">Click Setup to get started</div>
+                </div>
+            </div>
+            <button class="btn-settings" onclick="openSettings()">⚙ Setup</button>
+        </div>
+
+        <!-- Auto-save draft status -->
+        <div class="autosave-bar">
+            <span id="autosave-status" class="autosave-dot saved">Draft auto-saved locally</span>
+            <button class="btn-new-quote" onclick="newQuote()">＋ New Quote</button>
+        </div>
+
+        <!-- Tabs: Cloud | Local -->
+        <div class="tab-row">
+            <button class="tab-btn active" onclick="switchTab('cloud',this)">☁️ Cloud Records</button>
+            <button class="tab-btn" onclick="switchTab('local',this)">💾 Local Browser</button>
+        </div>
+
+        <!-- Cloud tab -->
+        <div id="tab-cloud" class="tab-content active">
+            <div class="cloud-filter-row">
+                <input type="text" id="cloud-search" placeholder="Search by name, quote no…" oninput="renderCloudList()">
+                <select id="cloud-user-filter" onchange="renderCloudList()">
+                    <option value="">All team members</option>
+                </select>
+                <button onclick="loadCloudList()" style="padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;" title="Refresh">↺</button>
+            </div>
+            <div class="cloud-list" id="cloud-list">
+                <div class="cloud-list-empty">Click ↺ to load cloud records</div>
+            </div>
+            <div class="cloud-action-row">
+                <button class="btn-cloud-load" id="btn-cloud-load" onclick="cloudLoad()" disabled>⬇ Load Selected</button>
+                <button class="btn-cloud-save" onclick="cloudSave()">⬆ Save to Cloud</button>
+            </div>
+            <p class="cloud-status-msg" id="cloud-status"></p>
+        </div>
+
+        <!-- Local tab -->
+        <div id="tab-local" class="tab-content">
+            <div class="save-search-row" style="margin-bottom:8px;">
+                <label style="font-size:12px;font-weight:600;color:#374151;">Search local saves</label>
+                <input type="text" id="save_search" placeholder="Filter by name…" oninput="filterSaveSlots()">
+            </div>
+            <div class="flex items-end space-x-2">
+                <div class="flex-grow">
+                    <label for="save_slots" data-lang-key="saved_entries">Saved Entries <span id="save-count-badge" class="save-count-badge">0</span></label>
+                    <select id="save_slots" style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;"></select>
+                </div>
+                <button id="load_button"   data-lang-key="load"   class="bg-green-500 text-white px-4 py-2 rounded h-10">Load</button>
+                <button id="save_button"   data-lang-key="save"   class="bg-blue-500  text-white px-4 py-2 rounded h-10">Save</button>
+                <button id="delete_button" data-lang-key="delete" class="bg-red-500   text-white px-4 py-2 rounded h-10">Delete</button>
+            </div>
+            <p id="feedback_message" class="text-sm text-gray-600 mt-2" style="min-height:18px;"></p>
+        </div>
+    </div>
+
+    <div class="form-section mb-6">
+        <label for="seller_website" class="text-lg"><strong data-lang-key="select_seller">Select Seller Website</strong></label>
+        <select id="seller_website">
+            <!-- Options populated by JS -->
+        </select>
+    </div>
+    <div class="form-grid">
+        <div class="form-section">
+            <h3 data-lang-key="order_info">Order Information</h3>
+            <label for="quote_number" data-lang-key="quote_no">Quote No.</label>
+            <input type="text" id="quote_number" value="">
+            <label for="pi_number" class="mt-2" data-lang-key="invoice_no">Invoice No.</label>
+            <input type="text" id="pi_number" value="">
+            <label for="po_number" class="mt-2" data-lang-key="po_no">PO No.</label>
+            <input type="text" id="po_number" value="">
+            <label for="date_of_issue" class="mt-2" data-lang-key="date_of_issue">Date of Issue</label>
+            <input type="date" id="date_of_issue" value="">
+             <label for="valid_until" class="mt-2" data-lang-key="valid_until">Valid Until</label>
+            <input type="date" id="valid_until" value="">
+            <label for="currency" class="mt-2" data-lang-key="currency">Currency</label>
+            <select id="currency">
+                <option value="USD">USD ($)</option>
+                <option value="CNY">RMB (¥)</option>
+                <option value="EUR">Euro (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="AUD">AUD (A$)</option>
+                <option value="CAD">CAD (C$)</option>
+            </select>
+        </div>
+        <div class="form-section">
+            <h3 data-lang-key="buyer_info">Buyer Information</h3>
+            <label for="buyer_info" data-lang-key="buyer_name_address">Buyer Name & Address</label>
+            <textarea id="buyer_info" rows="4"></textarea>
+            <label for="buyer_email" class="mt-2" data-lang-key="buyer_email">Buyer Email</label>
+            <input type="email" id="buyer_email" value="">
+        </div>
+        <div class="form-section">
+            <h3 data-lang-key="shipping_info">Shipping Information</h3>
+            <label for="shipping_info" data-lang-key="ship_to_name_address">Ship To Name & Address</label>
+            <textarea id="shipping_info" rows="4"></textarea>
+            <label for="shipping_tel" class="mt-2" data-lang-key="shipping_tel">Shipping Tel</label>
+            <input type="text" id="shipping_tel" value="">
+            <label for="freight_cost" class="mt-2" data-lang-key="freight_cost">Freight Cost (in USD)</label>
+            <input type="number" id="freight_cost" value="0" min="0" step="0.01">
+        </div>
+    </div>
+
+    <div class="form-section mt-6">
+        <h3 data-lang-key="seller_info_editable">Seller Information (Editable)</h3>
+        <label for="seller_name" data-lang-key="seller_name">Seller Name</label>
+        <input type="text" id="seller_name">
+        <label for="seller_address" class="mt-2" data-lang-key="seller_address">Seller Address</label>
+        <textarea id="seller_address" rows="3"></textarea>
+        <label for="seller_phone" class="mt-2" data-lang-key="seller_phone">Seller Phone</label>
+        <input type="text" id="seller_phone">
+        <label for="seller_email" class="mt-2" data-lang-key="seller_email">Seller Email</label>
+        <input type="email" id="seller_email">
+        <label for="seller_website_url" class="mt-2" data-lang-key="seller_website">Seller Website</label>
+        <input type="text" id="seller_website_url">
+    </div>
+    
+    <div class="form-section mt-6">
+        <h3 data-lang-key="product_items_packing">Product Items & Packing Details</h3>
+        <table id="item-table" class="w-full text-sm">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="p-2" data-lang-key="th_sku">SKU</th>
+                    <th class="p-2" data-lang-key="th_description">Description</th>
+                    <th class="p-2" data-lang-key="th_image">Image</th>
+                    <th class="p-2" data-lang-key="th_qty">Qty</th>
+                    <th id="master-unit-price-header" class="p-2" data-lang-key="th_unit_price_usd">Unit Price (USD)</th>
+                    <th class="p-2" data-lang-key="th_carton_no">Carton No.</th>
+                    <th class="p-2" data-lang-key="th_nw">N.W. (kgs)</th>
+                    <th class="p-2" data-lang-key="th_gw">G.W. (kgs)</th>
+                    <th class="p-2" data-lang-key="th_meas">Meas (cbm)</th>
+                    <th class="p-2" data-lang-key="th_action">Action</th>
+                </tr>
+            </thead>
+            <tbody id="master-items">
+                <!-- Items added dynamically -->
+            </tbody>
         </table>
-      </div>
+        <button onclick="addItem()" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded" data-lang-key="add_item">Add Item</button>
+    </div>
+    
+    <div class="form-section mt-6">
+        <h3 data-lang-key="discount">Discount</h3>
+        <label for="discount_percentage" data-lang-key="discount_perc">Discount (%)</label>
+        <input type="number" id="discount_percentage" value="0" min="0" max="100">
     </div>
 
-    <div class="mg-footer">
-      <div class="mg-notes-box">
-        <div class="mg-notes-header">
-          <span>工作备注 / 特殊说明</span>
-          <span>备注内容会随岗位切换清空</span>
-        </div>
-        <textarea id="mg-notes-area" class="mg-notes-textarea"
-          placeholder="请记录本月其他零碎工作或任务难度说明..."></textarea>
-      </div>
-      <div class="mg-total-box official" id="mg-total-box">
-        <p class="mg-total-label">本月累计总积分</p>
-        <p class="mg-total-value" id="mg-total-points">0.0</p>
-      </div>
+    <div class="form-section mt-6">
+        <h3 data-lang-key="terms_conditions">Terms & Conditions</h3>
+        <label for="terms_preset" data-lang-key="select_preset">Select a Preset</label>
+        <select id="terms_preset" class="mb-2">
+            <option value="standard">Standard Terms</option>
+            <option value="full_payment">Full Payment for Small Orders</option>
+            <option value="custom_product">Custom Products</option>
+            <option value="exw">EXW Price</option>
+        </select>
+        <textarea id="terms_conditions" rows="5"></textarea>
     </div>
 
-  </div>
 </div>
 
+<!-- Quotation Document -->
+<div class="document-container" id="quotation-section">
+    <h1 class="document-title" data-doc-key="quotation_title">QUOTATION</h1>
+    <div class="info-grid">
+        <div class="info-box"><h3 data-doc-key="from">From:</h3><div id="quote_seller_info"></div></div>
+        <div class="info-box"><h3 data-doc-key="to">To:</h3><div id="quote_buyer_info"></div></div>
+        <div class="info-box"><h3 data-doc-key="quotation_info">Quotation Info:</h3>
+            <p><strong data-doc-key="quote_no">Quote No.:</strong> <span id="quote_number_display"></span></p>
+            <p><strong data-doc-key="date">Date:</strong> <span id="quote_date"></span></p>
+            <p><strong data-doc-key="valid_until">Valid Until:</strong> <span id="quote_valid_until"></span></p>
+        </div>
+    </div>
+    <table><thead><tr><th style="width: 15%;" data-doc-key="th_image">Image</th><th style="width: 15%;" data-doc-key="th_sku">SKU</th><th style="width: 40%;" data-doc-key="th_description">Description</th><th data-doc-key="th_qty">Qty</th><th id="quote-unit-price-header">Unit Price</th><th id="quote-total-header">Total</th></tr></thead><tbody id="quote-items-table"></tbody></table>
+    <div class="total-section">
+        <p><span data-doc-key="subtotal">SUBTOTAL</span>: <span id="quote-currency-symbol-1"></span><span id="quote-subtotal">0.00</span></p>
+        <p id="quote-discount-line"><span data-doc-key="discount">Discount</span> (<span id="quote-discount-perc">0</span>%): - <span id="quote-currency-symbol-2"></span><span id="quote-discount-amount">0.00</span></p>
+        <p><span data-doc-key="freight">Freight</span>: <span id="quote-currency-symbol-3"></span><span id="quote-freight">0.00</span></p>
+        <p><strong><span data-doc-key="total">TOTAL</span>: <span id="quote-currency-symbol-4"></span><span id="quote-total">0.00</span></strong></p>
+    </div>
+    <div class="info-box" style="margin-top: 1.5rem;">
+        <h3 data-doc-key="terms_conditions">Terms & Conditions:</h3>
+        <div id="quote_terms_conditions"></div>
+    </div>
+    <div style="margin-top: 2rem;"><p style="padding-top: 1.5rem; border-top: 1px solid #e2e8f0; text-align: right;"><strong data-doc-key="auth_sig">Authorized Signature</strong></p><p style="text-align: right;"><strong id="quote_auth_signature"></strong></p></div>
+</div>
+
+<!-- Purchase Order Document -->
+<div class="document-container" id="po-section">
+    <h1 class="document-title" data-doc-key="po_title">PURCHASE ORDER</h1>
+    <div class="info-grid">
+        <div class="info-box"><h3 data-doc-key="buyer">Buyer:</h3><div id="po_buyer_info"></div></div>
+        <div class="info-box"><h3 data-doc-key="seller">Seller:</h3><div id="po_seller_info"></div></div>
+        <div class="info-box"><h3 data-doc-key="ship_to">Ship To:</h3><div id="po_shipping_info"></div><p class="mt-auto pt-2"><strong data-doc-key="tel">Tel:</strong> <span id="po_shipping_tel"></span></p></div>
+        <div class="info-box"><h3 data-doc-key="order_info">Order Info:</h3>
+            <p><strong data-doc-key="po_no">PO Number:</strong> <span id="po_po_number"></span></p>
+            <p><strong data-doc-key="date_of_issue">Date of Issue:</strong> <span id="po_date"></span></p>
+            <p><strong data-doc-key="ref_pi_no">Ref PI No.:</strong> <span id="po_pi_ref"></span></p>
+        </div>
+    </div>
+    <table><thead><tr><th style="width: 20%;" data-doc-key="th_sku">SKU</th><th style="width: 50%;" data-doc-key="th_description">Description</th><th data-doc-key="th_qty">Qty</th><th id="po-unit-price-header">Unit Price</th><th id="po-total-header">Total</th></tr></thead><tbody id="po-items-table"></tbody></table>
+    <div class="total-section">
+        <p><span data-doc-key="subtotal">SUBTOTAL</span>: <span id="po-currency-symbol-1"></span><span id="po-subtotal">0.00</span></p>
+        <p id="po-discount-line"><span data-doc-key="discount">Discount</span> (<span id="po-discount-perc">0</span>%): - <span id="po-currency-symbol-2"></span><span id="po-discount-amount">0.00</span></p>
+        <p><span data-doc-key="freight">Freight</span>: <span id="po-currency-symbol-3"></span><span id="po-freight">0.00</span></p>
+        <p><strong><span data-doc-key="total">TOTAL</span>: <span id="po-currency-symbol-4"></span><span id="po-total">0.00</span></strong></p>
+    </div>
+    <div class="info-box" style="margin-top: 1.5rem;">
+        <h3 data-doc-key="terms_conditions">Terms & Conditions:</h3>
+        <div id="po_terms_conditions"></div>
+    </div>
+    <div style="margin-top: 2rem;"><p style="padding-top: 1.5rem; border-top: 1px solid #e2e8f0; text-align: right;"><strong data-doc-key="auth_sig">Authorized Signature</strong></p><p style="text-align: right;"><strong id="po_auth_signature"></strong></p></div>
+</div>
+
+<!-- Proforma Invoice Document -->
+<div class="document-container" id="pi-section">
+    <h1 class="document-title" data-doc-key="pi_title">PROFORMA INVOICE</h1>
+    <div class="info-grid">
+        <div class="info-box"><h3 data-doc-key="seller">Seller:</h3><div id="pi_seller_info"></div></div>
+        <div class="info-box"><h3 data-doc-key="buyer">Buyer:</h3><div id="pi_buyer_info"></div></div>
+        <div class="info-box"><h3 data-doc-key="ship_to">Ship To:</h3><div id="pi_shipping_info"></div><p><strong data-doc-key="tel">Tel:</strong> <span id="pi_shipping_tel"></span></p></div>
+        <div class="info-box"><h3 data-doc-key="invoice_info">Invoice Info:</h3>
+            <p><strong data-doc-key="invoice_no">Invoice No.:</strong> <span id="pi_pi_number"></span></p>
+            <p><strong data-doc-key="date_of_issue">Date of Issue:</strong> <span id="pi_date"></span></p>
+            <p><strong data-doc-key="ref_po_no">Ref PO No.:</strong> <span id="pi_po_ref"></span></p>
+        </div>
+    </div>
+    <table><thead><tr><th style="width: 20%;" data-doc-key="th_sku">SKU</th><th style="width: 50%;" data-doc-key="th_description">Description</th><th data-doc-key="th_qty">Qty</th><th id="pi-unit-price-header">Unit Price</th><th id="pi-total-header">Total</th></tr></thead><tbody id="pi-items-table"></tbody></table>
+    <div class="total-section">
+        <p><span data-doc-key="subtotal">SUBTOTAL</span>: <span id="pi-currency-symbol-1"></span><span id="pi-subtotal">0.00</span></p>
+        <p id="pi-discount-line"><span data-doc-key="discount">Discount</span> (<span id="pi-discount-perc">0</span>%): - <span id="pi-currency-symbol-2"></span><span id="pi-discount-amount">0.00</span></p>
+        <p><span data-doc-key="freight">Freight</span>: <span id="pi-currency-symbol-3"></span><span id="pi-freight">0.00</span></p>
+        <p><strong><span data-doc-key="total_due">TOTAL AMOUNT DUE</span>: <span id="pi-currency-symbol-4"></span><span id="pi-total">0.00</span></strong></p>
+    </div>
+    <div class="info-box" style="margin-top: 1.5rem;">
+        <h3 data-doc-key="bank_info">BENEFICIARY BANK INFORMATION:</h3>
+        <label data-doc-key="bank_name">Bank Name:</label>
+        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <label class="mt-2" data-doc-key="bank_address">Bank Address:</label>
+        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <label class="mt-2" data-doc-key="account_name">Account Name:</label>
+        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <label class="mt-2" data-doc-key="account_number">Account Number:</label>
+        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <label class="mt-2" data-doc-key="swift_code">Swift Code or ABA :</label>
+        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <p class="mt-2"><strong data-doc-key="notes">Notes:</strong> <span data-doc-key="notes_text">Please include Invoice No.</span> <strong id="pi_notes_ref"></strong> <span data-doc-key="notes_text_2">in payment reference.</span></p>
+    </div>
+    <div style="margin-top: 2rem;"><p style="padding-top: 1.5rem; border-top: 1px solid #e2e8f0; text-align: right;"><strong data-doc-key="auth_sig">Authorized Signature</strong></p><p style="text-align: right;"><strong id="pi_auth_signature"></strong></p></div>
+</div>
+
+<!-- Packing List Document -->
+<div class="document-container" id="packing-list-section">
+    <h1 class="document-title" data-doc-key="pl_title">PACKING LIST</h1>
+    <div class="info-grid">
+        <div class="info-box"><h3 data-doc-key="shipper">Shipper:</h3><div id="pl_shipper_info"></div></div>
+        <div class="info-box"><h3 data-doc-key="consignee">Consignee:</h3><div id="pl_consignee_info"></div></div>
+        <div class="info-box" style="grid-column: span 2;">
+            <h3 data-doc-key="shipping_details">Shipping Details:</h3>
+            <p><strong data-doc-key="invoice_no">Invoice No.:</strong> <span id="pl_pi_number"></span></p>
+            <p><strong data-doc-key="date">Date:</strong> <span id="pl_date"></span></p>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th data-doc-key="th_carton_no">Carton No.</th>
+                <th data-doc-key="th_item_desc_sku">Item Description / SKU</th>
+                <th data-doc-key="th_qty_pcs">Quantity (PCS)</th>
+                <th data-doc-key="th_nw_kgs">Net Weight (KGS)</th>
+                <th data-doc-key="th_gw_kgs">Gross Weight (KGS)</th>
+                <th data-doc-key="th_meas_cbm">Measurement (CBM)</th>
+            </tr>
+        </thead>
+        <tbody id="packing-list-items-table"></tbody>
+        <tfoot>
+            <tr class="font-bold bg-gray-50">
+                <td colspan="2"><span data-doc-key="total_pl">TOTAL</span>:</td>
+                <td id="pl-total-qty">0</td>
+                <td id="pl-total-nw">0.00</td>
+                <td id="pl-total-gw">0.00</td>
+                <td id="pl-total-cbm">0.000</td>
+            </tr>
+        </tfoot>
+    </table>
+     <div class="info-box" style="margin-top: 1.5rem;">
+        <h3 data-doc-key="remarks">Remarks:</h3>
+        <textarea id="pl_remarks" class="manual-input w-full" rows="3" placeholder="Manual Entry"></textarea>
+    </div>
+    <div style="margin-top: 2rem;"><p style="padding-top: 1.5rem; border-top: 1px solid #e2e8f0; text-align: right;"><strong data-doc-key="auth_sig">Authorized Signature</strong></p><p style="text-align: right;"><strong id="pl_auth_signature"></strong></p></div>
+</div>
+
+
+<!-- Settings Modal -->
+<div id="settings-overlay" class="settings-overlay hidden">
+    <div class="settings-modal">
+        <h3>👤 Team Setup</h3>
+        <p>Enter your name and the shared GitHub token. This is saved <strong>only in your browser</strong> — never in the source code.</p>
+        <label>Your Name *</label>
+        <input type="text" id="setup-name" placeholder="e.g. Alice, 小明, Bob...">
+        <label>GitHub Token * <span style="font-size:10px;color:#9ca3af;">(get from your team admin)</span></label>
+        <input type="password" id="setup-token" placeholder="github_pat_...">
+        <div class="setup-actions">
+            <button class="btn-setup-save" onclick="saveSetup()">✓ Save & Continue</button>
+            <button class="btn-setup-cancel" onclick="closeSettings()">Cancel</button>
+        </div>
+        <p class="setup-note">🔒 Token is stored in your browser's localStorage only. It is never committed to the repository.</p>
+    </div>
+</div>
+
+<div class="print-button" onclick="window.print()" data-lang-key="print_save">Print or Save as PDF</div>
+
 <script>
-(function () {
-  var taskData = {
-    official: [
-      { name: '上传产品 1-2 SKU',              points: 10,  target: '100个' },
-      { name: '上传产品 3-5 SKU',              points: 20,  target: '40个' },
-      { name: '上传产品 6-9 SKU',              points: 30,  target: '20个' },
-      { name: '上传产品 10-18 SKU',            points: 35,  target: '10个' },
-      { name: '上传产品 19-30 SKU',            points: 45,  target: '10个' },
-      { name: '店铺装修-简单换图',              points: 20,  target: '1次/月' },
-      { name: '店铺装修-活动页面',              points: 50,  target: '1次/3个月' },
-      { name: '详情页面制作 (1个)',             points: 40,  target: '2次/月' },
-      { name: '邮件营销内容设计',              points: 5,   target: '8次/月' },
-      { name: '广告图一张',                    points: 2,   target: '按需' },
-      { name: '简单修图/抠图 (1款产品)',       points: 8,   target: '10次/月' },
-      { name: '社媒分享 (1次)',                points: 1,   target: '26次/月' },
-      { name: '参数文档-简单',                 points: 2.5, target: '按需' },
-      { name: '参数文档-复杂',                 points: 5,   target: '按需' },
-      { name: '单独只做尺寸图的情况',           points: 1,   target: '按需' },
-      { name: '安装图纸/3D图纸上传更新',       points: 1,   target: '按需' },
-      { name: '评价内容 (不带图)',              points: 3,   target: '按需' },
-      { name: '评价内容 (带图)',               points: 4,   target: '按需' },
-      { name: '评价内容 14-25条 (不带图)',     points: 6,   target: '15个' },
-      { name: '评价内容 14-25条 (带图)',       points: 7,   target: '15个' },
-      { name: '视频上传 (1次/平台)',            points: 2,   target: '按需' },
-      { name: '修改产品 (小时计)',              points: 12,  target: '按需', step: 0.5 },
-      { name: '其他工作 (小时计)',              points: 12,  target: '按需', step: 0.5 }
-    ],
-    newbie: [
-      { name: '上传产品 1-3 SKU',              points: 15,  target: '60个' },
-      { name: '上传产品 4-9 SKU',              points: 20,  target: '20个' },
-      { name: '上传产品 10-15 SKU',            points: 30,  target: '10个' },
-      { name: '店铺装修-简单换图',              points: 20,  target: '1月/1次' },
-      { name: '简单修图/抠图 (1款产品)',       points: 8,   target: '15次/月' },
-      { name: '单独只做尺寸图',                points: 1,   target: '按需' },
-      { name: '安装图纸/3D图纸上传更新',       points: 1,   target: '按需' },
-      { name: '社媒分享 (1次/平台)',            points: 1,   target: '26次/月' },
-      { name: '博客文章 (配图与发布)',          points: 20,  target: '12次/月' },
-      { name: '参数文档+尺寸图',               points: 4,   target: '120个/月' },
-      { name: '广告图一张',                    points: 2,   target: '按需' },
-      { name: '视频上传 (1次/平台)',            points: 2,   target: '按需' },
-      { name: '修改批发网站产品',               points: 2,   target: '按需' },
-      { name: '评价内容 8-13条 (不带图)',      points: 3,   target: '10个' },
-      { name: '评价内容 8-13条 (带图)',        points: 4,   target: '10个' },
-      { name: '评价内容 14-25条 (不带图)',     points: 6,   target: '15个' },
-      { name: '评价内容 14-25条 (带图)',       points: 7,   target: '15个' },
-      { name: '修改产品 (小时计)',              points: 12,  target: '按需', step: 0.5 },
-      { name: '其他工作 (小时计)',              points: 12,  target: '按需', step: 0.5 }
-    ],
-    intern: [
-      { name: '上传产品 1-9 SKU',              points: 3,   target: '按需' },
-      { name: '上传产品 10+ SKU',              points: 5,   target: '按需' },
-      { name: '简单修图/抠图 (1款产品)',       points: 8,   target: '20次/月' },
-      { name: '参数文档 1-5 SKU',              points: 2,   target: '按需' },
-      { name: '参数文档 6-10 SKU',             points: 3.5, target: '按需' },
-      { name: '参数文档 10+ SKU',              points: 5,   target: '按需' },
-      { name: '制作尺寸图PDF (1个)',           points: 1,   target: '按需' },
-      { name: '安装图纸/3D图纸上传更新',       points: 1,   target: '按需' },
-      { name: '社媒内容发布 (1次/平台)',        points: 1,   target: '26次/月' },
-      { name: '博客文章 (5张以上配图与发布)',   points: 20,  target: '12次/月' },
-      { name: '评价内容 8-13条 (不带图)',      points: 3,   target: '20个' },
-      { name: '评价内容 8-13条 (带图)',        points: 4,   target: '20个' },
-      { name: '评价内容 14-25条 (不带图)',     points: 6,   target: '15个' },
-      { name: '评价内容 14-25条 (带图)',       points: 7,   target: '15个' },
-      { name: '修改产品 (小时计)',              points: 12,  target: '按需', step: 0.5 },
-      { name: '其他工作 (小时计)',              points: 12,  target: '按需', step: 0.5 }
-    ]
-  };
+    // --- DICTIONARY FOR BILINGUAL SUPPORT ---
+    const translations = {
+        en: {
+            master_form_title: "Master Input Form",
+            language: "Language",
+            save_load_data: "Save/Load Data",
+            saved_entries: "Saved Entries",
+            load: "Load",
+            save: "Save",
+            delete: "Delete",
+            select_seller: "Select Seller Website",
+            order_info: "Order Information",
+            quote_no: "Quote No.",
+            invoice_no: "Invoice No.",
+            po_no: "PO No.",
+            date_of_issue: "Date of Issue",
+            valid_until: "Valid Until",
+            currency: "Currency",
+            buyer_info: "Buyer Information",
+            buyer_name_address: "Buyer Name & Address",
+            buyer_email: "Buyer Email",
+            shipping_info: "Shipping Information",
+            ship_to_name_address: "Ship To Name & Address",
+            shipping_tel: "Shipping Tel",
+            freight_cost: "Freight Cost (in USD)",
+            seller_info_editable: "Seller Information (Editable)",
+            seller_name: "Seller Name",
+            seller_address: "Seller Address",
+            seller_phone: "Seller Phone",
+            seller_email: "Seller Email",
+            seller_website: "Seller Website",
+            product_items_packing: "Product Items & Packing Details",
+            th_sku: "SKU",
+            th_description: "Description",
+            th_image: "Image",
+            th_qty: "Qty",
+            th_unit_price_usd: "Unit Price",
+            th_carton_no: "Carton No.",
+            th_nw: "N.W. (kgs)",
+            th_gw: "G.W. (kgs)",
+            th_meas: "Meas (cbm)",
+            th_action: "Action",
+            add_item: "Add Item",
+            discount: "Discount",
+            discount_perc: "Discount (%)",
+            terms_conditions: "Terms & Conditions",
+            select_preset: "Select a Preset",
+            print_save: "Print or Save as PDF",
+        },
+        bilingual: {
+            master_form_title: "Master Input Form / 主输入表单",
+            language: "Language / 语言",
+            save_load_data: "Save/Load Data / 保存/加载数据",
+            saved_entries: "Saved Entries / 已存条目",
+            load: "Load / 加载",
+            save: "Save / 保存",
+            delete: "Delete / 删除",
+            select_seller: "Select Seller Website / 选择卖家网站",
+            order_info: "Order Information / 订单信息",
+            quote_no: "Quote No. / 报价单号",
+            invoice_no: "Invoice No. / 发票号",
+            po_no: "PO No. / 采购订单号",
+            date_of_issue: "Date of Issue / 签发日期",
+            valid_until: "Valid Until / 有效期至",
+            currency: "Currency / 货币",
+            buyer_info: "Buyer Information / 买家信息",
+            buyer_name_address: "Buyer Name & Address / 买家名称和地址",
+            buyer_email: "Buyer Email / 买家邮箱",
+            shipping_info: "Shipping Information / 运输信息",
+            ship_to_name_address: "Ship To Name & Address / 收货人名称和地址",
+            shipping_tel: "Shipping Tel / 收货电话",
+            freight_cost: "Freight Cost (in USD) / 运费 (美元)",
+            seller_info_editable: "Seller Information (Editable) / 卖家信息 (可编辑)",
+            seller_name: "Seller Name / 卖家名称",
+            seller_address: "Seller Address / 卖家地址",
+            seller_phone: "Seller Phone / 卖家电话",
+            seller_email: "Seller Email / 卖家邮箱",
+            seller_website: "Seller Website / 卖家网站",
+            product_items_packing: "Product Items & Packing Details / 产品项目和包装细节",
+            th_sku: "SKU / 产品编号",
+            th_description: "Description / 描述",
+            th_image: "Image / 图片",
+            th_qty: "Qty / 数量",
+            th_unit_price_usd: "Unit Price / 单价",
+            th_carton_no: "Carton No. / 箱号",
+            th_nw: "N.W. (kgs) / 净重 (公斤)",
+            th_gw: "G.W. (kgs) / 毛重 (公斤)",
+            th_meas: "Meas (cbm) / 体积 (立方米)",
+            th_action: "Action / 操作",
+            add_item: "Add Item / 添加项目",
+            discount: "Discount / 折扣",
+            discount_perc: "Discount (%) / 折扣 (%)",
+            terms_conditions: "Terms & Conditions / 条款和条件",
+            select_preset: "Select a Preset / 选择预设",
+            print_save: "Print or Save as PDF / 打印或另存为PDF",
+        },
+        es: { // --- NEW SPANISH TRANSLATION ---
+            master_form_title: "Formulario de Entrada Maestro",
+            language: "Idioma",
+            save_load_data: "Guardar/Cargar Datos",
+            saved_entries: "Entradas Guardadas",
+            load: "Cargar",
+            save: "Guardar",
+            delete: "Eliminar",
+            select_seller: "Seleccionar Sitio Web del Vendedor",
+            order_info: "Información del Pedido",
+            quote_no: "Nº de Cotización",
+            invoice_no: "Nº de Factura",
+            po_no: "Nº de Pedido (PO)",
+            date_of_issue: "Fecha de Emisión",
+            valid_until: "Válido Hasta",
+            currency: "Moneda",
+            buyer_info: "Información del Comprador",
+            buyer_name_address: "Nombre y Dirección del Comprador",
+            buyer_email: "Email del Comprador",
+            shipping_info: "Información de Envío",
+            ship_to_name_address: "Nombre y Dirección de Envío",
+            shipping_tel: "Teléfono de Envío",
+            freight_cost: "Costo de Flete (en USD)",
+            seller_info_editable: "Información del Vendedor (Editable)",
+            seller_name: "Nombre del Vendedor",
+            seller_address: "Dirección del Vendedor",
+            seller_phone: "Teléfono del Vendedor",
+            seller_email: "Email del Vendedor",
+            seller_website: "Sitio Web del Vendedor",
+            product_items_packing: "Artículos del Producto y Detalles de Embalaje",
+            th_sku: "SKU",
+            th_description: "Descripción",
+            th_image: "Imagen",
+            th_qty: "Cant.",
+            th_unit_price_usd: "Precio Unitario",
+            th_carton_no: "Nº de Caja",
+            th_nw: "P.N. (kgs)",
+            th_gw: "P.B. (kgs)",
+            th_meas: "Med. (cbm)",
+            th_action: "Acción",
+            add_item: "Añadir Artículo",
+            discount: "Descuento",
+            discount_perc: "Descuento (%)",
+            terms_conditions: "Términos y Condiciones",
+            select_preset: "Seleccionar un Preajuste",
+            print_save: "Imprimir o Guardar como PDF",
+        },
+        de: { // --- NEW GERMAN TRANSLATION ---
+            master_form_title: "Haupteingabeformular",
+            language: "Sprache",
+            save_load_data: "Daten Speichern/Laden",
+            saved_entries: "Gespeicherte Einträge",
+            load: "Laden",
+            save: "Speichern",
+            delete: "Löschen",
+            select_seller: "Verkäufer-Website Auswählen",
+            order_info: "Bestellinformationen",
+            quote_no: "Angebot Nr.",
+            invoice_no: "Rechnung Nr.",
+            po_no: "Bestell-Nr.",
+            date_of_issue: "Ausstellungsdatum",
+            valid_until: "Gültig Bis",
+            currency: "Währung",
+            buyer_info: "Käuferinformationen",
+            buyer_name_address: "Name & Adresse des Käufers",
+            buyer_email: "Käufer-E-Mail",
+            shipping_info: "Versandinformationen",
+            ship_to_name_address: "Lieferadresse",
+            shipping_tel: "Versand-Telefon",
+            freight_cost: "Frachtkosten (in USD)",
+            seller_info_editable: "Verkäuferinformationen (Bearbeitbar)",
+            seller_name: "Name des Verkäufers",
+            seller_address: "Adresse des Verkäufers",
+            seller_phone: "Telefon des Verkäufers",
+            seller_email: "E-Mail des Verkäufers",
+            seller_website: "Website des Verkäufers",
+            product_items_packing: "Produktartikel & Verpackungsdetails",
+            th_sku: "SKU",
+            th_description: "Beschreibung",
+            th_image: "Bild",
+            th_qty: "Menge",
+            th_unit_price_usd: "Stückpreis",
+            th_carton_no: "Karton Nr.",
+            th_nw: "N.G. (kg)",
+            th_gw: "B.G. (kg)",
+            th_meas: "Maß (cbm)",
+            th_action: "Aktion",
+            add_item: "Artikel Hinzufügen",
+            discount: "Rabatt",
+            discount_perc: "Rabatt (%)",
+            terms_conditions: "Allgemeine Geschäftsbedingungen",
+            select_preset: "Voreinstellung Auswählen",
+            print_save: "Drucken oder als PDF Speichern",
+        },
+        fr: { // --- NEW FRENCH TRANSLATION ---
+            master_form_title: "Formulaire de Saisie Principal",
+            language: "Langue",
+            save_load_data: "Enregistrer/Charger les Données",
+            saved_entries: "Entrées Enregistrées",
+            load: "Charger",
+            save: "Enregistrer",
+            delete: "Supprimer",
+            select_seller: "Sélectionner le Site Web du Vendeur",
+            order_info: "Informations sur la Commande",
+            quote_no: "N° de Devis",
+            invoice_no: "N° de Facture",
+            po_no: "N° de Bon de Commande",
+            date_of_issue: "Date d'Émission",
+            valid_until: "Valable Jusqu'au",
+            currency: "Devise",
+            buyer_info: "Informations sur l'Acheteur",
+            buyer_name_address: "Nom et Adresse de l'Acheteur",
+            buyer_email: "Email de l'Acheteur",
+            shipping_info: "Informations d'Expédition",
+            ship_to_name_address: "Nom et Adresse de Livraison",
+            shipping_tel: "Tél. de Livraison",
+            freight_cost: "Frais de Transport (en USD)",
+            seller_info_editable: "Informations sur le Vendeur (Modifiables)",
+            seller_name: "Nom du Vendeur",
+            seller_address: "Adresse du Vendeur",
+            seller_phone: "Téléphone du Vendeur",
+            seller_email: "Email du Vendeur",
+            seller_website: "Site Web du Vendeur",
+            product_items_packing: "Articles de Produit et Détails d'Emballage",
+            th_sku: "SKU",
+            th_description: "Description",
+            th_image: "Image",
+            th_qty: "Qté",
+            th_unit_price_usd: "Prix Unitaire",
+            th_carton_no: "N° de Carton",
+            th_nw: "P.N. (kgs)",
+            th_gw: "P.B. (kgs)",
+            th_meas: "Mes. (cbm)",
+            th_action: "Action",
+            add_item: "Ajouter un Article",
+            discount: "Remise",
+            discount_perc: "Remise (%)",
+            terms_conditions: "Termes et Conditions",
+            select_preset: "Sélectionner un Préréglage",
+            print_save: "Imprimer ou Enregistrer en PDF",
+        },
+        ar: { // --- NEW ARABIC TRANSLATION ---
+            master_form_title: "نموذج الإدخال الرئيسي",
+            language: "اللغة",
+            save_load_data: "حفظ/تحميل البيانات",
+            saved_entries: "الإدخالات المحفوظة",
+            load: "تحميل",
+            save: "حفظ",
+            delete: "حذف",
+            select_seller: "تحديد موقع البائع",
+            order_info: "معلومات الطلب",
+            quote_no: "رقم عرض السعر",
+            invoice_no: "رقم الفاتورة",
+            po_no: "رقم طلب الشراء",
+            date_of_issue: "تاريخ الإصدار",
+            valid_until: "صالح حتى",
+            currency: "العملة",
+            buyer_info: "معلومات المشتري",
+            buyer_name_address: "اسم وعنوان المشتري",
+            buyer_email: "البريد الإلكتروني للمشتري",
+            shipping_info: "معلومات الشحن",
+            ship_to_name_address: "اسم وعنوان المستلم",
+            shipping_tel: "هاتف المستلم",
+            freight_cost: "تكلفة الشحن (بالدولار الأمريكي)",
+            seller_info_editable: "معلومات البائع (قابلة للتعديل)",
+            seller_name: "اسم البائع",
+            seller_address: "عنوان البائع",
+            seller_phone: "هاتف البائع",
+            seller_email: "البريد الإلكتروني للبائع",
+            seller_website: "موقع البائع",
+            product_items_packing: "بنود المنتج وتفاصيل التغليف",
+            th_sku: "SKU",
+            th_description: "الوصف",
+            th_image: "الصورة",
+            th_qty: "الكمية",
+            th_unit_price_usd: "سعر الوحدة",
+            th_carton_no: "رقم الكرتون",
+            th_nw: "الوزن الصافي (كجم)",
+            th_gw: "الوزن الإجمالي (كجم)",
+            th_meas: "القياس (متر مكعب)",
+            th_action: "إجراء",
+            add_item: "إضافة بند",
+            discount: "خصم",
+            discount_perc: "الخصم (%)",
+            terms_conditions: "الشروط والأحكام",
+            select_preset: "تحديد إعداد مسبق",
+            print_save: "طباعة أو حفظ بصيغة PDF",
+        },
+        ru: { // --- NEW RUSSIAN TRANSLATION ---
+            master_form_title: "Основная Форма Ввода",
+            language: "Язык",
+            save_load_data: "Сохранить/Загрузить Данные",
+            saved_entries: "Сохраненные Записи",
+            load: "Загрузить",
+            save: "Сохранить",
+            delete: "Удалить",
+            select_seller: "Выберите Сайт Продавца",
+            order_info: "Информация о Заказе",
+            quote_no: "№ Предложения",
+            invoice_no: "№ Счета",
+            po_no: "№ Заказа на Покупку",
+            date_of_issue: "Дата Выдачи",
+            valid_until: "Действительно До",
+            currency: "Валюта",
+            buyer_info: "Информация о Покупателе",
+            buyer_name_address: "Имя и Адрес Покупателя",
+            buyer_email: "Email Покупателя",
+            shipping_info: "Информация о Доставке",
+            ship_to_name_address: "Имя и Адрес Получателя",
+            shipping_tel: "Телефон для Доставки",
+            freight_cost: "Стоимость Фрахта (в USD)",
+            seller_info_editable: "Информация о Продавце (Редактируемая)",
+            seller_name: "Имя Продавца",
+            seller_address: "Адрес Продавца",
+            seller_phone: "Телефон Продавца",
+            seller_email: "Email Продавца",
+            seller_website: "Веб-сайт Продавца",
+            product_items_packing: "Товары и Детали Упаковки",
+            th_sku: "SKU",
+            th_description: "Описание",
+            th_image: "Изображение",
+            th_qty: "Кол-во",
+            th_unit_price_usd: "Цена за Ед.",
+            th_carton_no: "№ Коробки",
+            th_nw: "Вес Нетто (кг)",
+            th_gw: "Вес Брутто (кг)",
+            th_meas: "Объем (куб. м)",
+            th_action: "Действие",
+            add_item: "Добавить Товар",
+            discount: "Скидка",
+            discount_perc: "Скидка (%)",
+            terms_conditions: "Условия и Положения",
+            select_preset: "Выберите Шаблон",
+            print_save: "Печать или Сохранить как PDF",
+        },
+        doc: {
+            en: {
+                quotation_title: "QUOTATION", po_title: "PURCHASE ORDER", pi_title: "PROFORMA INVOICE", pl_title: "PACKING LIST",
+                from: "From:", to: "To:", seller: "Seller:", buyer: "Buyer:", ship_to: "Ship To:", shipper: "Shipper:", consignee: "Consignee:",
+                quotation_info: "Quotation Info:", order_info: "Order Info:", invoice_info: "Invoice Info:", shipping_details: "Shipping Details:",
+                quote_no: "Quote No.:", po_no: "PO Number:", invoice_no: "Invoice No.:", date: "Date:", valid_until: "Valid Until:", date_of_issue: "Date of Issue:",
+                ref_pi_no: "Ref PI No.:", ref_po_no: "Ref PO No.:", tel: "Tel:",
+                th_image: "Image", th_sku: "SKU", th_description: "Description", th_qty: "Qty",
+                subtotal: "SUBTOTAL", discount: "Discount", freight: "Freight", total: "TOTAL", total_due: "TOTAL AMOUNT DUE",
+                terms_conditions: "Terms & Conditions:", auth_sig: "Authorized Signature",
+                bank_info: "BENEFICIARY BANK INFORMATION:", bank_name: "Bank Name:", bank_address: "Bank Address:", account_name: "Account Name:", account_number: "Account Number:", swift_code: "Swift Code or ABA :",
+                notes: "Notes:", notes_text: "Please include Invoice No.", notes_text_2: "in payment reference.",
+                th_carton_no: "Carton No.", th_item_desc_sku: "Item Description / SKU", th_qty_pcs: "Quantity (PCS)", th_nw_kgs: "Net Weight (KGS)", th_gw_kgs: "Gross Weight (KGS)", th_meas_cbm: "Measurement (CBM)",
+                total_pl: "TOTAL", remarks: "Remarks:"
+            },
+            bilingual: {
+                quotation_title: "QUOTATION / 报价单", po_title: "PURCHASE ORDER / 采购订单", pi_title: "PROFORMA INVOICE / 形式发票", pl_title: "PACKING LIST / 装箱单",
+                from: "From / 发件人:", to: "To / 收件人:", seller: "Seller / 卖家:", buyer: "Buyer / 买家:", ship_to: "Ship To / 收货地址:", shipper: "Shipper / 发货人:", consignee: "Consignee / 收货人:",
+                quotation_info: "Quotation Info / 报价信息:", order_info: "Order Info / 订单信息:", invoice_info: "Invoice Info / 发票信息:", shipping_details: "Shipping Details / 运输详情:",
+                quote_no: "Quote No. / 报价单号:", po_no: "PO Number / 采购订单号:", invoice_no: "Invoice No. / 发票号:", date: "Date / 日期:", valid_until: "Valid Until / 有效期至:", date_of_issue: "Date of Issue / 签发日期:",
+                ref_pi_no: "Ref PI No. / 参考发票号:", ref_po_no: "Ref PO No. / 参考订单号:", tel: "Tel / 电话:",
+                th_image: "Image / 图片", th_sku: "SKU / 产品编号", th_description: "Description / 描述", th_qty: "Qty / 数量",
+                subtotal: "SUBTOTAL / 小计", discount: "Discount / 折扣", freight: "Freight / 运费", total: "TOTAL / 总计", total_due: "TOTAL AMOUNT DUE / 应付总额",
+                terms_conditions: "Terms & Conditions / 条款和条件:", auth_sig: "Authorized Signature / 授权签名",
+                bank_info: "BENEFICIARY BANK INFORMATION / 收款银行信息:", bank_name: "Bank Name / 银行名称:", bank_address: "Bank Address / 银行地址:", account_name: "Account Name / 账户名称:", account_number: "Account Number / 账号:", swift_code: "Swift Code or ABA / 国际代码:",
+                notes: "Notes / 备注:", notes_text: "Please include Invoice No.", notes_text_2: "in payment reference. / 请在付款备注中注明发票号。",
+                th_carton_no: "Carton No. / 箱号", th_item_desc_sku: "Item Description / SKU / 描述/产品编号", th_qty_pcs: "Quantity (PCS) / 数量 (件)", th_nw_kgs: "Net Weight (KGS) / 净重 (公斤)", th_gw_kgs: "Gross Weight (KGS) / 毛重 (公斤)", th_meas_cbm: "Measurement (CBM) / 体积 (立方米)",
+                total_pl: "TOTAL / 总计", remarks: "Remarks / 备注:"
+            },
+            es: { // --- NEW SPANISH DOC TRANSLATION ---
+                quotation_title: "COTIZACIÓN", po_title: "ORDEN DE COMPRA", pi_title: "FACTURA PROFORMA", pl_title: "LISTA DE EMPAQUE",
+                from: "De:", to: "Para:", seller: "Vendedor:", buyer: "Comprador:", ship_to: "Enviar A:", shipper: "Remitente:", consignee: "Destinatario:",
+                quotation_info: "Información de Cotización:", order_info: "Información del Pedido:", invoice_info: "Información de Factura:", shipping_details: "Detalles de Envío:",
+                quote_no: "Nº de Cotización:", po_no: "Nº de Pedido (PO):", invoice_no: "Nº de Factura:", date: "Fecha:", valid_until: "Válido Hasta:", date_of_issue: "Fecha de Emisión:",
+                ref_pi_no: "Ref. Factura Proforma:", ref_po_no: "Ref. Orden de Compra:", tel: "Tel:",
+                th_image: "Imagen", th_sku: "SKU", th_description: "Descripción", th_qty: "Cant.",
+                subtotal: "SUBTOTAL", discount: "Descuento", freight: "Flete", total: "TOTAL", total_due: "IMPORTE TOTAL A PAGAR",
+                terms_conditions: "Términos y Condiciones:", auth_sig: "Firma Autorizada",
+                bank_info: "INFORMACIÓN BANCARIA DEL BENEFICIARIO:", bank_name: "Nombre del Banco:", bank_address: "Dirección del Banco:", account_name: "Nombre de la Cuenta:", account_number: "Número de Cuenta:", swift_code: "Código Swift o ABA:",
+                notes: "Notas:", notes_text: "Por favor incluya el Nº de Factura", notes_text_2: "en la referencia de pago.",
+                th_carton_no: "Nº de Caja", th_item_desc_sku: "Descripción del Artículo / SKU", th_qty_pcs: "Cantidad (PCS)", th_nw_kgs: "Peso Neto (KGS)", th_gw_kgs: "Peso Bruto (KGS)", th_meas_cbm: "Medida (CBM)",
+                total_pl: "TOTAL", remarks: "Observaciones:"
+            },
+            de: { // --- NEW GERMAN DOC TRANSLATION ---
+                quotation_title: "ANGEBOT", po_title: "BESTELLUNG", pi_title: "PROFORMA-RECHNUNG", pl_title: "PACKLISTE",
+                from: "Von:", to: "An:", seller: "Verkäufer:", buyer: "Käufer:", ship_to: "Lieferadresse:", shipper: "Absender:", consignee: "Empfänger:",
+                quotation_info: "Angebotsinfo:", order_info: "Bestellinfo:", invoice_info: "Rechnungsinfo:", shipping_details: "Versanddetails:",
+                quote_no: "Angebot Nr.:", po_no: "Bestell-Nr.:", invoice_no: "Rechnung Nr.:", date: "Datum:", valid_until: "Gültig Bis:", date_of_issue: "Ausstellungsdatum:",
+                ref_pi_no: "Ref. Proforma-Nr.:", ref_po_no: "Ref. Bestell-Nr.:", tel: "Tel:",
+                th_image: "Bild", th_sku: "SKU", th_description: "Beschreibung", th_qty: "Menge",
+                subtotal: "ZWISCHENSUMME", discount: "Rabatt", freight: "Fracht", total: "GESAMT", total_due: "FÄLLIGER GESAMTBETRAG",
+                terms_conditions: "Allgemeine Geschäftsbedingungen:", auth_sig: "Autorisierte Unterschrift",
+                bank_info: "BANKVERBINDUNG DES BEGÜNSTIGTEN:", bank_name: "Name der Bank:", bank_address: "Adresse der Bank:", account_name: "Kontoinhaber:", account_number: "Kontonummer:", swift_code: "Swift-Code oder ABA:",
+                notes: "Hinweise:", notes_text: "Bitte Rechnungs-Nr.", notes_text_2: "als Verwendungszweck angeben.",
+                th_carton_no: "Karton Nr.", th_item_desc_sku: "Artikelbeschreibung / SKU", th_qty_pcs: "Menge (Stk.)", th_nw_kgs: "Nettogewicht (KG)", th_gw_kgs: "Bruttogewicht (KG)", th_meas_cbm: "Maß (CBM)",
+                total_pl: "GESAMT", remarks: "Anmerkungen:"
+            },
+            fr: { // --- NEW FRENCH DOC TRANSLATION ---
+                quotation_title: "DEVIS", po_title: "BON DE COMMANDE", pi_title: "FACTURE PROFORMA", pl_title: "LISTE DE COLISAGE",
+                from: "De:", to: "À:", seller: "Vendeur:", buyer: "Acheteur:", ship_to: "Livrer À:", shipper: "Expéditeur:", consignee: "Destinataire:",
+                quotation_info: "Infos Devis:", order_info: "Infos Commande:", invoice_info: "Infos Facture:", shipping_details: "Détails d'Expédition:",
+                quote_no: "N° de Devis:", po_no: "N° de Commande:", invoice_no: "N° de Facture:", date: "Date:", valid_until: "Valable Jusqu'au:", date_of_issue: "Date d'Émission:",
+                ref_pi_no: "Réf. Facture Proforma:", ref_po_no: "Réf. Bon de Commande:", tel: "Tél:",
+                th_image: "Image", th_sku: "SKU", th_description: "Description", th_qty: "Qté",
+                subtotal: "SOUS-TOTAL", discount: "Remise", freight: "Transport", total: "TOTAL", total_due: "MONTANT TOTAL DÛ",
+                terms_conditions: "Termes et Conditions:", auth_sig: "Signature Autorisée",
+                bank_info: "INFORMATIONS BANCAIRES DU BÉNÉFICIAIRE:", bank_name: "Nom de la Banque:", bank_address: "Adresse de la Banque:", account_name: "Nom du Compte:", account_number: "Numéro de Compte:", swift_code: "Code Swift ou ABA:",
+                notes: "Notes:", notes_text: "Veuillez inclure le N° de Facture", notes_text_2: "dans la référence de paiement.",
+                th_carton_no: "N° de Carton", th_item_desc_sku: "Description de l'Article / SKU", th_qty_pcs: "Quantité (PCS)", th_nw_kgs: "Poids Net (KGS)", th_gw_kgs: "Poids Brut (KGS)", th_meas_cbm: "Mesure (CBM)",
+                total_pl: "TOTAL", remarks: "Remarques:"
+            },
+            ar: { // --- NEW ARABIC DOC TRANSLATION ---
+                quotation_title: "عرض سعر", po_title: "طلب شراء", pi_title: "فاتورة أولية", pl_title: "قائمة التعبئة",
+                from: "من:", to: "إلى:", seller: "البائع:", buyer: "المشتري:", ship_to: "الشحن إلى:", shipper: "الشاحن:", consignee: "المرسل إليه:",
+                quotation_info: "معلومات عرض السعر:", order_info: "معلومات الطلب:", invoice_info: "معلومات الفاتورة:", shipping_details: "تفاصيل الشحن:",
+                quote_no: "رقم عرض السعر:", po_no: "رقم طلب الشراء:", invoice_no: "رقم الفاتورة:", date: "التاريخ:", valid_until: "صالح حتى:", date_of_issue: "تاريخ الإصدار:",
+                ref_pi_no: "مرجع الفاتورة الأولية:", ref_po_no: "مرجع طلب الشراء:", tel: "الهاتف:",
+                th_image: "الصورة", th_sku: "SKU", th_description: "الوصف", th_qty: "الكمية",
+                subtotal: "المجموع الفرعي", discount: "خصم", freight: "الشحن", total: "المجموع", total_due: "المبلغ الإجمالي المستحق",
+                terms_conditions: "الشروط والأحكام:", auth_sig: "التوقيع المعتمد",
+                bank_info: "معلومات البنك المستفيد:", bank_name: "اسم البنك:", bank_address: "عنوان البنك:", account_name: "اسم الحساب:", account_number: "رقم الحساب:", swift_code: "رمز سويفت أو ABA:",
+                notes: "ملاحظات:", notes_text: "يرجى تضمين رقم الفاتورة", notes_text_2: "في مرجع الدفع.",
+                th_carton_no: "رقم الكرتون", th_item_desc_sku: "وصف الصنف / SKU", th_qty_pcs: "الكمية (قطعة)", th_nw_kgs: "الوزن الصافي (كجم)", th_gw_kgs: "الوزN الإجمالي (كجم)", th_meas_cbm: "القياس (متر مكعب)",
+                total_pl: "المجموع", remarks: "ملاحظات:"
+            },
+            ru: { // --- NEW RUSSIAN DOC TRANSLATION ---
+                quotation_title: "КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ", po_title: "ЗАКАЗ НА ПОКУПКУ", pi_title: "СЧЕТ-ПРОФОРМА", pl_title: "УПАКОВОЧНЫЙ ЛИСТ",
+                from: "От:", to: "Кому:", seller: "Продавец:", buyer: "Покупатель:", ship_to: "Грузополучатель:", shipper: "Отправитель:", consignee: "Получатель:",
+                quotation_info: "Информация о Предложении:", order_info: "Информация о Заказе:", invoice_info: "Информация о Счете:", shipping_details: "Детали Доставки:",
+                quote_no: "№ Предложения:", po_no: "№ Заказа:", invoice_no: "№ Счета:", date: "Дата:", valid_until: "Действительно До:", date_of_issue: "Дата Выдачи:",
+                ref_pi_no: "№ Счета-Проформы:", ref_po_no: "№ Заказа:", tel: "Тел:",
+                th_image: "Изображение", th_sku: "SKU", th_description: "Описание", th_qty: "Кол-во",
+                subtotal: "ПОДЫТОГ", discount: "Скидка", freight: "Фрахт", total: "ИТОГО", total_due: "ИТОГОВАЯ СУММА К ОПЛАТЕ",
+                terms_conditions: "Условия и Положения:", auth_sig: "Авторизованная Подпись",
+                bank_info: "БАНКОВСКАЯ ИНФОРМАЦИЯ БЕНЕФИЦИАРА:", bank_name: "Название Банка:", bank_address: "Адрес Банка:", account_name: "Имя Счета:", account_number: "Номер Счета:", swift_code: "Swift-Код или ABA:",
+                notes: "Примечания:", notes_text: "Пожалуйста, укажите № Счета", notes_text_2: "в назначении платежа.",
+                th_carton_no: "№ Коробки", th_item_desc_sku: "Описание Товара / SKU", th_qty_pcs: "Количество (ШТ)", th_nw_kgs: "Вес Нетто (КГ)", th_gw_kgs: "Вес Брутто (КГ)", th_meas_cbm: "Объем (КУБ. М)",
+                total_pl: "ИТОГО", remarks: "Примечания:"
+            }
+        }
+    };
 
-  var roleSelector  = document.getElementById('mg-role-selector');
-  var kpiTbody      = document.getElementById('mg-kpi-tbody');
-  var totalPointsEl = document.getElementById('mg-total-points');
-  var totalBox      = document.getElementById('mg-total-box');
-  var notesArea     = document.getElementById('mg-notes-area');
+    const sellerData = {
+        vakkerlight: { name: "Vakkerlight", prefix: "VK", address: "1520 Caton Center Dr. Suite L-M, Baltimore, MD 21227", phone: "+1 800-715-2593", website: "vakkerlight.com", email: "info@vakkerlight.com", theme: "theme-blue" },
+        dekorfine: { name: "Dekorfine", prefix: "DF", address: "1710 KELLER PKWY STE 5511 KELLER, TX 76248", phone: "+1 800-715-9483", website: "dekorfine.com", email: "support@dekorfine.com", theme: "theme-green" },
+        docos: { name: "Docos", prefix: "DC", address: "1111 Sulphur Spring Rd. #113 Halethorpe, MD 21227", phone: "+1 800-716-3167", website: "docos.us", email: "info@docos.us", theme: "theme-gray" },
+        radilum: { name: "Radilum INC", prefix: "RD", address: "177 Joe Routt Blvd, College Station, TX 77840", phone: "+1 800-761-1037", website: "radilum.com", email: "support@radilum.com", theme: "theme-purple" },
+        mooijane: { name: "Mooijane", prefix: "MJ", address: "1586 Sulphur Spring Rd. #113 Halethorpe, MD 21227", phone: "+1 800-770-1693", website: "mooijane.com", email: "support@mooijane.com", theme: "theme-blue" },
+        mooiehome: { name: "Mooiehome", prefix: "MH", address: "1520 Caton Center Dr. Suite L-M, Baltimore, MD 21227 USA", phone: "+1 800-867-5009", website: "mooiehome.com", email: "support@mooiehome.com", theme: "theme-green" },
+        brillilume: { name: "Brillilume", prefix: "BL", address: "1520 Caton Center Dr. Suite L-M, Baltimore MD 21227 USA", phone: "+1 800-867-5009", website: "brillilume.com", email: "support@brillilume.com", theme: "theme-gray" },
+        mooielight: { name: "Mooielight", prefix: "ML", address: "1500 Caton Center Dr, Arbutus, MD 21227", phone: "+1 800-953-1356", website: "mooielight.com", email: "admin@mooielight.com", theme: "theme-purple" },
+        pinlighting: { name: "Pinlighting", prefix: "PL", address: "1833 Wind Gate Rd, Baltimore, MD 21227", phone: "+1 800-953-1356", website: "pinlighting.com", email: "info@pinlighting.com", theme: "theme-blue" },
+        rayonshine: { name: "Rayonshine", prefix: "RS", address: "2435 Sulphur Spring Rd, Baltimore, MD 21227", phone: "+1 800-978-5754", website: "rayonshine.com", email: "support@rayonshine.com", theme: "theme-green" },
+        lumioshine: { name: "Lumioshine", prefix: "LS", address: "1520 Caton Center Dr. Suite L-M, Baltimore MD 21227 USA", phone: "+1 800-978-5754", website: "lumioshine.com", email: "service@lumioshine.com", theme: "theme-gray" },
+        jiangmen_radilum: { name: "Radilum Inc.", prefix: "JRI", address: "Room 301, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone: "+8615876099121", website: "n/a", email: "info@mooielight.com", theme: "theme-red" },
+        jiangmen_vakker: { name: "Vakker Limited", prefix: "JVL", address: "Room 401, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone: "+8615876099121", website: "n/a", email: "info@vakkerlimited.com", theme: "theme-blue" }
+    };
 
-  function renderTable(role) {
-    kpiTbody.innerHTML = '';
-    taskData[role].forEach(function (item) {
-      var row = document.createElement('tr');
-      var stepAttr = item.step ? 'step="' + item.step + '"' : 'step="1"';
-      row.innerHTML =
-        '<td>' + item.name + '</td>' +
-        '<td>' + item.points + '</td>' +
-        '<td>' + item.target + '</td>' +
-        '<td><input type="number" class="mg-qty-input" value="0" min="0" ' + stepAttr +
-          ' data-points="' + item.points + '"></td>' +
-        '<td class="mg-subtotal">0.0</td>';
-      kpiTbody.appendChild(row);
+    const exchangeRates = {
+        USD: { rate: 1, symbol: '$' },
+        CNY: { rate: 7.25, symbol: '¥' },
+        EUR: { rate: 0.92, symbol: '€' },
+        GBP: { rate: 0.79, symbol: '£' },
+        AUD: { rate: 1.51, symbol: 'A$' },
+        CAD: { rate: 1.37, symbol: 'C$' },
+    };
+
+    const allTermsPresets = {
+        en: {
+            standard: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: For orders over $1000, a 30% deposit is required upon order confirmation, with the 70% balance due before shipment.\n4. Lead Time: 4-6 weeks upon receipt of deposit.`,
+            full_payment: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: 100% full payment is required upon order confirmation.\n4. Lead Time: 4-6 weeks upon receipt of full payment.`,
+            custom_product: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: 50% non-refundable deposit is required upon order confirmation, with the 50% balance due before shipment.\n4. All custom products are non-returnable and non-exchangeable once production has begun.\n5. Lead Time: 6-8 weeks upon receipt of deposit.`,
+            exw: `1. Prices are quoted on an Ex-Works (EXW) basis in USD.\n2. All costs related to shipping, insurance, customs duties, and taxes are the sole responsibility of the buyer.\n3. This quotation is valid for 30 days.\n4. Payment Terms: 100% full payment is required before the goods are released for collection.\n5. Goods will be ready for collection within 4-6 weeks upon receipt of full payment.`
+        },
+        bilingual: { // Bilingual uses English as base, user can add Chinese manually
+            standard: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: For orders over $1000, a 30% deposit is required upon order confirmation, with the 70% balance due before shipment.\n4. Lead Time: 4-6 weeks upon receipt of deposit.`,
+            full_payment: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: 100% full payment is required upon order confirmation.\n4. Lead Time: 4-6 weeks upon receipt of full payment.`,
+            custom_product: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: 50% non-refundable deposit is required upon order confirmation, with the 50% balance due before shipment.\n4. All custom products are non-returnable and non-exchangeable once production has begun.\n5. Lead Time: 6-8 weeks upon receipt of deposit.`,
+            exw: `1. Prices are quoted on an Ex-Works (EXW) basis in USD.\n2. All costs related to shipping, insurance, customs duties, and taxes are the sole responsibility of the buyer.\n3. This quotation is valid for 30 days.\n4. Payment Terms: 100% full payment is required before the goods are released for collection.\n5. Goods will be ready for collection within 4-6 weeks upon receipt of full payment.`
+        },
+        es: {
+            standard: `1. Los precios se cotizan en USD y no incluyen derechos de aduana ni impuestos.\n2. Esta cotización es válida por 30 días.\n3. Condiciones de Pago: Para pedidos superiores a $1000, se requiere un depósito del 30% al confirmar el pedido, y el saldo del 70% debe pagarse antes del envío.\n4. Plazo de Entrega: 4-6 semanas tras la recepción del depósito.`,
+            full_payment: `1. Los precios se cotizan en USD y no incluyen derechos de aduana ni impuestos.\n2. Esta cotización es válida por 30 días.\n3. Condiciones de Pago: Se requiere el pago completo del 100% al confirmar el pedido.\n4. Plazo de Entrega: 4-6 semanas tras la recepción del pago completo.`,
+            custom_product: `1. Los precios se cotizan en USD y no incluyen derechos de aduana ni impuestos.\n2. Esta cotización es válida por 30 días.\n3. Condiciones de Pago: Se requiere un depósito no reembolsable del 50% al confirmar el pedido, y el saldo del 50% debe pagarse antes del envío.\n4. Todos los productos personalizados no admiten devoluciones ni cambios una vez iniciada la producción.\n5. Plazo de Entrega: 6-8 semanas tras la recepción del depósito.`,
+            exw: `1. Los precios se cotizan en base Ex-Works (EXW) en USD.\n2. Todos los costos relacionados con el envío, seguro, derechos de aduana e impuestos son responsabilidad exclusiva del comprador.\n3. Esta cotización es válida por 30 días.\n4. Condiciones de Pago: Se requiere el pago completo del 100% antes de que la mercancía sea liberada para su recolección.\n5. La mercancía estará lista para su recolección dentro de 4-6 semanas tras la recepción del pago completo.`
+        },
+        de: {
+            standard: `1. Die Preise sind in USD angegeben und enthalten keine Zollgebühren oder Steuern.\n2. Dieses Angebot ist 30 Tage gültig.\n3. Zahlungsbedingungen: Bei Bestellungen über 1000 $ ist eine Anzahlung von 30% bei Auftragsbestätigung erforderlich, der Restbetrag von 70% ist vor dem Versand fällig.\n4. Lieferzeit: 4-6 Wochen nach Eingang der Anzahlung.`,
+            full_payment: `1. Die Preise sind in USD angegeben und enthalten keine Zollgebühren oder Steuern.\n2. Dieses Angebot ist 30 Tage gültig.\n3. Zahlungsbedingungen: 100% Vorauszahlung ist bei Auftragsbestätigung erforderlich.\n4. Lieferzeit: 4-6 Wochen nach Eingang der vollständigen Zahlung.`,
+            custom_product: `1. Die Preise sind in USD angegeben und enthalten keine Zollgebühren oder Steuern.\n2. Dieses Angebot ist 30 Tage gültig.\n3. Zahlungsbedingungen: Eine nicht erstattungsfähige Anzahlung von 50% ist bei Auftragsbestätigung erforderlich, der Restbetrag von 50% ist vor dem Versand fällig.\n4. Alle kundenspezifischen Produkte sind vom Umtausch ausgeschlossen, sobald die Produktion begonnen hat.\n5. Lieferzeit: 6-8 Wochen nach Eingang der Anzahlung.`,
+            exw: `1. Die Preise verstehen sich ab Werk (EXW) in USD.\n2. Alle Kosten im Zusammenhang mit Versand, Versicherung, Zollgebühren und Steuern liegen in der alleinigen Verantwortung des Käufers.\n3. Dieses Angebot ist 30 Tage gültig.\n4. Zahlungsbedingungen: 100% Vorauszahlung ist erforderlich, bevor die Ware zur Abholung freigegeben wird.\n5. Die Ware ist innerhalb von 4-6 Wochen nach Eingang der vollständigen Zahlung abholbereit.`
+        },
+        fr: {
+            standard: `1. Les prix sont indiqués en USD et n'incluent pas les droits de douane ni les taxes.\n2. Ce devis est valable 30 jours.\n3. Conditions de Paiement : Pour les commandes supérieures à 1000 $, un acompte de 30% est requis à la confirmation de la commande, le solde de 70% étant dû avant l'expédition.\n4. Délai de Livraison : 4-6 semaines après réception de l'acompte.`,
+            full_payment: `1. Les prix sont indiqués en USD et n'incluent pas les droits de douane ni les taxes.\n2. Ce devis est valable 30 jours.\n3. Conditions de Paiement : Un paiement complet de 100% est requis à la confirmation de la commande.\n4. Délai de Livraison : 4-6 semaines après réception du paiement complet.`,
+            custom_product: `1. Les prix sont indiqués en USD et n'incluent pas les droits de douane ni les taxes.\n2. Ce devis est valable 30 jours.\n3. Conditions de Paiement : Un acompte non remboursable de 50% est requis à la confirmation de la commande, le solde de 50% étant dû avant l'expédition.\n4. Tous les produits personnalisés ne sont ni repris ni échangés une fois la production commencée.\n5. Délai de Livraison : 6-8 semaines après réception de l'acompte.`,
+            exw: `1. Les prix sont indiqués Ex-Works (EXW) en USD.\n2. Tous les coûts liés à l'expédition, l'assurance, aux droits de douane et aux taxes sont à la charge exclusive de l'acheteur.\n3. Ce devis est valable 30 jours.\n4. Conditions de Paiement : Un paiement complet de 100% est requis avant que les marchandises ne soient mises à disposition pour enlèvement.\n5. Les marchandises seront prêtes à être enlevées dans un délai de 4-6 semaines après réception du paiement complet.`
+        },
+        ar: {
+            standard: `1. الأسعار مقومة بالدولار الأمريكي ولا تشمل الرسوم الجمركية أو الضرائب.\n2. عرض السعر هذا صالح لمدة 30 يومًا.\n3. شروط الدفع: للطلبات التي تزيد عن 1000 دولار، يلزم دفع عربون 30% عند تأكيد الطلب، مع دفع الرصيد 70% قبل الشحن.\n4. مهلة التسليم: 4-6 أسابيع من تاريخ استلام العربون.`,
+            full_payment: `1. الأسعار مقومة بالدولار الأمريكي ولا تشمل الرسوم الجمركية أو الضرائب.\n2. عرض السعر هذا صالح لمدة 30 يومًا.\n3. شروط الدفع: يلزم دفع 100% من المبلغ كاملاً عند تأكيد الطلب.\n4. مهلة التسليم: 4-6 أسابيع من تاريخ استلام المبلغ كاملاً.`,
+            custom_product: `1. الأسعار مقومة بالدولار الأمريكي ولا تشمل الرسوم الجمركية أو الضرائب.\n2. عرض السعر هذا صالح لمدة 30 يومًا.\n3. شروط الدفع: يلزم دفع عربون 50% غير قابل للاسترداد عند تأكيد الطلب، مع دفع الرصيد 50% قبل الشحن.\n4. جميع المنتجات المخصصة غير قابلة للإرجاع أو الاستبدال بمجرد بدء الإنتاج.\n5. مهلة التسليم: 6-8 أسابيع من تاريخ استلام العربون.`,
+            exw: `1. الأسعار مقومة على أساس تسليم المصنع (EXW) بالدولار الأمريكي.\n2. جميع التكاليف المتعلقة بالشحن والتأمين والرسوم الجمركية والضرائب هي مسؤولية المشتري وحده.\n3. عرض السعر هذا صالح لمدة 30 يومًا.\n4. شروط الدفع: يلزم دفع 100% من المبلغ كاملاً قبل إتاحة البضائع للاستلام.\n5. ستكون البضائع جاهزة للاستلام في غضون 4-6 أسابيع من تاريخ استلام المبلغ كاملاً.`
+        },
+        ru: {
+            standard: `1. Цены указаны в долларах США и не включают таможенные пошлины или налоги.\n2. Данное предложение действительно в течение 30 дней.\n3. Условия Оплаты: Для заказов на сумму свыше 1000 долларов США требуется 30% предоплата при подтверждении заказа, оставшиеся 70% оплачиваются перед отгрузкой.\n4. Срок Выполнения: 4-6 недель с момента получения предоплаты.`,
+            full_payment: `1. Цены указаны в долларах США и не включают таможенные пошлины или налоги.\n2. Данное предложение действительно в течение 30 дней.\n3. Условия Оплаты: Требуется 100% полная оплата при подтверждении заказа.\n4. Срок Выполнения: 4-6 недель с момента получения полной оплаты.`,
+            custom_product: `1. Цены указаны в долларах США и не включают таможенные пошлины или налоги.\n2. Данное предложение действительно в течение 30 дней.\n3. Условия Оплаты: Требуется 50% невозвратный депозит при подтверждении заказа, оставшиеся 50% оплачиваются перед отгрузкой.\n4. Все индивидуальные заказы не подлежат возврату или обмену после начала производства.\n5. Срок Выполнения: 6-8 недель с момента получения депозита.`,
+            exw: `1. Цены указаны на условиях Ex-Works (EXW) в долларах США.\n2. Все расходы, связанные с доставкой, страхованием, таможенными пошлинами и налогами, несет покупатель.\n3. Данное предложение действительно в течение 30 дней.\n4. Условия Оплаты: Требуется 100% полная оплата до момента отгрузки товара для самовывоза.\n5. Товар будет готов к самовывозу в течение 4-6 недель с момента получения полной оплаты.`
+        }
+    };
+    
+    let orderNumberPart = '1001';
+    let termsManuallyEdited = false; // Flag to track manual edits to terms
+
+    function setLanguage(lang) {
+        document.querySelectorAll('[data-lang-key]').forEach(el => {
+            const key = el.getAttribute('data-lang-key');
+            if (translations[lang] && translations[lang][key]) {
+                el.innerText = translations[lang][key];
+            } else if (translations['en'] && translations['en'][key]) { // Fallback to English
+                el.innerText = translations['en'][key];
+            }
+        });
+        syncAndCalculate(); // Recalculate to update document language
+    }
+
+    function populateSellerDropdown() {
+        const selectElement = document.getElementById('seller_website');
+        for (const key in sellerData) {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = sellerData[key].name;
+            selectElement.appendChild(option);
+        }
+    }
+
+    function updateOrderNumbers() {
+        const selectedSellerKey = document.getElementById('seller_website').value;
+        const prefix = sellerData[selectedSellerKey].prefix;
+        const quoteInput = document.getElementById('quote_number');
+        const piInput = document.getElementById('pi_number');
+        const poInput = document.getElementById('po_number');
+        quoteInput.value = `Q-${prefix}-${orderNumberPart}`;
+        piInput.value = `${prefix}-${orderNumberPart}`;
+        poInput.value = `JDI-${prefix}-${orderNumberPart}`;
+    }
+    
+    function autoFillSellerInfo() {
+        const selectedSellerKey = document.getElementById('seller_website').value;
+        const currentSeller = sellerData[selectedSellerKey];
+        document.getElementById('seller_name').value = currentSeller.name;
+        document.getElementById('seller_address').value = currentSeller.address;
+        document.getElementById('seller_phone').value = currentSeller.phone;
+        document.getElementById('seller_email').value = currentSeller.email;
+        document.getElementById('seller_website_url').value = currentSeller.website;
+    }
+
+    function syncAndCalculate() {
+        const lang = document.getElementById('language_select').value;
+        const dict = translations[lang] || translations['en'];
+        const docLang = translations.doc[lang] || translations.doc['en'];
+
+        // --- Update Document Static Text ---
+        document.querySelectorAll('[data-doc-key]').forEach(el => {
+            const key = el.getAttribute('data-doc-key');
+            if (docLang[key]) {
+                el.innerText = docLang[key];
+            }
+        });
+
+        // --- Update Master Form Header based on currency ---
+        const currencyForHeader = document.getElementById('currency').value;
+        document.getElementById('master-unit-price-header').innerText = `${dict.th_unit_price_usd} (${currencyForHeader})`;
+
+        const sellerName = document.getElementById('seller_name').value;
+        const sellerAddress = document.getElementById('seller_address').value;
+        const sellerPhone = document.getElementById('seller_phone').value;
+        const sellerEmail = document.getElementById('seller_email').value;
+        const sellerWebsite = document.getElementById('seller_website_url').value;
+        const theme = sellerData[document.getElementById('seller_website').value].theme;
+        const quoteNumber = document.getElementById('quote_number').value;
+        const piNumber = document.getElementById('pi_number').value;
+        const poNumber = document.getElementById('po_number').value;
+        const date = document.getElementById('date_of_issue').value;
+        const validUntil = document.getElementById('valid_until').value;
+        const buyerInfo = document.getElementById('buyer_info').value;
+        const buyerEmail = document.getElementById('buyer_email').value;
+        const shippingInfo = document.getElementById('shipping_info').value;
+        const shippingTel = document.getElementById('shipping_tel').value;
+        
+        // --- MODIFIED TERMS LOGIC ---
+        const freightCostUSD = parseFloat(document.getElementById('freight_cost').value) || 0;
+        
+        let baseTerms;
+        if (termsManuallyEdited) {
+            // If manually edited, use textarea value as base.
+            // We must "revert" logic if freight cost is 0 to get the real base.
+            baseTerms = document.getElementById('terms_conditions').value;
+            if (freightCostUSD === 0) {
+                 // This reverts "1-3 weeks" back to "4-6 weeks" as a default.
+                 // This is the best guess we can make for a revert.
+                 baseTerms = baseTerms.replace(/Lead Time: 1-3 weeks/g, "Lead Time: 4-6 weeks");
+                 baseTerms = baseTerms.replace(/collection within 1-3 weeks/g, "collection within 4-6 weeks");
+            }
+        } else {
+            // If not manually edited, always use the preset as the source of truth.
+            const preset = document.getElementById('terms_preset').value;
+            const currentTermsLang = allTermsPresets[lang] || allTermsPresets['en'];
+            baseTerms = currentTermsLang[preset];
+        }
+
+        let processedTerms = baseTerms;
+        if (freightCostUSD > 0) {
+            processedTerms = processedTerms.replace(/Lead Time: 4-6 weeks/g, "Lead Time: 1-3 weeks");
+            processedTerms = processedTerms.replace(/Lead Time: 6-8 weeks/g, "Lead Time: 1-3 weeks");
+            processedTerms = processedTerms.replace(/collection within 4-6 weeks/g, "collection within 1-3 weeks");
+        }
+        
+        // Update textarea ONLY if not manually edited by user
+        if (!termsManuallyEdited) {
+            document.getElementById('terms_conditions').value = processedTerms;
+        }
+        // --- END MODIFIED TERMS LOGIC ---
+
+
+        const discountPercentage = parseFloat(document.getElementById('discount_percentage').value) || 0;
+        
+        const currency = document.getElementById('currency').value;
+        const { rate: conversionRate, symbol: currencySymbol } = exchangeRates[currency];
+
+        let fullBuyerInfo = buyerInfo;
+        if (buyerEmail) {
+            fullBuyerInfo += `\nEmail: ${buyerEmail}`;
+        }
+        const buyerNameOnly = buyerInfo.split('\n')[0];
+        
+        document.querySelectorAll('.document-container').forEach(container => {
+            container.className = 'document-container';
+            container.classList.add(theme);
+        });
+        
+        const sellerInfoHTML = `<strong>${sellerName}</strong><p>${sellerAddress}</p><p>Phone: ${sellerPhone}</p>${sellerEmail ? `<p>Email: ${sellerEmail}</p>` : ''}`;
+        const sellerInfoWithWebsiteHTML = `<strong>${sellerName}</strong><p>${sellerAddress}</p><p>Phone: ${sellerPhone}</p>${sellerWebsite && sellerWebsite !== 'n/a' ? `<p>Website: ${sellerWebsite}</p>` : ''}${sellerEmail ? `<p>Email: ${sellerEmail}</p>` : ''}`;
+        
+        document.getElementById('po_seller_info').innerHTML = sellerInfoHTML;
+        document.getElementById('po_buyer_info').innerText = fullBuyerInfo;
+        document.getElementById('po_shipping_info').innerText = shippingInfo;
+        document.getElementById('po_shipping_tel').innerText = shippingTel;
+        document.getElementById('po_po_number').innerText = poNumber;
+        document.getElementById('po_date').innerText = date;
+        document.getElementById('po_pi_ref').innerText = piNumber;
+        document.getElementById('po_terms_conditions').innerText = processedTerms;
+        document.getElementById('po_auth_signature').innerText = buyerNameOnly;
+
+        document.getElementById('pi_seller_info').innerHTML = sellerInfoWithWebsiteHTML;
+        document.getElementById('pi_buyer_info').innerText = fullBuyerInfo;
+        document.getElementById('pi_shipping_info').innerText = shippingInfo;
+        document.getElementById('pi_shipping_tel').innerText = shippingTel;
+        document.getElementById('pi_pi_number').innerText = piNumber;
+        document.getElementById('pi_date').innerText = date;
+        document.getElementById('pi_po_ref').innerText = poNumber;
+        document.getElementById('pi_notes_ref').innerText = piNumber;
+        document.getElementById('pi_auth_signature').innerText = sellerName;
+
+        document.getElementById('quote_seller_info').innerHTML = sellerInfoWithWebsiteHTML;
+        document.getElementById('quote_buyer_info').innerText = fullBuyerInfo;
+        document.getElementById('quote_number_display').innerText = quoteNumber;
+        document.getElementById('quote_date').innerText = date;
+        document.getElementById('quote_valid_until').innerText = validUntil;
+        document.getElementById('quote_auth_signature').innerText = sellerName;
+        document.getElementById('quote_terms_conditions').innerText = processedTerms;
+        
+        document.getElementById('pl_shipper_info').innerHTML = sellerInfoHTML;
+        document.getElementById('pl_consignee_info').innerText = fullBuyerInfo;
+        document.getElementById('pl_pi_number').innerText = piNumber;
+        document.getElementById('pl_date').innerText = date;
+        document.getElementById('pl_auth_signature').innerText = sellerName;
+
+        const poItemsTable = document.getElementById('po-items-table');
+        const piItemsTable = document.getElementById('pi-items-table');
+        const quoteItemsTable = document.getElementById('quote-items-table');
+        const packingListItemsTable = document.getElementById('packing-list-items-table');
+        
+        poItemsTable.innerHTML = '';
+        piItemsTable.innerHTML = '';
+        quoteItemsTable.innerHTML = '';
+        packingListItemsTable.innerHTML = '';
+        
+        let subtotalUSD = 0;
+        let totalQty = 0, totalNw = 0, totalGw = 0, totalCbm = 0;
+
+        document.querySelectorAll('#master-items tr').forEach(row => {
+            const sku = row.querySelector('.sku').value;
+            const description = row.querySelector('.description').value;
+            const qty = parseFloat(row.querySelector('.qty').value) || 0;
+            
+            // --- FIX START ---
+            // The price entered in the master form is in the selected currency.
+            // We need to convert it back to USD for consistent internal calculations.
+            const priceInSelectedCurrency = parseFloat(row.querySelector('.price').value) || 0;
+            const priceUSD = priceInSelectedCurrency / conversionRate;
+            // --- FIX END ---
+            
+            const imageSrc = row.dataset.imageSrc || '';
+            const cartonNo = row.querySelector('.carton-no').value;
+            const nw = parseFloat(row.querySelector('.nw').value) || 0;
+            const gw = parseFloat(row.querySelector('.gw').value) || 0;
+            const cbm = parseFloat(row.querySelector('.cbm').value) || 0;
+            
+            const lineTotalUSD = qty * priceUSD;
+            subtotalUSD += lineTotalUSD;
+            totalQty += qty;
+            totalNw += nw;
+            totalGw += gw;
+            totalCbm += cbm;
+
+            const convertedPrice = priceUSD * conversionRate;
+            const convertedLineTotal = lineTotalUSD * conversionRate;
+
+            const poPiRowHTML = `<tr><td>${sku}</td><td style="white-space: pre-wrap; word-wrap: break-word;">${description}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`;
+            const quoteRowHTML = `<tr><td><img src="${imageSrc}" class="quote-item-image" style="display: ${imageSrc ? 'block' : 'none'};"></td><td>${sku}</td><td style="white-space: pre-wrap; word-wrap: break-word;">${description}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`;
+            const packingListRowHTML = `<tr><td>${cartonNo}</td><td>${description}<br><strong>SKU: ${sku}</strong></td><td>${qty}</td><td>${nw.toFixed(2)}</td><td>${gw.toFixed(2)}</td><td>${cbm.toFixed(3)}</td></tr>`;
+
+            poItemsTable.innerHTML += poPiRowHTML;
+            piItemsTable.innerHTML += poPiRowHTML;
+            quoteItemsTable.innerHTML += quoteRowHTML;
+            packingListItemsTable.innerHTML += packingListRowHTML;
+        });
+
+        const discountAmountUSD = subtotalUSD * (discountPercentage / 100);
+        const totalAfterDiscountUSD = subtotalUSD - discountAmountUSD;
+        const finalTotalUSD = totalAfterDiscountUSD + freightCostUSD;
+
+        const convertedSubtotal = subtotalUSD * conversionRate;
+        const convertedDiscountAmount = discountAmountUSD * conversionRate;
+        const convertedFreight = freightCostUSD * conversionRate;
+        const convertedFinalTotal = finalTotalUSD * conversionRate;
+
+        ['quote', 'po', 'pi'].forEach(doc => {
+            document.getElementById(`${doc}-unit-price-header`).innerText = `${docLang.th_unit_price || 'Unit Price'} (${currency})`;
+            document.getElementById(`${doc}-total-header`).innerText = `${docLang.th_total || 'Total'} (${currency})`;
+            
+            document.getElementById(`${doc}-subtotal`).innerText = convertedSubtotal.toFixed(2);
+            const discountLine = document.getElementById(`${doc}-discount-line`);
+            if (discountPercentage > 0) {
+                discountLine.style.display = 'block';
+                document.getElementById(`${doc}-discount-perc`).innerText = discountPercentage;
+                document.getElementById(`${doc}-discount-amount`).innerText = convertedDiscountAmount.toFixed(2);
+            } else {
+                discountLine.style.display = 'none';
+            }
+            document.getElementById(`${doc}-freight`).innerText = convertedFreight.toFixed(2);
+            document.getElementById(`${doc}-total`).innerText = convertedFinalTotal.toFixed(2);
+
+            for (let i = 1; i <= 4; i++) {
+                const symbolEl = document.getElementById(`${doc}-currency-symbol-${i}`);
+                if (symbolEl) symbolEl.innerText = currencySymbol;
+            }
+        });
+        
+        document.getElementById('pl-total-qty').innerText = totalQty;
+        document.getElementById('pl-total-nw').innerText = totalNw.toFixed(2);
+        document.getElementById('pl-total-gw').innerText = totalGw.toFixed(2);
+        document.getElementById('pl-total-cbm').innerText = totalCbm.toFixed(3);
+
+        // Auto-save draft on every change
+        triggerAutoSave();
+    }
+
+    function addItem(item = { sku: '', description: '', qty: 1, price: 0.00, imageSrc: '', cartonNo: '', nw: 0, gw: 0, cbm: 0 }) {
+        const masterItems = document.getElementById('master-items');
+        const newRow = document.createElement('tr');
+        newRow.dataset.imageSrc = item.imageSrc;
+        newRow.innerHTML = `
+            <td><input type="text" class="sku" placeholder="SKU" value="${item.sku}"></td>
+            <td><textarea rows="2" class="description">${item.description}</textarea></td>
+            <td>
+                <div class="paste-area" contenteditable="true">${item.imageSrc ? `<img src="${item.imageSrc}" class="w-full h-full object-contain">` : 'Paste Image'}</div>
+                <button onclick="removeImage(this)" class="remove-image-btn ${item.imageSrc ? '' : 'hidden'} text-red-500 text-xs mt-1">Remove</button>
+            </td>
+            <td><input type="number" value="${item.qty}" class="qty"></td>
+            <td><input type="number" value="${parseFloat(item.price).toFixed(2)}" class="price" step="0.01"></td>
+            <td><input type="text" class="carton-no" value="${item.cartonNo}"></td>
+            <td><input type="number" value="${parseFloat(item.nw).toFixed(2)}" class="nw" step="0.01"></td>
+            <td><input type="number" value="${parseFloat(item.gw).toFixed(2)}" class="gw" step="0.01"></td>
+            <td><input type="number" value="${parseFloat(item.cbm).toFixed(3)}" class="cbm" step="0.001"></td>
+            <td><button onclick="removeItem(this)" class="text-red-500 px-2 py-1 rounded" data-lang-key="remove_item_btn">Remove</button></td>`;
+        masterItems.appendChild(newRow);
+        const lang = document.getElementById('language_select').value;
+        const removeBtn = newRow.querySelector('[data-lang-key="remove_item_btn"]');
+        if(removeBtn) removeBtn.innerText = lang === 'bilingual' ? '删除' : 'Remove';
+        
+        attachInputListeners();
+    }
+
+    function removeItem(button) {
+        button.closest('tr').remove();
+        syncAndCalculate();
+    }
+
+    function removeImage(button) {
+        const cell = button.parentElement;
+        const pasteArea = cell.querySelector('.paste-area');
+        const tableRow = cell.closest('tr');
+        
+        pasteArea.innerHTML = 'Paste Image';
+        tableRow.dataset.imageSrc = '';
+        button.classList.add('hidden');
+        syncAndCalculate();
+    }
+
+    function handlePaste(event) {
+        const pasteArea = event.target.closest('.paste-area');
+        if (!pasteArea) return;
+        
+        const tableRow = pasteArea.closest('tr');
+        const removeBtn = pasteArea.nextElementSibling;
+        const items = (event.clipboardData || window.clipboardData).items;
+        let file = null;
+
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                file = items[i].getAsFile();
+                break;
+            }
+        }
+
+        if (file) {
+            event.preventDefault();
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                pasteArea.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-contain">`;
+                tableRow.dataset.imageSrc = e.target.result;
+                removeBtn.classList.remove('hidden');
+                syncAndCalculate();
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function updateTerms() {
+        termsManuallyEdited = false; // Reset flag on preset change
+        const preset = document.getElementById('terms_preset').value;
+        const lang = document.getElementById('language_select').value;
+        const currentTermsLang = allTermsPresets[lang] || allTermsPresets['en'];
+        document.getElementById('terms_conditions').value = currentTermsLang[preset];
+        syncAndCalculate();
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  GITHUB API CONFIG  (token stored in user's browser)
+    // ════════════════════════════════════════════════════════
+    const GH_OWNER  = 'Dekorfine';
+    const GH_REPO   = 'meigong-kpi';
+    const GH_BRANCH = 'main';
+    const GH_QUOTES_PATH = 'quotes';
+    const SETTINGS_KEY = 'quoteToolSettings_v1';
+
+    function getSettings()  { try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; } catch(e) { return {}; } }
+    function getToken()     { return getSettings().token    || ''; }
+    function getUsername()  { return getSettings().username || ''; }
+
+    function saveSetup() {
+        const name  = document.getElementById('setup-name').value.trim();
+        const token = document.getElementById('setup-token').value.trim();
+        if (!name)  { alert('Please enter your name.'); return; }
+        if (!token) { alert('Please enter the GitHub token.'); return; }
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify({ username: name, token }));
+        closeSettings(); renderUserBar(); loadCloudList();
+    }
+    function openSettings() {
+        const s = getSettings();
+        document.getElementById('setup-name').value  = s.username || '';
+        document.getElementById('setup-token').value = s.token    || '';
+        document.getElementById('settings-overlay').classList.remove('hidden');
+    }
+    function closeSettings() { document.getElementById('settings-overlay').classList.add('hidden'); }
+
+    function renderUserBar() {
+        const name = getUsername();
+        const avatarEl = document.getElementById('user-avatar');
+        const nameEl   = document.getElementById('user-name-label');
+        if (name) { avatarEl.textContent = name.charAt(0).toUpperCase(); avatarEl.style.background = nameToColor(name); nameEl.textContent = name; }
+        else      { avatarEl.textContent = '?'; nameEl.textContent = 'Not set up'; }
+    }
+    function nameToColor(n) {
+        const c = ['#3b82f6','#8b5cf6','#ec4899','#f97316','#14b8a6','#10b981','#f59e0b','#6366f1'];
+        let h = 0; for (let i = 0; i < n.length; i++) h = n.charCodeAt(i) + ((h<<5)-h);
+        return c[Math.abs(h) % c.length];
+    }
+    function switchTab(tab, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active'); document.getElementById('tab-'+tab).classList.add('active');
+    }
+
+    // ── GitHub API helper ──────────────────────────────────────────────
+    async function ghAPI(path, method, body) {
+        const token = getToken();
+        if (!token) { setCloudStatus('Please set up your token first (click ⚙ Setup)', 'err'); return null; }
+        const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`;
+        const opts = { method, headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' } };
+        if (body) opts.body = JSON.stringify(body);
+        try {
+            const res = await fetch(url, opts);
+            if (res.status === 404) return { _notFound: true };
+            if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || res.statusText); }
+            return res.status === 204 ? {} : await res.json();
+        } catch(e) { setCloudStatus('Error: ' + e.message, 'err'); return null; }
+    }
+
+    // ── Cloud list ─────────────────────────────────────────────────────
+    let cloudRecords = [];
+    let selectedCloudItem = null;
+
+    async function loadCloudList() {
+        if (!getToken()) { openSettings(); return; }
+        setCloudStatus('<span class="loading-spinner"></span> Loading from GitHub…', '');
+        document.getElementById('cloud-list').innerHTML = '<div class="cloud-list-empty"><span class="loading-spinner"></span> Fetching records…</div>';
+        const usersData = await ghAPI(GH_QUOTES_PATH, 'GET');
+        if (!usersData || usersData._notFound) { cloudRecords = []; renderCloudList(); setCloudStatus('No cloud records yet. Save your first quote!', ''); return; }
+        if (!Array.isArray(usersData)) { setCloudStatus('Unexpected response from GitHub.', 'err'); return; }
+        const userFolders = usersData.filter(f => f.type === 'dir');
+        cloudRecords = [];
+        await Promise.all(userFolders.map(async folder => {
+            const files = await ghAPI(`${GH_QUOTES_PATH}/${folder.name}`, 'GET');
+            if (!Array.isArray(files)) return;
+            files.filter(f => f.name.endsWith('.json')).forEach(f => {
+                const parts = f.name.replace('.json','').split('__');
+                cloudRecords.push({ user: folder.name, filename: f.name, path: f.path, sha: f.sha, downloadUrl: f.download_url, quoteName: parts[0]||f.name, date: parts[1]||'' });
+            });
+        }));
+        cloudRecords.sort((a,b) => b.date.localeCompare(a.date));
+        const uf = document.getElementById('cloud-user-filter');
+        const cur = uf.value;
+        uf.innerHTML = '<option value="">All team members</option>';
+        [...new Set(cloudRecords.map(r=>r.user))].forEach(u => { const o=document.createElement('option'); o.value=u; o.textContent=u; uf.appendChild(o); });
+        if (cur) uf.value = cur;
+        renderCloudList();
+        setCloudStatus(`✓ ${cloudRecords.length} record(s) loaded`, 'ok');
+    }
+
+    function renderCloudList() {
+        const search = (document.getElementById('cloud-search')?.value||'').toLowerCase();
+        const uf     = document.getElementById('cloud-user-filter')?.value||'';
+        const list   = document.getElementById('cloud-list');
+        const filtered = cloudRecords.filter(r => (!uf || r.user===uf) && (!search || r.quoteName.toLowerCase().includes(search) || r.user.toLowerCase().includes(search)));
+        if (!filtered.length) { list.innerHTML = `<div class="cloud-list-empty">${cloudRecords.length===0?'No cloud records yet.':'No matches found.'}</div>`; selectedCloudItem=null; document.getElementById('btn-cloud-load').disabled=true; return; }
+        list.innerHTML = '';
+        filtered.forEach(record => {
+            const div = document.createElement('div');
+            div.className = 'cloud-list-item' + (selectedCloudItem?.path===record.path?' selected':'');
+            div.innerHTML = `<div class="cloud-item-avatar" style="background:${nameToColor(record.user)}">${record.user.charAt(0).toUpperCase()}</div><div class="cloud-item-info"><div class="cloud-item-name">${record.quoteName}</div><div class="cloud-item-meta">${record.user} · ${record.date?record.date.replace('T',' ').slice(0,16):'—'}</div></div><button class="cloud-item-del" onclick="event.stopPropagation();cloudDelete('${record.path}','${record.sha}','${record.quoteName.replace(/'/g,'')}')">✕</button>`;
+            div.addEventListener('click', () => { selectedCloudItem=record; document.querySelectorAll('.cloud-list-item').forEach(e=>e.classList.remove('selected')); div.classList.add('selected'); document.getElementById('btn-cloud-load').disabled=false; });
+            list.appendChild(div);
+        });
+    }
+
+    async function cloudSave() {
+        const username = getUsername();
+        if (!username) { openSettings(); return; }
+        const data = collectFormData();
+        const piNo = (data.pi_number||'QUOTE').replace(/[^a-zA-Z0-9\-_]/g,'_');
+        const dateStr = new Date().toISOString().slice(0,16).replace(':','-');
+        const path = `${GH_QUOTES_PATH}/${username}/${piNo}__${dateStr}.json`;
+        setCloudStatus('<span class="loading-spinner"></span> Saving to GitHub…', '');
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+        const existing = await ghAPI(path, 'GET');
+        const body = { message: `Save quote: ${piNo} by ${username}`, content, branch: GH_BRANCH };
+        if (existing && existing.sha) body.sha = existing.sha;
+        const result = await ghAPI(path, 'PUT', body);
+        if (result && result.content) { setCloudStatus(`✓ Saved to cloud: ${piNo}`, 'ok'); loadCloudList(); }
+    }
+
+    async function cloudLoad() {
+        if (!selectedCloudItem) return;
+        setCloudStatus('<span class="loading-spinner"></span> Loading…', '');
+        try {
+            const resp = await fetch(selectedCloudItem.downloadUrl);
+            const data = await resp.json();
+            restoreDataToForm(data);
+            setCloudStatus(`✓ Loaded: ${selectedCloudItem.quoteName}`, 'ok');
+        } catch(e) { setCloudStatus('Failed to load: '+e.message, 'err'); }
+    }
+
+    async function cloudDelete(path, sha, name) {
+        if (!confirm(`Delete "${name}" from the cloud? This cannot be undone.`)) return;
+        setCloudStatus('<span class="loading-spinner"></span> Deleting…', '');
+        const result = await ghAPI(path, 'DELETE', { message: `Delete quote: ${name}`, sha, branch: GH_BRANCH });
+        if (result !== null) {
+            cloudRecords = cloudRecords.filter(r => r.path !== path);
+            if (selectedCloudItem?.path === path) { selectedCloudItem=null; document.getElementById('btn-cloud-load').disabled=true; }
+            renderCloudList();
+            setCloudStatus(`✓ Deleted "${name}"`, 'ok');
+        }
+    }
+
+    function setCloudStatus(html, type) {
+        const el = document.getElementById('cloud-status');
+        if (!el) return;
+        el.innerHTML = html;
+        el.className = 'cloud-status-msg' + (type ? ' cloud-status-'+type : '');
+    }
+
+    // ── Storage keys ──────────────────────────────────────────────────
+    const storageKey = 'quoteGeneratorSaves_v4';
+    const draftKey   = 'quoteGenerator_draft_v1';
+    let autoSaveTimer = null;
+
+    // ── Feedback ──────────────────────────────────────────────────────
+    function showFeedback(message) {
+        const el = document.getElementById('feedback_message');
+        el.textContent = message;
+        setTimeout(() => { el.textContent = ''; }, 3000);
+    }
+
+    // ── Auto-save status indicator ────────────────────────────────────
+    function setAutoSaveStatus(state, extra) {
+        const el = document.getElementById('autosave-status');
+        if (!el) return;
+        el.className = 'autosave-dot ' + state;
+        if (state === 'saving')   el.textContent = 'Saving draft…';
+        if (state === 'saved')    el.textContent = 'Draft auto-saved';
+        if (state === 'restored') el.textContent = 'Restored from ' + (extra || 'last session');
+    }
+
+    // ── Collect ALL form data (fixes bank info + remarks bug) ─────────
+    function collectFormData() {
+        const items = [];
+        document.querySelectorAll('#master-items tr').forEach(row => {
+            items.push({
+                sku:       row.querySelector('.sku').value,
+                description: row.querySelector('.description').value,
+                qty:       row.querySelector('.qty').value,
+                price:     row.querySelector('.price').value,
+                imageSrc:  row.dataset.imageSrc || '',
+                cartonNo:  row.querySelector('.carton-no').value,
+                nw:        row.querySelector('.nw').value,
+                gw:        row.querySelector('.gw').value,
+                cbm:       row.querySelector('.cbm').value,
+            });
+        });
+
+        // ── FIX: capture PI bank fields ──
+        const bankFields = [];
+        document.querySelectorAll('#pi-section .manual-input').forEach(input => {
+            bankFields.push(input.value);
+        });
+
+        return {
+            language_select:      document.getElementById('language_select').value,
+            seller_website:       document.getElementById('seller_website').value,
+            quote_number:         document.getElementById('quote_number').value,
+            pi_number:            document.getElementById('pi_number').value,
+            po_number:            document.getElementById('po_number').value,
+            date_of_issue:        document.getElementById('date_of_issue').value,
+            valid_until:          document.getElementById('valid_until').value,
+            currency:             document.getElementById('currency').value,
+            buyer_info:           document.getElementById('buyer_info').value,
+            buyer_email:          document.getElementById('buyer_email').value,
+            shipping_info:        document.getElementById('shipping_info').value,
+            shipping_tel:         document.getElementById('shipping_tel').value,
+            freight_cost:         document.getElementById('freight_cost').value,
+            seller_name:          document.getElementById('seller_name').value,
+            seller_address:       document.getElementById('seller_address').value,
+            seller_phone:         document.getElementById('seller_phone').value,
+            seller_email:         document.getElementById('seller_email').value,
+            seller_website_url:   document.getElementById('seller_website_url').value,
+            discount_percentage:  document.getElementById('discount_percentage').value,
+            terms_preset:         document.getElementById('terms_preset').value,
+            terms_conditions:     document.getElementById('terms_conditions').value,
+            pl_remarks:           (document.getElementById('pl_remarks') || {}).value || '',
+            bankFields:           bankFields,
+            items:                items,
+        };
+    }
+
+    // ── Restore collected data back into the form ─────────────────────
+    function restoreDataToForm(d) {
+        const skip = new Set(['items','bankFields','pl_remarks']);
+        for (const key in d) {
+            if (skip.has(key)) continue;
+            const el = document.getElementById(key);
+            if (el) el.value = d[key];
+        }
+        // Restore bank fields
+        if (d.bankFields) {
+            document.querySelectorAll('#pi-section .manual-input').forEach((inp, i) => {
+                if (d.bankFields[i] !== undefined) inp.value = d.bankFields[i];
+            });
+        }
+        // Restore packing remarks
+        const remarksEl = document.getElementById('pl_remarks');
+        if (remarksEl && d.pl_remarks) remarksEl.value = d.pl_remarks;
+
+        // Restore items
+        document.getElementById('master-items').innerHTML = '';
+        (d.items || []).forEach(item => addItem(item));
+
+        const lang = d.language_select || 'en';
+        document.getElementById('language_select').value = lang;
+        setLanguage(lang); // calls syncAndCalculate internally
+    }
+
+    // ── AUTO-SAVE (debounced 800 ms) ──────────────────────────────────
+    function triggerAutoSave() {
+        setAutoSaveStatus('saving');
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(() => {
+            try {
+                localStorage.setItem(draftKey, JSON.stringify({
+                    savedAt: new Date().toISOString(),
+                    data: collectFormData()
+                }));
+                setAutoSaveStatus('saved');
+            } catch(e) { console.warn('Auto-save failed', e); }
+        }, 800);
+    }
+
+    // ── RESTORE DRAFT on page load ────────────────────────────────────
+    function restoreFromDraft() {
+        try {
+            const raw = localStorage.getItem(draftKey);
+            if (!raw) return false;
+            const parsed = JSON.parse(raw);
+            if (!parsed || !parsed.data) return false;
+            const mins = Math.round((Date.now() - new Date(parsed.savedAt)) / 60000);
+            const label = mins < 1 ? 'just now' : mins < 60 ? mins + ' min ago' : Math.round(mins/60) + 'h ago';
+            restoreDataToForm(parsed.data);
+            setAutoSaveStatus('restored', label);
+            return true;
+        } catch(e) { console.warn('Draft restore failed', e); return false; }
+    }
+
+    // ── NEW QUOTE (clears form + draft) ──────────────────────────────
+    function newQuote() {
+        if (!confirm('Start a new blank quote? Your current draft will be cleared.')) return;
+        localStorage.removeItem(draftKey);
+        document.getElementById('master-items').innerHTML = '';
+        ['buyer_info','buyer_email','shipping_info','shipping_tel'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.value = '';
+        });
+        ['freight_cost','discount_percentage'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.value = 0;
+        });
+        document.querySelectorAll('#pi-section .manual-input').forEach(el => { el.value = ''; });
+        const plr = document.getElementById('pl_remarks'); if (plr) plr.value = '';
+        const today = new Date();
+        document.getElementById('date_of_issue').valueAsDate = today;
+        const v = new Date(); v.setDate(today.getDate() + 30);
+        document.getElementById('valid_until').valueAsDate = v;
+        termsManuallyEdited = false;
+        addItem();
+        autoFillSellerInfo();
+        updateOrderNumbers();
+        updateTerms();
+        syncAndCalculate();
+        setAutoSaveStatus('saved');
+        showFeedback('New quote started.');
+    }
+
+    // ── Named save slots ──────────────────────────────────────────────
+    function getSavedData() {
+        return JSON.parse(localStorage.getItem(storageKey)) || {};
+    }
+
+    function updateSaveSlotsDropdown(filter) {
+        const savedData = getSavedData();
+        const selectElement = document.getElementById('save_slots');
+        const keys = Object.keys(savedData).filter(k =>
+            !filter || k.toLowerCase().includes(filter.toLowerCase()));
+        selectElement.innerHTML = '';
+        const badge = document.getElementById('save-count-badge');
+        if (badge) badge.textContent = Object.keys(savedData).length;
+        if (keys.length === 0) {
+            const opt = document.createElement('option');
+            opt.textContent = filter ? 'No matches' : 'No saved entries';
+            opt.disabled = true;
+            selectElement.appendChild(opt);
+        } else {
+            keys.forEach(key => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = key;
+                selectElement.appendChild(opt);
+            });
+        }
+    }
+
+    function filterSaveSlots() {
+        updateSaveSlotsDropdown(document.getElementById('save_search').value);
+    }
+
+    function saveData() {
+        const saveName = prompt('Enter a name for this entry:', `Quote ${new Date().toLocaleDateString()} ${document.getElementById('pi_number').value}`);
+        if (!saveName) return;
+        const savedData = getSavedData();
+        savedData[saveName] = collectFormData();
+        localStorage.setItem(storageKey, JSON.stringify(savedData));
+        updateSaveSlotsDropdown();
+        showFeedback(`Saved as "${saveName}"!`);
+    }
+
+    function loadData() {
+        const sel = document.getElementById('save_slots');
+        const name = sel.value;
+        if (!name || sel.options[sel.selectedIndex].disabled) {
+            showFeedback('Please select an entry to load.'); return;
+        }
+        const d = getSavedData()[name];
+        if (!d) { showFeedback('Error loading data.'); return; }
+        restoreDataToForm(d);
+        showFeedback(`Loaded "${name}"!`);
+    }
+
+    function deleteData() {
+        const sel = document.getElementById('save_slots');
+        const name = sel.value;
+        if (!name || sel.options[sel.selectedIndex].disabled) {
+            showFeedback('Please select an entry to delete.'); return;
+        }
+        if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+        const savedData = getSavedData();
+        delete savedData[name];
+        localStorage.setItem(storageKey, JSON.stringify(savedData));
+        updateSaveSlotsDropdown();
+        showFeedback(`Deleted "${name}".`);
+    }
+
+    function attachInputListeners() {
+        document.querySelectorAll('.master-form input, .master-form textarea, .master-form select').forEach(input => {
+            if(!['terms_preset', 'seller_website', 'save_slots', 'language_select'].includes(input.id)) {
+                input.removeEventListener('input', syncAndCalculate);
+                input.addEventListener('input', syncAndCalculate);
+            }
+        });
+        
+        document.getElementById('master-items').removeEventListener('paste', handlePaste);
+        document.getElementById('master-items').addEventListener('paste', handlePaste);
+        
+        document.getElementById('pi_number').addEventListener('input', function() {
+            const match = this.value.match(/-(\d+)$/);
+            if (match) {
+                orderNumberPart = match[1];
+                updateOrderNumbers();
+            }
+        });
+        
+        document.getElementById('seller_website').addEventListener('change', () => {
+            autoFillSellerInfo();
+            updateOrderNumbers();
+            syncAndCalculate();
+        });
+
+        document.getElementById('language_select').addEventListener('change', (e) => setLanguage(e.target.value));
+        document.getElementById('terms_preset').addEventListener('change', updateTerms);
+
+        // Add listener for manual terms edit
+        document.getElementById('terms_conditions').addEventListener('input', () => {
+            termsManuallyEdited = true;
+            syncAndCalculate(); // Re-run sync to update previews with manual text
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        populateSellerDropdown();
+        const today = new Date();
+        document.getElementById('date_of_issue').valueAsDate = today;
+        const validDate = new Date();
+        validDate.setDate(today.getDate() + 30);
+        document.getElementById('valid_until').valueAsDate = validDate;
+
+        attachInputListeners();
+        updateSaveSlotsDropdown();
+        document.getElementById('save_button').addEventListener('click', saveData);
+        document.getElementById('load_button').addEventListener('click', loadData);
+        document.getElementById('delete_button').addEventListener('click', deleteData);
+
+        // Attach auto-save to PI bank fields and packing remarks
+        document.querySelectorAll('#pi-section .manual-input').forEach(inp => inp.addEventListener('input', triggerAutoSave));
+        const plr = document.getElementById('pl_remarks');
+        if (plr) plr.addEventListener('input', triggerAutoSave);
+
+        // Settings modal backdrop close
+        document.getElementById('settings-overlay').addEventListener('click', e => {
+            if (e.target === document.getElementById('settings-overlay')) closeSettings();
+        });
+
+        // Render user bar
+        renderUserBar();
+
+        // Restore draft OR start fresh
+        const restored = restoreFromDraft();
+        if (!restored) {
+            autoFillSellerInfo(); updateOrderNumbers(); updateTerms(); addItem(); setLanguage('en');
+        }
+
+        // If token already set, auto-load cloud list
+        if (getToken()) loadCloudList();
+        else openSettings(); // First visit: prompt setup
     });
-    totalBox.className = 'mg-total-box ' + role;
-    bindInputEvents();
-    calculateTotal();
-  }
-
-  function calculateTotal() {
-    var total = 0;
-    kpiTbody.querySelectorAll('tr').forEach(function (row) {
-      var input      = row.querySelector('.mg-qty-input');
-      var subtotalEl = row.querySelector('.mg-subtotal');
-      var pts        = parseFloat(input.getAttribute('data-points'));
-      var qty        = parseFloat(input.value) || 0;
-      var sub        = pts * qty;
-      subtotalEl.textContent = sub.toFixed(1);
-      total += sub;
-    });
-    totalPointsEl.textContent = total.toFixed(1);
-  }
-
-  function bindInputEvents() {
-    kpiTbody.querySelectorAll('.mg-qty-input').forEach(function (input) {
-      input.addEventListener('input', calculateTotal);
-    });
-  }
-
-  roleSelector.addEventListener('change', function (e) {
-    renderTable(e.target.value);
-    notesArea.value = '';
-  });
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { renderTable('official'); });
-  } else {
-    renderTable('official');
-  }
-}());
 </script>
 
 </body>
 </html>
+
+
+
+
