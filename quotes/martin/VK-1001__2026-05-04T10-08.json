@@ -1,0 +1,44 @@
+{
+  "language_select": "bilingual",
+  "seller_website": "vakkerlight",
+  "quote_number": "Q-VK-1001",
+  "pi_number": "VK-1001",
+  "po_number": "JDI-VK-1001",
+  "date_of_issue": "2026-05-04",
+  "valid_until": "2026-06-03",
+  "currency": "USD",
+  "buyer_info": "2225",
+  "buyer_email": "",
+  "shipping_info": "",
+  "shipping_tel": "",
+  "freight_cost": "0",
+  "seller_name": "Vakkerlight",
+  "seller_address": "1520 Caton Center Dr. Suite L-M, Baltimore, MD 21227",
+  "seller_phone": "+1 800-715-2593",
+  "seller_email": "info@vakkerlight.com",
+  "seller_website_url": "vakkerlight.com",
+  "discount_percentage": "0",
+  "terms_preset": "standard",
+  "terms_conditions": "1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: For orders over $1000, a 30% deposit is required upon order confirmation, with the 70% balance due before shipment.\n4. Lead Time: 4-6 weeks upon receipt of deposit.",
+  "pl_remarks": "",
+  "bankFields": [
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "items": [
+    {
+      "sku": "",
+      "description": "",
+      "qty": "1",
+      "price": "100",
+      "imageSrc": "",
+      "cartonNo": "",
+      "nw": "0.00",
+      "gw": "0.00",
+      "cbm": "0.000"
+    }
+  ]
+}
