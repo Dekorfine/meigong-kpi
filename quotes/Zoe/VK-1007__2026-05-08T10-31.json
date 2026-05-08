@@ -1,0 +1,55 @@
+{
+  "language_select": "en",
+  "seller_website": "vakkerlight",
+  "quote_number": "Q-VK-1007",
+  "pi_number": "VK-1007",
+  "po_number": "JDI-VK-1007",
+  "date_of_issue": "2026-05-06",
+  "valid_until": "2026-06-05",
+  "currency": "USD",
+  "buyer_info": "Babin BnBabin Bn\n\n\n",
+  "buyer_email": "babin@mobelandlitt.co.in",
+  "shipping_info": "",
+  "shipping_tel": "",
+  "freight_cost": "0",
+  "seller_name": "Vakkerlight",
+  "seller_address": "1520 Caton Center Dr. Suite L-M, Baltimore, MD 21227",
+  "seller_phone": "+1 800-715-2593",
+  "seller_email": "info@vakkerlight.com",
+  "seller_website_url": "vakkerlight.com",
+  "discount_percentage": "10",
+  "terms_preset": "full_payment",
+  "terms_conditions": "1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: 100% full payment is required upon order confirmation.\n4. Lead Time: 4-6 weeks upon receipt of full payment.",
+  "pl_remarks": "",
+  "bankFields": [
+    "",
+    "",
+    "Hannah",
+    "",
+    ""
+  ],
+  "items": [
+    {
+      "sku": "KD9220-190",
+      "description": "Pendant Light ∅ 190mm*370mm : natural- mulberry silk E27*1",
+      "qty": "1",
+      "price": "320",
+      "imageSrc": "data:image/png;base64,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",
+      "cartonNo": "",
+      "nw": "0.00",
+      "gw": "0.00",
+      "cbm": "0.000"
+    },
+    {
+      "sku": "KD9220-380",
+      "description": "Pendant Light ∅ 380mm*300mm : natural- mulberry silk E27*1",
+      "qty": "1",
+      "price": "510",
+      "imageSrc": "data:image/png;base64,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",
+      "cartonNo": "",
+      "nw": "0.00",
+      "gw": "0.00",
+      "cbm": "0.000"
+    }
+  ]
+}
