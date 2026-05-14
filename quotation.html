@@ -395,9 +395,18 @@
         @media print {
             @page {
                 size: A4;
-                margin: 0.6cm;
+                margin: 0.8cm;
             }
-            body { background-color: white; margin: 0; }
+
+            /* Hard reset of html/body so nothing inherits stray padding/margins */
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                background: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
 
             /* Hide every UI element that should never appear in the PDF */
             .master-form,
@@ -415,13 +424,16 @@
                 display: none !important;
             }
 
+            /* The base rule sets max-width: 8.5in which is WIDER than A4 print area.
+               Force the document to fit the available page width. */
             .document-container {
                 margin: 0 !important;
-                padding: 0.3rem !important;
-                border: none;
-                box-shadow: none;
-                width: 100%;
-                max-width: 100%;
+                padding: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
                 page-break-inside: avoid;
             }
 
@@ -448,6 +460,7 @@
             .info-box {
                 padding: 0.4rem !important;
                 page-break-inside: avoid;
+                box-sizing: border-box !important;
             }
             .info-box h3 {
                 font-size: 0.8rem !important;
@@ -459,22 +472,33 @@
                 line-height: 1.25 !important;
             }
 
-            /* Compress tables */
+            /* Compress tables — table-layout fixed prevents columns from
+               expanding past the container width and clipping the right edge */
             table {
+                width: 100% !important;
+                max-width: 100% !important;
+                table-layout: fixed !important;
                 margin-top: 0.4rem !important;
+                box-sizing: border-box !important;
             }
             th, td {
-                padding: 0.25rem !important;
-                font-size: 0.7rem !important;
+                padding: 0.2rem 0.25rem !important;
+                font-size: 0.68rem !important;
                 line-height: 1.2 !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                box-sizing: border-box !important;
             }
             tr {
                 page-break-inside: avoid;
             }
 
-            /* Compress totals */
+            /* Compress totals + small right padding so the dollar amount
+               can never touch / overflow the page edge */
             .total-section {
                 margin-top: 0.4rem !important;
+                padding-right: 0.3rem !important;
+                box-sizing: border-box !important;
             }
             .total-section p {
                 font-size: 0.78rem !important;
