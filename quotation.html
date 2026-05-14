@@ -369,7 +369,7 @@
             max-height: 50px;
             object-fit: contain;
         }
-        
+
         /* --- Theme Styles --- */
         .theme-blue .document-title { color: #2b6cb0; }
         .theme-blue .info-box h3 { border-bottom-color: #4299e1; }
@@ -382,7 +382,7 @@
         .theme-gray .document-title { color: #4a5568; }
         .theme-gray .info-box h3 { border-bottom-color: #a0aec0; }
         .theme-gray th { background-color: #f7fafc; }
-        
+
         .theme-purple .document-title { color: #553c9a; }
         .theme-purple .info-box h3 { border-bottom-color: #805ad5; }
         .theme-purple th { background-color: #faf5ff; }
@@ -393,26 +393,108 @@
 
 
         @media print {
+            @page {
+                size: A4;
+                margin: 0.6cm;
+            }
             body { background-color: white; margin: 0; }
-            .master-form, .print-button { display: none; }
-            .document-container { 
-                margin: 0; 
-                padding: 0; 
-                border: none; 
-                box-shadow: none; 
-                width: 100%; 
+
+            /* Hide every UI element that should never appear in the PDF */
+            .master-form,
+            .print-button,
+            .quick-save-bar,
+            .setup-prompt-banner,
+            .settings-overlay,
+            .autosave-bar,
+            .user-identity-bar,
+            .tab-row,
+            .cloud-filter-row,
+            .cloud-list,
+            .cloud-action-row,
+            .cloud-status-msg {
+                display: none !important;
+            }
+
+            .document-container {
+                margin: 0 !important;
+                padding: 0.3rem !important;
+                border: none;
+                box-shadow: none;
+                width: 100%;
+                max-width: 100%;
                 page-break-inside: avoid;
             }
+
+            /* One document per page */
             #quotation-section, #po-section, #pi-section {
                 page-break-after: always;
             }
             #packing-list-section {
-                 page-break-before: avoid;
+                page-break-before: avoid;
+                page-break-after: auto;
             }
-            .info-box, tr {
+
+            /* Compress title */
+            .document-title {
+                font-size: 1.3rem !important;
+                margin-bottom: 0.4rem !important;
+            }
+
+            /* Compress info boxes */
+            .info-grid {
+                gap: 0.4rem !important;
+                margin-bottom: 0.4rem !important;
+            }
+            .info-box {
+                padding: 0.4rem !important;
                 page-break-inside: avoid;
             }
-            .manual-input { border-color: transparent; }
+            .info-box h3 {
+                font-size: 0.8rem !important;
+                padding-bottom: 0.2rem !important;
+                margin-bottom: 0.2rem !important;
+            }
+            .info-box p, .info-box div {
+                font-size: 0.7rem !important;
+                line-height: 1.25 !important;
+            }
+
+            /* Compress tables */
+            table {
+                margin-top: 0.4rem !important;
+            }
+            th, td {
+                padding: 0.25rem !important;
+                font-size: 0.7rem !important;
+                line-height: 1.2 !important;
+            }
+            tr {
+                page-break-inside: avoid;
+            }
+
+            /* Compress totals */
+            .total-section {
+                margin-top: 0.4rem !important;
+            }
+            .total-section p {
+                font-size: 0.78rem !important;
+                margin: 0.12rem 0 !important;
+            }
+
+            /* Signature block */
+            .document-container > div[style*="margin-top: 2rem"] {
+                margin-top: 0.8rem !important;
+            }
+
+            .manual-input {
+                border-color: transparent !important;
+            }
+
+            /* Cap image size so a single row can't blow up vertically */
+            .quote-item-image {
+                max-width: 40px !important;
+                max-height: 40px !important;
+            }
         }
     </style>
 </head>
@@ -421,20 +503,20 @@
 <!-- ── Sticky Quick Save Bar ── -->
 <div class="quick-save-bar" id="quick-save-bar">
     <div class="quick-save-bar-left">
-        <span class="quick-save-bar-title">📄 报价单工具</span>
-        <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;">← 返回首页</a>
+        <span class="quick-save-bar-title">📄 Quote Tool</span>
+        <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;">← Back to Home</a>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
         <button class="btn-quick-save" onclick="quickSave()" id="btn-quick-save-top">
-            ☁ 保存到云端 <span class="kbd-hint">Ctrl+S</span>
+            ☁ Save to Cloud <span class="kbd-hint">Ctrl+S</span>
         </button>
-        <span class="qs-status" id="qs-status-bar">未设置账户</span>
+        <span class="qs-status" id="qs-status-bar">Not set up</span>
     </div>
 </div>
 
 <div class="master-form">
     <h2 data-lang-key="master_form_title">Master Input Form</h2>
-    
+
     <div class="form-section mb-6">
         <label for="language_select" data-lang-key="language">Language</label>
         <select id="language_select">
@@ -480,8 +562,8 @@
         <div id="tab-cloud" class="tab-content active">
             <!-- Setup prompt shown when token not configured -->
             <div class="setup-prompt-banner" id="setup-prompt-banner" style="display:none;">
-                ⚠️ 还没设置账户信息，云端保存功能未启用。请先完成设置。
-                <button class="btn-setup-now" onclick="openSettings()">立即设置 →</button>
+                ⚠️ Account not set up. Cloud save is disabled — please complete setup first.
+                <button class="btn-setup-now" onclick="openSettings()">Setup Now →</button>
             </div>
             <div class="cloud-filter-row">
                 <input type="text" id="cloud-search" placeholder="Search by name, quote no…" oninput="renderCloudList()">
@@ -579,7 +661,7 @@
         <label for="seller_website_url" class="mt-2" data-lang-key="seller_website">Seller Website</label>
         <input type="text" id="seller_website_url">
     </div>
-    
+
     <div class="form-section mt-6">
         <h3 data-lang-key="product_items_packing">Product Items & Packing Details</h3>
         <table id="item-table" class="w-full text-sm">
@@ -603,7 +685,7 @@
         </table>
         <button onclick="addItem()" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded" data-lang-key="add_item">Add Item</button>
     </div>
-    
+
     <div class="form-section mt-6">
         <h3 data-lang-key="discount">Discount</h3>
         <label for="discount_percentage" data-lang-key="discount_perc">Discount (%)</label>
@@ -759,14 +841,14 @@
 <!-- Settings Modal -->
 <div id="settings-overlay" class="settings-overlay hidden">
     <div class="settings-modal">
-        <h3>👤 账户设置</h3>
-        <p>输入你的姓名和团队共用的 GitHub Token，数据只存在<strong>你自己的浏览器</strong>里，不会进入代码。</p>
-        <label>你的姓名 * <span style="font-size:10px;color:#9ca3af;">（用于标记你保存的报价单）</span></label>
-        <input type="text" id="setup-name" placeholder="例如：Alice、小明、Bob...">
-        <label style="margin-top:14px;">GitHub Token * <span style="font-size:10px;color:#9ca3af;">（向管理员获取，以 github_pat_ 开头）</span></label>
+        <h3>👤 Account Setup</h3>
+        <p>Enter your name and the team's shared GitHub Token. Data is stored only in <strong>your own browser</strong> and is never committed to the repository.</p>
+        <label>Your Name * <span style="font-size:10px;color:#9ca3af;">(used to label quotes you save)</span></label>
+        <input type="text" id="setup-name" placeholder="e.g., Alice, Bob, Charlie...">
+        <label style="margin-top:14px;">GitHub Token * <span style="font-size:10px;color:#9ca3af;">(get from admin, starts with github_pat_)</span></label>
         <input type="password" id="setup-token" placeholder="github_pat_...">
         <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:10px 12px;margin-top:12px;font-size:12px;color:#0369a1;">
-            💡 设置完成后，点页面顶部的 <strong>☁ 保存到云端</strong> 按钮或按 <kbd style="background:#e0f2fe;border:1px solid #bae6fd;padding:1px 4px;border-radius:3px;">Ctrl+S</kbd> 快速保存
+            💡 After setup, click <strong>☁ Save to Cloud</strong> at the top of the page or press <kbd style="background:#e0f2fe;border:1px solid #bae6fd;padding:1px 4px;border-radius:3px;">Ctrl+S</kbd> to save quickly
         </div>
         <div class="setup-actions">
             <button class="btn-setup-save" onclick="saveSetup()">✓ Save & Continue</button>
@@ -875,7 +957,7 @@
             select_preset: "Select a Preset / 选择预设",
             print_save: "Print or Save as PDF / 打印或另存为PDF",
         },
-        es: { // --- NEW SPANISH TRANSLATION ---
+        es: {
             master_form_title: "Formulario de Entrada Maestro",
             language: "Idioma",
             save_load_data: "Guardar/Cargar Datos",
@@ -922,7 +1004,7 @@
             select_preset: "Seleccionar un Preajuste",
             print_save: "Imprimir o Guardar como PDF",
         },
-        de: { // --- NEW GERMAN TRANSLATION ---
+        de: {
             master_form_title: "Haupteingabeformular",
             language: "Sprache",
             save_load_data: "Daten Speichern/Laden",
@@ -969,7 +1051,7 @@
             select_preset: "Voreinstellung Auswählen",
             print_save: "Drucken oder als PDF Speichern",
         },
-        fr: { // --- NEW FRENCH TRANSLATION ---
+        fr: {
             master_form_title: "Formulaire de Saisie Principal",
             language: "Langue",
             save_load_data: "Enregistrer/Charger les Données",
@@ -1016,7 +1098,7 @@
             select_preset: "Sélectionner un Préréglage",
             print_save: "Imprimer ou Enregistrer en PDF",
         },
-        ar: { // --- NEW ARABIC TRANSLATION ---
+        ar: {
             master_form_title: "نموذج الإدخال الرئيسي",
             language: "اللغة",
             save_load_data: "حفظ/تحميل البيانات",
@@ -1063,7 +1145,7 @@
             select_preset: "تحديد إعداد مسبق",
             print_save: "طباعة أو حفظ بصيغة PDF",
         },
-        ru: { // --- NEW RUSSIAN TRANSLATION ---
+        ru: {
             master_form_title: "Основная Форма Ввода",
             language: "Язык",
             save_load_data: "Сохранить/Загрузить Данные",
@@ -1139,7 +1221,7 @@
                 th_carton_no: "Carton No. / 箱号", th_item_desc_sku: "Item Description / SKU / 描述/产品编号", th_qty_pcs: "Quantity (PCS) / 数量 (件)", th_nw_kgs: "Net Weight (KGS) / 净重 (公斤)", th_gw_kgs: "Gross Weight (KGS) / 毛重 (公斤)", th_meas_cbm: "Measurement (CBM) / 体积 (立方米)",
                 total_pl: "TOTAL / 总计", remarks: "Remarks / 备注:"
             },
-            es: { // --- NEW SPANISH DOC TRANSLATION ---
+            es: {
                 quotation_title: "COTIZACIÓN", po_title: "ORDEN DE COMPRA", pi_title: "FACTURA PROFORMA", pl_title: "LISTA DE EMPAQUE",
                 from: "De:", to: "Para:", seller: "Vendedor:", buyer: "Comprador:", ship_to: "Enviar A:", shipper: "Remitente:", consignee: "Destinatario:",
                 quotation_info: "Información de Cotización:", order_info: "Información del Pedido:", invoice_info: "Información de Factura:", shipping_details: "Detalles de Envío:",
@@ -1153,7 +1235,7 @@
                 th_carton_no: "Nº de Caja", th_item_desc_sku: "Descripción del Artículo / SKU", th_qty_pcs: "Cantidad (PCS)", th_nw_kgs: "Peso Neto (KGS)", th_gw_kgs: "Peso Bruto (KGS)", th_meas_cbm: "Medida (CBM)",
                 total_pl: "TOTAL", remarks: "Observaciones:"
             },
-            de: { // --- NEW GERMAN DOC TRANSLATION ---
+            de: {
                 quotation_title: "ANGEBOT", po_title: "BESTELLUNG", pi_title: "PROFORMA-RECHNUNG", pl_title: "PACKLISTE",
                 from: "Von:", to: "An:", seller: "Verkäufer:", buyer: "Käufer:", ship_to: "Lieferadresse:", shipper: "Absender:", consignee: "Empfänger:",
                 quotation_info: "Angebotsinfo:", order_info: "Bestellinfo:", invoice_info: "Rechnungsinfo:", shipping_details: "Versanddetails:",
@@ -1167,7 +1249,7 @@
                 th_carton_no: "Karton Nr.", th_item_desc_sku: "Artikelbeschreibung / SKU", th_qty_pcs: "Menge (Stk.)", th_nw_kgs: "Nettogewicht (KG)", th_gw_kgs: "Bruttogewicht (KG)", th_meas_cbm: "Maß (CBM)",
                 total_pl: "GESAMT", remarks: "Anmerkungen:"
             },
-            fr: { // --- NEW FRENCH DOC TRANSLATION ---
+            fr: {
                 quotation_title: "DEVIS", po_title: "BON DE COMMANDE", pi_title: "FACTURE PROFORMA", pl_title: "LISTE DE COLISAGE",
                 from: "De:", to: "À:", seller: "Vendeur:", buyer: "Acheteur:", ship_to: "Livrer À:", shipper: "Expéditeur:", consignee: "Destinataire:",
                 quotation_info: "Infos Devis:", order_info: "Infos Commande:", invoice_info: "Infos Facture:", shipping_details: "Détails d'Expédition:",
@@ -1181,7 +1263,7 @@
                 th_carton_no: "N° de Carton", th_item_desc_sku: "Description de l'Article / SKU", th_qty_pcs: "Quantité (PCS)", th_nw_kgs: "Poids Net (KGS)", th_gw_kgs: "Poids Brut (KGS)", th_meas_cbm: "Mesure (CBM)",
                 total_pl: "TOTAL", remarks: "Remarques:"
             },
-            ar: { // --- NEW ARABIC DOC TRANSLATION ---
+            ar: {
                 quotation_title: "عرض سعر", po_title: "طلب شراء", pi_title: "فاتورة أولية", pl_title: "قائمة التعبئة",
                 from: "من:", to: "إلى:", seller: "البائع:", buyer: "المشتري:", ship_to: "الشحن إلى:", shipper: "الشاحن:", consignee: "المرسل إليه:",
                 quotation_info: "معلومات عرض السعر:", order_info: "معلومات الطلب:", invoice_info: "معلومات الفاتورة:", shipping_details: "تفاصيل الشحن:",
@@ -1195,7 +1277,7 @@
                 th_carton_no: "رقم الكرتون", th_item_desc_sku: "وصف الصنف / SKU", th_qty_pcs: "الكمية (قطعة)", th_nw_kgs: "الوزن الصافي (كجم)", th_gw_kgs: "الوزN الإجمالي (كجم)", th_meas_cbm: "القياس (متر مكعب)",
                 total_pl: "المجموع", remarks: "ملاحظات:"
             },
-            ru: { // --- NEW RUSSIAN DOC TRANSLATION ---
+            ru: {
                 quotation_title: "КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ", po_title: "ЗАКАЗ НА ПОКУПКУ", pi_title: "СЧЕТ-ПРОФОРМА", pl_title: "УПАКОВОЧНЫЙ ЛИСТ",
                 from: "От:", to: "Кому:", seller: "Продавец:", buyer: "Покупатель:", ship_to: "Грузополучатель:", shipper: "Отправитель:", consignee: "Получатель:",
                 quotation_info: "Информация о Предложении:", order_info: "Информация о Заказе:", invoice_info: "Информация о Счете:", shipping_details: "Детали Доставки:",
@@ -1244,7 +1326,7 @@
             custom_product: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: 50% non-refundable deposit is required upon order confirmation, with the 50% balance due before shipment.\n4. All custom products are non-returnable and non-exchangeable once production has begun.\n5. Lead Time: 6-8 weeks upon receipt of deposit.`,
             exw: `1. Prices are quoted on an Ex-Works (EXW) basis in USD.\n2. All costs related to shipping, insurance, customs duties, and taxes are the sole responsibility of the buyer.\n3. This quotation is valid for 30 days.\n4. Payment Terms: 100% full payment is required before the goods are released for collection.\n5. Goods will be ready for collection within 4-6 weeks upon receipt of full payment.`
         },
-        bilingual: { // Bilingual uses English as base, user can add Chinese manually
+        bilingual: {
             standard: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: For orders over $1000, a 30% deposit is required upon order confirmation, with the 70% balance due before shipment.\n4. Lead Time: 4-6 weeks upon receipt of deposit.`,
             full_payment: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: 100% full payment is required upon order confirmation.\n4. Lead Time: 4-6 weeks upon receipt of full payment.`,
             custom_product: `1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: 50% non-refundable deposit is required upon order confirmation, with the 50% balance due before shipment.\n4. All custom products are non-returnable and non-exchangeable once production has begun.\n5. Lead Time: 6-8 weeks upon receipt of deposit.`,
@@ -1281,7 +1363,7 @@
             exw: `1. Цены указаны на условиях Ex-Works (EXW) в долларах США.\n2. Все расходы, связанные с доставкой, страхованием, таможенными пошлинами и налогами, несет покупатель.\n3. Данное предложение действительно в течение 30 дней.\n4. Условия Оплаты: Требуется 100% полная оплата до момента отгрузки товара для самовывоза.\n5. Товар будет готов к самовывозу в течение 4-6 недель с момента получения полной оплаты.`
         }
     };
-    
+
     let orderNumberPart = '1001';
     let termsManuallyEdited = false; // Flag to track manual edits to terms
 
@@ -1317,7 +1399,7 @@
         piInput.value = `${prefix}-${orderNumberPart}`;
         poInput.value = `JDI-${prefix}-${orderNumberPart}`;
     }
-    
+
     function autoFillSellerInfo() {
         const selectedSellerKey = document.getElementById('seller_website').value;
         const currentSeller = sellerData[selectedSellerKey];
@@ -1360,10 +1442,10 @@
         const buyerEmail = document.getElementById('buyer_email').value;
         const shippingInfo = document.getElementById('shipping_info').value;
         const shippingTel = document.getElementById('shipping_tel').value;
-        
+
         // --- MODIFIED TERMS LOGIC ---
         const freightCostUSD = parseFloat(document.getElementById('freight_cost').value) || 0;
-        
+
         let baseTerms;
         if (termsManuallyEdited) {
             // If manually edited, use textarea value as base.
@@ -1388,7 +1470,7 @@
             processedTerms = processedTerms.replace(/Lead Time: 6-8 weeks/g, "Lead Time: 1-3 weeks");
             processedTerms = processedTerms.replace(/collection within 4-6 weeks/g, "collection within 1-3 weeks");
         }
-        
+
         // Update textarea ONLY if not manually edited by user
         if (!termsManuallyEdited) {
             document.getElementById('terms_conditions').value = processedTerms;
@@ -1397,7 +1479,7 @@
 
 
         const discountPercentage = parseFloat(document.getElementById('discount_percentage').value) || 0;
-        
+
         const currency = document.getElementById('currency').value;
         const { rate: conversionRate, symbol: currencySymbol } = exchangeRates[currency];
 
@@ -1406,15 +1488,15 @@
             fullBuyerInfo += `\nEmail: ${buyerEmail}`;
         }
         const buyerNameOnly = buyerInfo.split('\n')[0];
-        
+
         document.querySelectorAll('.document-container').forEach(container => {
             container.className = 'document-container';
             container.classList.add(theme);
         });
-        
+
         const sellerInfoHTML = `<strong>${sellerName}</strong><p>${sellerAddress}</p><p>Phone: ${sellerPhone}</p>${sellerEmail ? `<p>Email: ${sellerEmail}</p>` : ''}`;
         const sellerInfoWithWebsiteHTML = `<strong>${sellerName}</strong><p>${sellerAddress}</p><p>Phone: ${sellerPhone}</p>${sellerWebsite && sellerWebsite !== 'n/a' ? `<p>Website: ${sellerWebsite}</p>` : ''}${sellerEmail ? `<p>Email: ${sellerEmail}</p>` : ''}`;
-        
+
         document.getElementById('po_seller_info').innerHTML = sellerInfoHTML;
         document.getElementById('po_buyer_info').innerText = fullBuyerInfo;
         document.getElementById('po_shipping_info').innerText = shippingInfo;
@@ -1442,7 +1524,7 @@
         document.getElementById('quote_valid_until').innerText = validUntil;
         document.getElementById('quote_auth_signature').innerText = sellerName;
         document.getElementById('quote_terms_conditions').innerText = processedTerms;
-        
+
         document.getElementById('pl_shipper_info').innerHTML = sellerInfoHTML;
         document.getElementById('pl_consignee_info').innerText = fullBuyerInfo;
         document.getElementById('pl_pi_number').innerText = piNumber;
@@ -1453,12 +1535,12 @@
         const piItemsTable = document.getElementById('pi-items-table');
         const quoteItemsTable = document.getElementById('quote-items-table');
         const packingListItemsTable = document.getElementById('packing-list-items-table');
-        
+
         poItemsTable.innerHTML = '';
         piItemsTable.innerHTML = '';
         quoteItemsTable.innerHTML = '';
         packingListItemsTable.innerHTML = '';
-        
+
         let subtotalUSD = 0;
         let totalQty = 0, totalNw = 0, totalGw = 0, totalCbm = 0;
 
@@ -1466,20 +1548,20 @@
             const sku = row.querySelector('.sku').value;
             const description = row.querySelector('.description').value;
             const qty = parseFloat(row.querySelector('.qty').value) || 0;
-            
+
             // --- FIX START ---
             // The price entered in the master form is in the selected currency.
             // We need to convert it back to USD for consistent internal calculations.
             const priceInSelectedCurrency = parseFloat(row.querySelector('.price').value) || 0;
             const priceUSD = priceInSelectedCurrency / conversionRate;
             // --- FIX END ---
-            
+
             const imageSrc = row.dataset.imageSrc || '';
             const cartonNo = row.querySelector('.carton-no').value;
             const nw = parseFloat(row.querySelector('.nw').value) || 0;
             const gw = parseFloat(row.querySelector('.gw').value) || 0;
             const cbm = parseFloat(row.querySelector('.cbm').value) || 0;
-            
+
             const lineTotalUSD = qty * priceUSD;
             subtotalUSD += lineTotalUSD;
             totalQty += qty;
@@ -1512,7 +1594,7 @@
         ['quote', 'po', 'pi'].forEach(doc => {
             document.getElementById(`${doc}-unit-price-header`).innerText = `${docLang.th_unit_price || 'Unit Price'} (${currency})`;
             document.getElementById(`${doc}-total-header`).innerText = `${docLang.th_total || 'Total'} (${currency})`;
-            
+
             document.getElementById(`${doc}-subtotal`).innerText = convertedSubtotal.toFixed(2);
             const discountLine = document.getElementById(`${doc}-discount-line`);
             if (discountPercentage > 0) {
@@ -1530,7 +1612,7 @@
                 if (symbolEl) symbolEl.innerText = currencySymbol;
             }
         });
-        
+
         document.getElementById('pl-total-qty').innerText = totalQty;
         document.getElementById('pl-total-nw').innerText = totalNw.toFixed(2);
         document.getElementById('pl-total-gw').innerText = totalGw.toFixed(2);
@@ -1562,7 +1644,7 @@
         const lang = document.getElementById('language_select').value;
         const removeBtn = newRow.querySelector('[data-lang-key="remove_item_btn"]');
         if(removeBtn) removeBtn.innerText = lang === 'bilingual' ? '删除' : 'Remove';
-        
+
         attachInputListeners();
     }
 
@@ -1575,7 +1657,7 @@
         const cell = button.parentElement;
         const pasteArea = cell.querySelector('.paste-area');
         const tableRow = cell.closest('tr');
-        
+
         pasteArea.innerHTML = 'Paste Image';
         tableRow.dataset.imageSrc = '';
         button.classList.add('hidden');
@@ -1585,7 +1667,7 @@
     function handlePaste(event) {
         const pasteArea = event.target.closest('.paste-area');
         if (!pasteArea) return;
-        
+
         const tableRow = pasteArea.closest('tr');
         const removeBtn = pasteArea.nextElementSibling;
         const items = (event.clipboardData || window.clipboardData).items;
@@ -1659,12 +1741,12 @@
             avatarEl.textContent = name.charAt(0).toUpperCase();
             avatarEl.style.background = nameToColor(name);
             nameEl.textContent = name;
-            if (statusBar) { statusBar.textContent = name + ' · 云端就绪'; statusBar.className = 'qs-status ok'; }
+            if (statusBar) { statusBar.textContent = name + ' · Cloud Ready'; statusBar.className = 'qs-status ok'; }
             if (setupBanner) setupBanner.style.display = 'none';
         } else {
             avatarEl.textContent = '?';
             nameEl.textContent = 'Not set up';
-            if (statusBar) { statusBar.textContent = '未设置账户'; statusBar.className = 'qs-status'; }
+            if (statusBar) { statusBar.textContent = 'Not set up'; statusBar.className = 'qs-status'; }
             if (setupBanner) setupBanner.style.display = 'flex';
         }
     }
@@ -1674,7 +1756,7 @@
         const username = getUsername();
         if (!username) { openSettings(); return; }
         const statusBar = document.getElementById('qs-status-bar');
-        if (statusBar) { statusBar.textContent = '正在保存…'; statusBar.className = 'qs-status busy'; }
+        if (statusBar) { statusBar.textContent = 'Saving...'; statusBar.className = 'qs-status busy'; }
         await cloudSave();
         // cloudSave already updates setCloudStatus; sync top bar too
         if (statusBar) {
@@ -2047,10 +2129,10 @@
                 input.addEventListener('input', syncAndCalculate);
             }
         });
-        
+
         document.getElementById('master-items').removeEventListener('paste', handlePaste);
         document.getElementById('master-items').addEventListener('paste', handlePaste);
-        
+
         document.getElementById('pi_number').addEventListener('input', function() {
             const match = this.value.match(/-(\d+)$/);
             if (match) {
@@ -2058,7 +2140,7 @@
                 updateOrderNumbers();
             }
         });
-        
+
         document.getElementById('seller_website').addEventListener('change', () => {
             autoFillSellerInfo();
             updateOrderNumbers();
