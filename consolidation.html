@@ -1350,10 +1350,11 @@
         const [region, setRegion] = useState('east'); // US 分区：east/mid/west
         const [auZip, setAuZip] = useState('3000'); // 澳洲邮编
         const [isRemoteCA, setIsRemoteCA] = useState(false); // 加拿大偏远地区
-        // 卖价推演相关
-        const [purchasePrice, setPurchasePrice] = useState(''); // 采购单价（元/件）
-        const [exchangeRate, setExchangeRate] = useState('7.2'); // CNY → USD
-        const [profitMultiplier, setProfitMultiplier] = useState('2.4'); // 利润倍率
+        // 卖价推演相关 (与 finance.html 公式对齐: (成本+运费+木箱) × 防损 × 折扣 ÷ 推演汇率)
+        const [purchasePrice, setPurchasePrice] = useState('');     // 采购单价（元/件）
+        const [exchangeRate, setExchangeRate] = useState('6.2');    // 推演汇率 (固定 6.2 预留空间)
+        const [damageMultiplier, setDamageMultiplier] = useState('2.0');     // 防损倍数 (破损补发)
+        const [discountMultiplier, setDiscountMultiplier] = useState('1.2'); // 折扣倍数 (日常 20% 折扣)
 
         const SAVE_KEY = 'consolidationCalc_v3';
 
@@ -1396,7 +1397,8 @@
                 if (s.isRemoteCA !== undefined) setIsRemoteCA(s.isRemoteCA);
                 if (s.purchasePrice !== undefined) setPurchasePrice(s.purchasePrice);
                 if (s.exchangeRate !== undefined) setExchangeRate(s.exchangeRate);
-                if (s.profitMultiplier !== undefined) setProfitMultiplier(s.profitMultiplier);
+                if (s.damageMultiplier !== undefined) setDamageMultiplier(s.damageMultiplier);
+                if (s.discountMultiplier !== undefined) setDiscountMultiplier(s.discountMultiplier);
             } catch (e) {}
         }, []);
 
@@ -1406,12 +1408,12 @@
                 try {
                     localStorage.setItem(SAVE_KEY, JSON.stringify({
                         packages, glassLamp, targetCN, region, auZip, isRemoteCA,
-                        purchasePrice, exchangeRate, profitMultiplier
+                        purchasePrice, exchangeRate, damageMultiplier, discountMultiplier
                     }));
                 } catch (e) {}
             }, 500);
             return () => clearTimeout(t);
-        }, [packages, glassLamp, targetCN, region, auZip, isRemoteCA, purchasePrice, exchangeRate, profitMultiplier]);
+        }, [packages, glassLamp, targetCN, region, auZip, isRemoteCA, purchasePrice, exchangeRate, damageMultiplier, discountMultiplier]);
 
         // === 有效包装（已填完整字段）===
         const validPackages = useMemo(() => {
@@ -1837,12 +1839,15 @@
             };
         }, [hasInput, planSplit, planConsol, planYunding, packageAnalyses, totalQty, totalWeight, glassLamp, country]);
 
-        // === 卖价推演 ===
+        // === 卖价推演 (与 finance 一致) ===
+        // 公式: (产品成本 + 运费 + 木箱制造费) × 防损倍数 × 折扣倍数 ÷ 推演汇率
         const salesPrice = useMemo(() => {
             if (!hasInput || !recommendation) return null;
             const unitCost = parseFloat(purchasePrice) || 0;
-            const rate = parseFloat(exchangeRate) || 7.2;
-            const multiplier = parseFloat(profitMultiplier) || 2.4;
+            const rate = parseFloat(exchangeRate) || 6.2;
+            const dam = parseFloat(damageMultiplier) || 2.0;
+            const disc = parseFloat(discountMultiplier) || 1.2;
+            const totalMultiplier = dam * disc;  // 总加价 = 防损 × 折扣
 
             const totalProductCost = unitCost * totalQty;
 
@@ -1891,11 +1896,11 @@
             }
 
             const totalCostCNY = totalProductCost + recShippingCost + totalCrateCost;
-            const totalSellingUSD = (totalCostCNY * multiplier) / rate;
+            const totalSellingUSD = (totalCostCNY * totalMultiplier) / rate;
             const unitSellingUSD = totalQty > 0 ? totalSellingUSD / totalQty : 0;
 
             return {
-                unitCost, rate, multiplier,
+                unitCost, rate, dam, disc, totalMultiplier,
                 totalProductCost,
                 recShippingCost,
                 totalCrateCost,
@@ -1904,7 +1909,7 @@
                 totalSellingUSD,
                 unitSellingUSD
             };
-        }, [hasInput, recommendation, purchasePrice, exchangeRate, profitMultiplier, totalQty, planConsol, packageAnalyses]);
+        }, [hasInput, recommendation, purchasePrice, exchangeRate, damageMultiplier, discountMultiplier, totalQty, planConsol, packageAnalyses]);
 
         // === 渲染 ===
         return (
@@ -2244,8 +2249,10 @@
                                         setPurchasePrice={setPurchasePrice}
                                         exchangeRate={exchangeRate}
                                         setExchangeRate={setExchangeRate}
-                                        profitMultiplier={profitMultiplier}
-                                        setProfitMultiplier={setProfitMultiplier}
+                                        damageMultiplier={damageMultiplier}
+                                        setDamageMultiplier={setDamageMultiplier}
+                                        discountMultiplier={discountMultiplier}
+                                        setDiscountMultiplier={setDiscountMultiplier}
                                     />
                                 )}
 
@@ -3766,7 +3773,7 @@
     };
 
     // === 卖价推演卡片（财务核算用）===
-    const SalesPriceCard = ({ sp, recLabel, totalQty, purchasePrice, setPurchasePrice, exchangeRate, setExchangeRate, profitMultiplier, setProfitMultiplier }) => {
+    const SalesPriceCard = ({ sp, recLabel, totalQty, purchasePrice, setPurchasePrice, exchangeRate, setExchangeRate, damageMultiplier, setDamageMultiplier, discountMultiplier, setDiscountMultiplier }) => {
         const hasPurchase = parseFloat(purchasePrice) > 0;
         return (
             <div className="paper rounded-2xl p-6 anim-fadeup" style={{border: '1.5px solid var(--line-soft)'}}>
@@ -3782,8 +3789,8 @@
                     </span>
                 </div>
 
-                {/* 输入参数 */}
-                <div className="grid grid-cols-3 gap-3 mb-4">
+                {/* 输入参数: 4 字段 */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                     <div>
                         <label className="field-label">
                             采购单价 (元)
@@ -3793,14 +3800,28 @@
                             className="field-input field-input-sm" placeholder="¥/件" />
                     </div>
                     <div>
-                        <label className="field-label">实时汇率</label>
-                        <input type="number" step="0.01" value={exchangeRate} onChange={(e) => setExchangeRate(e.target.value)}
-                            className="field-input field-input-sm" placeholder="CNY/USD" />
+                        <label className="field-label">
+                            防损倍数
+                            <span className="ml-1 text-[9px] font-normal" style={{color: 'var(--ink-4)'}}>(损坏补发)</span>
+                        </label>
+                        <input type="number" step="0.1" value={damageMultiplier} onChange={(e) => setDamageMultiplier(e.target.value)}
+                            className="field-input field-input-sm" placeholder="2.0" />
                     </div>
                     <div>
-                        <label className="field-label">利润倍率</label>
-                        <input type="number" step="0.1" value={profitMultiplier} onChange={(e) => setProfitMultiplier(e.target.value)}
-                            className="field-input field-input-sm" placeholder="倍" />
+                        <label className="field-label">
+                            折扣倍数
+                            <span className="ml-1 text-[9px] font-normal" style={{color: 'var(--ink-4)'}}>(20% 折扣=1.2)</span>
+                        </label>
+                        <input type="number" step="0.1" value={discountMultiplier} onChange={(e) => setDiscountMultiplier(e.target.value)}
+                            className="field-input field-input-sm" placeholder="1.2" />
+                    </div>
+                    <div>
+                        <label className="field-label">
+                            推演汇率
+                            <span className="ml-1 text-[9px] font-normal" style={{color: 'var(--ink-4)'}}>(预留空间)</span>
+                        </label>
+                        <input type="number" step="0.01" value={exchangeRate} onChange={(e) => setExchangeRate(e.target.value)}
+                            className="field-input field-input-sm" placeholder="6.2" />
                     </div>
                 </div>
 
@@ -3823,7 +3844,7 @@
                                     <span className="font-bold" style={{color: 'var(--ink)'}}>¥{Math.round(sp.totalProductCost).toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span style={{color: 'var(--ink-2)'}}>· 推演运费</span>
+                                    <span style={{color: 'var(--ink-2)'}}>· 推荐方案运费</span>
                                     <span className="font-bold" style={{color: 'var(--ink)'}}>¥{Math.round(sp.recShippingCost).toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between">
@@ -3844,7 +3865,7 @@
                                     建议总售价 (USD)
                                 </div>
                                 <span className="font-mono text-[10px] font-bold uppercase tracking-widest opacity-70">
-                                    × {sp.multiplier} ÷ {sp.rate}
+                                    × {sp.dam.toFixed(1)} × {sp.disc.toFixed(1)} ÷ {sp.rate}
                                 </span>
                             </div>
                             <div className="display-num text-5xl tracking-tighter">
@@ -3862,7 +3883,8 @@
                                 </div>
                                 <div className="text-right text-[10px] font-mono opacity-70 leading-relaxed">
                                     公式: (产品+运费+木箱)<br/>
-                                    × {sp.multiplier} ÷ {sp.rate} = USD
+                                    × {sp.dam.toFixed(1)} (防损) × {sp.disc.toFixed(1)} (折扣)<br/>
+                                    ÷ {sp.rate} (推演汇率) = USD
                                 </div>
                             </div>
                         </div>
@@ -3870,7 +3892,7 @@
                         {/* 财务核算用提示 */}
                         <div className="mt-3 text-[10px] font-medium flex items-start gap-1.5" style={{color: 'var(--ink-3)'}}>
                             <Icon name="info" className="w-3 h-3 flex-shrink-0 mt-0.5" />
-                            <span>财务可输入实际采购价 + 当前汇率 + 利润倍率，核算业务报价是否合理。木箱材料费按表面积 m² × ¥44/m² 计算。</span>
+                            <span>公式: (产品成本+运费+木箱) × <b>2.0</b>(防损补发) × <b>1.2</b>(20%日常折扣) ÷ <b>6.2</b>(汇率·预留空间)。木箱材料按表面积 m² × ¥44/m² 计算。</span>
                         </div>
                     </>
                 )}
