@@ -806,15 +806,15 @@
     <div class="info-box" style="margin-top: 1.5rem;">
         <h3 data-doc-key="bank_info">BENEFICIARY BANK INFORMATION:</h3>
         <label data-doc-key="bank_name">Bank Name:</label>
-        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <input type="text" id="pi_bank_name" class="manual-input" placeholder="Manual Entry">
         <label class="mt-2" data-doc-key="bank_address">Bank Address:</label>
-        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <input type="text" id="pi_bank_address" class="manual-input" placeholder="Manual Entry">
         <label class="mt-2" data-doc-key="account_name">Account Name:</label>
-        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <input type="text" id="pi_account_name" class="manual-input" placeholder="Manual Entry">
         <label class="mt-2" data-doc-key="account_number">Account Number:</label>
-        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <input type="text" id="pi_account_number" class="manual-input" placeholder="Manual Entry">
         <label class="mt-2" data-doc-key="swift_code">Swift Code or ABA :</label>
-        <input type="text" class="manual-input" placeholder="Manual Entry">
+        <input type="text" id="pi_swift_code" class="manual-input" placeholder="Manual Entry">
         <p class="mt-2"><strong data-doc-key="notes">Notes:</strong> <span data-doc-key="notes_text">Please include Invoice No.</span> <strong id="pi_notes_ref"></strong> <span data-doc-key="notes_text_2">in payment reference.</span></p>
     </div>
     <div style="margin-top: 2rem;"><p style="padding-top: 1.5rem; border-top: 1px solid #e2e8f0; text-align: right;"><strong data-doc-key="auth_sig">Authorized Signature</strong></p><p style="text-align: right;"><strong id="pi_auth_signature"></strong></p></div>
@@ -1322,7 +1322,7 @@
         vakkerlight: { name: "Vakkerlight", prefix: "VK", address: "1520 Caton Center Dr. Suite L-M, Baltimore, MD 21227", phone: "+1 800-715-2593", website: "vakkerlight.com", email: "info@vakkerlight.com", theme: "theme-blue" },
         dekorfine: { name: "Dekorfine", prefix: "DF", address: "1710 KELLER PKWY STE 5511 KELLER, TX 76248", phone: "+1 800-715-9483", website: "dekorfine.com", email: "support@dekorfine.com", theme: "theme-green" },
         docos: { name: "Docos", prefix: "DC", address: "1111 Sulphur Spring Rd. #113 Halethorpe, MD 21227", phone: "+1 800-716-3167", website: "docos.us", email: "info@docos.us", theme: "theme-gray" },
-        radilum: { name: "Radilum INC", prefix: "RD", address: "177 Joe Routt Blvd, College Station, TX 77840", phone: "+1 800-761-1037", website: "radilum.com", email: "support@radilum.com", theme: "theme-purple" },
+        radilum: { name: "Radilum", prefix: "RD", address: "177 Joe Routt Blvd, College Station, TX 77840", phone: "+1 800-761-1037", website: "radilum.com", email: "support@radilum.com", theme: "theme-purple" },
         mooijane: { name: "Mooijane", prefix: "MJ", address: "1586 Sulphur Spring Rd. #113 Halethorpe, MD 21227", phone: "+1 800-770-1693", website: "mooijane.com", email: "support@mooijane.com", theme: "theme-blue" },
         mooiehome: { name: "Mooiehome", prefix: "MH", address: "1520 Caton Center Dr. Suite L-M, Baltimore, MD 21227 USA", phone: "+1 800-867-5009", website: "mooiehome.com", email: "support@mooiehome.com", theme: "theme-green" },
         brillilume: { name: "Brillilume", prefix: "BL", address: "1520 Caton Center Dr. Suite L-M, Baltimore MD 21227 USA", phone: "+1 800-867-5009", website: "brillilume.com", email: "support@brillilume.com", theme: "theme-gray" },
@@ -1330,7 +1330,7 @@
         pinlighting: { name: "Pinlighting", prefix: "PL", address: "1833 Wind Gate Rd, Baltimore, MD 21227", phone: "+1 800-953-1356", website: "pinlighting.com", email: "info@pinlighting.com", theme: "theme-blue" },
         rayonshine: { name: "Rayonshine", prefix: "RS", address: "2435 Sulphur Spring Rd, Baltimore, MD 21227", phone: "+1 800-978-5754", website: "rayonshine.com", email: "support@rayonshine.com", theme: "theme-green" },
         lumioshine: { name: "Lumioshine", prefix: "LS", address: "1520 Caton Center Dr. Suite L-M, Baltimore MD 21227 USA", phone: "+1 800-978-5754", website: "lumioshine.com", email: "service@lumioshine.com", theme: "theme-gray" },
-        jiangmen_radilum: { name: "Radilum Inc.", prefix: "JRI", address: "Room 301, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone: "+8615876099121", website: "n/a", email: "info@mooielight.com", theme: "theme-red" },
+        jiangmen_radilum: { name: "Radilum Inc", prefix: "JRI", address: "Room 301, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone: "+8615876099121", website: "n/a", email: "info@mooielight.com", theme: "theme-red" },
         jiangmen_vakker: { name: "Vakker Limited", prefix: "JVL", address: "Room 401, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone: "+8615876099121", website: "n/a", email: "info@vakkerlimited.com", theme: "theme-blue" }
     };
 
@@ -1432,6 +1432,25 @@
         document.getElementById('seller_phone').value = currentSeller.phone;
         document.getElementById('seller_email').value = currentSeller.email;
         document.getElementById('seller_website_url').value = currentSeller.website;
+
+        // 当选中任意 Radilum (美国 Radilum 或 江门 Radilum Inc) 自动填入收款银行；其他清空
+        const radilumBank = {
+            bank_name: "China Merchants Bank Co., Ltd., Zhongshan Guzhen Branch",
+            bank_address: "No. 17, Zhongxing Avenue, Guzhen Town, Zhongshan City, Guangdong Province",
+            account_name: "Radilum INC",
+            account_number: "76090192D632009",
+            swift_code: "CMBCCNBSXXX"
+        };
+        const bankAutoFill = {
+            radilum: radilumBank,
+            jiangmen_radilum: radilumBank
+        };
+        const bankData = bankAutoFill[selectedSellerKey] || { bank_name: "", bank_address: "", account_name: "", account_number: "", swift_code: "" };
+        document.getElementById('pi_bank_name').value = bankData.bank_name;
+        document.getElementById('pi_bank_address').value = bankData.bank_address;
+        document.getElementById('pi_account_name').value = bankData.account_name;
+        document.getElementById('pi_account_number').value = bankData.account_number;
+        document.getElementById('pi_swift_code').value = bankData.swift_code;
     }
 
     function syncAndCalculate() {
