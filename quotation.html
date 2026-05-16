@@ -1433,7 +1433,9 @@
         document.getElementById('seller_email').value = currentSeller.email;
         document.getElementById('seller_website_url').value = currentSeller.website;
 
-        // 当选中任意 Radilum (美国 Radilum 或 江门 Radilum Inc) 自动填入收款银行；其他清空
+        // 业务逻辑:
+        // - 美国 Radilum (radilum.com): 网站对外报价, 客户每次不同 → 全部留空, 手工填
+        // - 江门 Radilum Inc (jiangmen_radilum): 固定客户 → 自动填买家 + 收款银行
         const radilumBank = {
             bank_name: "China Merchants Bank Co., Ltd., Zhongshan Guzhen Branch",
             bank_address: "No. 17, Zhongxing Avenue, Guzhen Town, Zhongshan City, Guangdong Province",
@@ -1441,9 +1443,12 @@
             account_number: "76090192D632009",
             swift_code: "CMBCCNBSXXX"
         };
+        const radilumBuyer = "JANEDECOR INC\n424 LINDSEY LN, TYLER, TX 75701-1590,\nUnited States";
         const bankAutoFill = {
-            radilum: radilumBank,
             jiangmen_radilum: radilumBank
+        };
+        const buyerAutoFill = {
+            jiangmen_radilum: radilumBuyer
         };
         const bankData = bankAutoFill[selectedSellerKey] || { bank_name: "", bank_address: "", account_name: "", account_number: "", swift_code: "" };
         document.getElementById('pi_bank_name').value = bankData.bank_name;
@@ -1451,6 +1456,7 @@
         document.getElementById('pi_account_name').value = bankData.account_name;
         document.getElementById('pi_account_number').value = bankData.account_number;
         document.getElementById('pi_swift_code').value = bankData.swift_code;
+        document.getElementById('buyer_info').value = buyerAutoFill[selectedSellerKey] || "";
     }
 
     function syncAndCalculate() {
