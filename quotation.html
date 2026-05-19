@@ -212,6 +212,164 @@ input, textarea, select { font-family: inherit; }
   font-size: 12px; font-weight: 600; color: #64748b;
 }
 .tabs button.active { background: #fff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+/* My Quotes / Team toggle */
+.cloud-view-toggle {
+  display: flex; gap: 4px;
+  background: #f1f5f9; border-radius: 7px; padding: 3px;
+  margin-bottom: 8px;
+}
+.view-mode-btn {
+  flex: 1; padding: 7px 10px;
+  background: transparent; border: none; border-radius: 5px;
+  font-size: 12px; font-weight: 600; color: #64748b;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.view-mode-btn:hover { color: #0f172a; }
+.view-mode-btn.active { background: #fff; color: #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.count-badge {
+  display: inline-block; background: #e2e8f0; color: #475569;
+  font-size: 10px; font-weight: 700; border-radius: 99px;
+  padding: 1px 7px; min-width: 18px; text-align: center;
+}
+.view-mode-btn.active .count-badge { background: #dbeafe; color: #1d4ed8; }
+
+/* Currently loaded indicator */
+.cloud-list-item.is-current {
+  background: linear-gradient(90deg, #ecfdf5 0%, #fff 100%);
+}
+.cloud-list-item.is-current::before {
+  content: '● '; color: #16a34a; font-size: 9px; margin-right: -4px;
+}
+.current-pill {
+  display: inline-block; background: #dcfce7; color: #15803d;
+  font-size: 9px; font-weight: 700; border-radius: 99px;
+  padding: 1px 6px; margin-left: 6px; vertical-align: middle;
+}
+.cloud-item-secondary {
+  font-size: 10px; color: #94a3b8; margin-top: 2px;
+}
+
+/* Status pill (draft / sent / won / lost / archived) */
+.status-tag {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  padding: 1px 7px; border-radius: 99px;
+  margin-left: 6px; vertical-align: middle;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.status-tag.draft    { background: #f1f5f9; color: #475569; }
+.status-tag.sent     { background: #dbeafe; color: #1d4ed8; }
+.status-tag.won      { background: #dcfce7; color: #15803d; }
+.status-tag.lost     { background: #fee2e2; color: #b91c1c; }
+.status-tag.archived { background: #f3e8ff; color: #6b21a8; }
+
+/* Status selector in form */
+.form-status-row {
+  display: flex; gap: 6px; align-items: center;
+  flex-wrap: wrap;
+}
+.status-btn {
+  flex: 1; min-width: 70px;
+  padding: 6px 8px; border: 1px solid #e2e8f0;
+  background: #fff; color: #64748b;
+  border-radius: 5px; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  cursor: pointer; transition: all 0.15s;
+}
+.status-btn:hover { border-color: #94a3b8; }
+.status-btn.active.draft    { background: #f1f5f9; color: #1e293b; border-color: #cbd5e1; }
+.status-btn.active.sent     { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+.status-btn.active.won      { background: #dcfce7; color: #15803d; border-color: #86efac; }
+.status-btn.active.lost     { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+.status-btn.active.archived { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+
+/* Amount display in list */
+.cloud-item-amount {
+  font-size: 11px; font-weight: 700; color: #0f172a;
+  margin-left: 8px; white-space: nowrap;
+}
+
+/* Toolbar actions inside the cloud panel */
+.cloud-toolbar {
+  display: flex; gap: 6px; margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.toolbar-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: #fff; border: 1px solid #cbd5e1; color: #475569;
+  padding: 6px 10px; border-radius: 5px;
+  font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+}
+.toolbar-btn:hover { background: #f8fafc; border-color: #94a3b8; }
+.toolbar-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.toolbar-btn.primary { background: #2563eb; color: #fff; border-color: #2563eb; }
+.toolbar-btn.primary:hover { background: #1d4ed8; }
+
+/* Status filter chips */
+.status-filter-row {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.status-chip {
+  padding: 3px 9px; border-radius: 99px;
+  background: #f1f5f9; border: 1px solid transparent;
+  font-size: 10px; font-weight: 600; color: #64748b;
+  cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+.status-chip:hover { background: #e2e8f0; }
+.status-chip.active { background: #0f172a; color: #fff; }
+
+/* Conflict / dirty warning */
+.conflict-banner {
+  background: #fff7ed; border: 1px solid #fdba74;
+  border-radius: 6px; padding: 8px 12px; margin-bottom: 8px;
+  font-size: 12px; color: #9a3412;
+  display: flex; gap: 8px; align-items: center;
+}
+
+/* Trash view */
+.view-mode-btn.trash-mode.active { color: #b91c1c; }
+.cloud-list-item.is-trashed { opacity: 0.7; }
+.cloud-list-item.is-trashed .cloud-item-name { text-decoration: line-through; }
+
+/* Image-too-large warning */
+.size-warning {
+  background: #fef3c7; border: 1px solid #fcd34d;
+  color: #92400e; padding: 6px 10px; border-radius: 5px;
+  font-size: 11px; margin-top: 6px;
+  display: none;
+}
+.size-warning.show { display: block; }
+
+/* Token security note */
+.security-warning {
+  background: #fef2f2; border: 1px solid #fecaca;
+  border-radius: 6px; padding: 10px 12px; margin-top: 10px;
+  font-size: 11px; color: #991b1b; line-height: 1.5;
+}
+
+/* Better mobile layout (sub-720 already exists; extend) */
+@media (max-width: 720px) {
+  .cloud-filter-row { flex-direction: column; }
+  .cloud-filter-row input,
+  .cloud-filter-row select,
+  .cloud-filter-row .btn-refresh { width: 100%; }
+  .cloud-toolbar .toolbar-btn { flex: 1; justify-content: center; }
+  .form-status-row { gap: 4px; }
+  .status-btn { font-size: 10px; padding: 5px 6px; }
+  .topbar-right .user-chip { display: none; }
+  .btn-cloud .kbd { display: none; }
+}
+@media (max-width: 480px) {
+  .cloud-view-toggle { flex-direction: column; }
+  .view-mode-btn { width: 100%; }
+  .status-filter-row { gap: 3px; }
+  .status-chip { padding: 2px 7px; font-size: 9px; }
+  .form-grid.cols-3 { grid-template-columns: 1fr; }
+}
 .cloud-filter-row {
   display: flex; gap: 6px; margin-bottom: 8px;
 }
@@ -630,13 +788,51 @@ input, textarea, select { font-family: inherit; }
 
     <!-- Cloud tab -->
     <div id="tab-cloud" class="tab-pane">
+      <!-- View mode segmented control: My / Team / Trash -->
+      <div class="cloud-view-toggle">
+        <button class="view-mode-btn active" data-view="mine" onclick="setCloudViewMode('mine')">
+          👤 My Quotes <span class="count-badge" id="count-mine">0</span>
+        </button>
+        <button class="view-mode-btn" data-view="all" onclick="setCloudViewMode('all')">
+          👥 Team <span class="count-badge" id="count-all">0</span>
+        </button>
+        <button class="view-mode-btn trash-mode" data-view="trash" onclick="setCloudViewMode('trash')">
+          🗑 Trash <span class="count-badge" id="count-trash">0</span>
+        </button>
+      </div>
+
+      <!-- Status filter chips -->
+      <div class="status-filter-row" id="status-filter-row">
+        <button class="status-chip active" data-status="" onclick="setStatusFilter('')">All</button>
+        <button class="status-chip" data-status="draft" onclick="setStatusFilter('draft')">Draft</button>
+        <button class="status-chip" data-status="sent" onclick="setStatusFilter('sent')">Sent</button>
+        <button class="status-chip" data-status="won" onclick="setStatusFilter('won')">Won</button>
+        <button class="status-chip" data-status="lost" onclick="setStatusFilter('lost')">Lost</button>
+        <button class="status-chip" data-status="archived" onclick="setStatusFilter('archived')">Archived</button>
+      </div>
+
       <div class="cloud-filter-row">
-        <input type="text" id="cloud-search" placeholder="Search by name, quote no…" oninput="renderCloudList()">
-        <select id="cloud-user-filter" onchange="renderCloudList()">
-          <option value="">All team members</option>
+        <input type="text" id="cloud-search" placeholder="Customer, PI no, or SKU…" oninput="renderCloudList()">
+        <select id="cloud-date-filter" onchange="renderCloudList()" title="Filter by date">
+          <option value="all">All dates</option>
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="week">Last 7 days</option>
+          <option value="month">Last 30 days</option>
+        </select>
+        <select id="cloud-user-filter" onchange="renderCloudList()" title="Filter by team member" style="display:none;">
+          <option value="">All members</option>
         </select>
         <button class="btn-refresh" onclick="loadCloudList()" title="Refresh">↺</button>
       </div>
+
+      <!-- Action toolbar: Duplicate, Export, Empty Trash -->
+      <div class="cloud-toolbar">
+        <button class="toolbar-btn" onclick="duplicateAsNew()" title="Copy current quote as a new draft with auto-incremented PI">📋 Duplicate as New</button>
+        <button class="toolbar-btn" onclick="exportCSV()" title="Export filtered list to CSV">📊 Export CSV</button>
+        <button class="toolbar-btn" id="btn-empty-trash" onclick="emptyTrash()" style="display:none;color:#b91c1c;">🗑 Empty Trash</button>
+      </div>
+
       <div class="cloud-list" id="cloud-list">
         <div class="cloud-list-empty">Click ↺ to load cloud records</div>
       </div>
@@ -713,6 +909,16 @@ input, textarea, select { font-family: inherit; }
             <option value="AUD">AUD (A$)</option>
             <option value="CAD">CAD (C$)</option>
           </select>
+        </div>
+        <div class="form-row" style="margin-top:8px;">
+          <label>Status</label>
+          <div class="form-status-row" id="status-selector">
+            <button type="button" class="status-btn active draft" data-status="draft" onclick="setQuoteStatus('draft')">Draft</button>
+            <button type="button" class="status-btn sent" data-status="sent" onclick="setQuoteStatus('sent')">Sent</button>
+            <button type="button" class="status-btn won" data-status="won" onclick="setQuoteStatus('won')">Won</button>
+            <button type="button" class="status-btn lost" data-status="lost" onclick="setQuoteStatus('lost')">Lost</button>
+            <button type="button" class="status-btn archived" data-status="archived" onclick="setQuoteStatus('archived')">Archive</button>
+          </div>
         </div>
       </fieldset>
 
@@ -1011,10 +1217,14 @@ input, textarea, select { font-family: inherit; }
     <p>Enter your name and the team's shared GitHub Token. Credentials are stored only in <strong>your own browser</strong> — never committed to the repository.</p>
     <label>Your Name * <span style="font-weight:400;color:#94a3b8;">(used to label quotes you save)</span></label>
     <input type="text" id="setup-name" placeholder="e.g., Alice, Bob, Charlie…">
+    <p id="setup-name-locked-warning" style="display:none;font-size:11px;color:#b91c1c;margin:4px 0 0;">⚠ Changing your name will orphan your existing cloud quotes (they will still be visible under the old name in Team view).</p>
     <label style="margin-top:14px;">GitHub Token * <span style="font-weight:400;color:#94a3b8;">(get from admin, starts with github_pat_)</span></label>
     <input type="password" id="setup-token" placeholder="github_pat_…">
     <div class="modal-tip">
       💡 After setup, click <strong>☁ Save to Cloud</strong> at the top of the page or press <kbd style="background:#e0f2fe;border:1px solid #bae6fd;padding:1px 4px;border-radius:3px;font-size:11px;">Ctrl+S</kbd> to save quickly.
+    </div>
+    <div class="security-warning">
+      <strong>🔒 Security note:</strong> This tool uses a <em>shared</em> team token. If someone leaves the team, an admin should regenerate the token on GitHub and re-distribute it to remaining members. Anyone with the token has full access to all quotes.
     </div>
     <div class="modal-actions">
       <button class="btn-modal-primary" onclick="saveSetup()">✓ Save & Continue</button>
@@ -1225,7 +1435,7 @@ const sellerData = {
   pinlighting:     { name:"Pinlighting",     prefix:"PL",  address:"1833 Wind Gate Rd, Baltimore, MD 21227",                               phone:"+1 800-953-1356",  website:"pinlighting.com", email:"info@pinlighting.com",     theme:"theme-blue"   },
   rayonshine:      { name:"Rayonshine",      prefix:"RS",  address:"2435 Sulphur Spring Rd, Baltimore, MD 21227",                          phone:"+1 800-978-5754",  website:"rayonshine.com",  email:"support@rayonshine.com",   theme:"theme-green"  },
   lumioshine:      { name:"Lumioshine",      prefix:"LS",  address:"1520 Caton Center Dr. Suite L-M, Baltimore MD 21227 USA",             phone:"+1 800-978-5754",  website:"lumioshine.com",  email:"service@lumioshine.com",   theme:"theme-gray"   },
-  jiangmen_radilum:{ name:"Radilum Inc",     prefix:"JRI", address:"Room 301, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone:"+8615876099121", website:"n/a", email:"info@mooielight.com",  theme:"theme-red"    },
+  jiangmen_radilum:{ name:"Radilum Inc",     prefix:"JRI", address:"Room 301, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone:"+8615876099121", website:"n/a", email:"",                          theme:"theme-red"    },
   jiangmen_vakker: { name:"Vakker Limited",  prefix:"JVL", address:"Room 401, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone:"+8615876099121", website:"n/a", email:"info@vakkerlimited.com", theme:"theme-blue"  }
 };
 
@@ -1292,14 +1502,30 @@ let termsManuallyEdited = false;
 let currentPreviewDoc = 'quotation';
 let syncTimer = null;
 let autoSaveTimer = null;
+let currentQuoteStatus = 'draft';      // status of the quote currently in the form
+let currentCreatedAt = null;            // ISO timestamp; preserved across saves of the same quote
+let currentLoadedSha = null;            // sha of the loaded record (for conflict detection)
+let statusFilter = '';                  // active status filter in cloud list ('' = all)
 const storageKey = 'quoteGeneratorSaves_v4';
 const draftKey   = 'quoteGenerator_draft_v1';
 const SETTINGS_KEY = 'quoteToolSettings_v1';
+const TRASH_PATH = 'quotes/_trash';     // soft-delete location
 
 /* ============================================================
    UTILITY
    ============================================================ */
 function $(id) { return document.getElementById(id); }
+
+/* Set the active status (also updates buttons UI). Triggers autosave. */
+function setQuoteStatus(status) {
+  const valid = ['draft','sent','won','lost','archived'];
+  if (!valid.includes(status)) status = 'draft';
+  currentQuoteStatus = status;
+  document.querySelectorAll('#status-selector .status-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.status === status);
+  });
+  scheduleSync();
+}
 function showToast(msg, type) {
   const t = $('toast');
   t.textContent = msg;
@@ -1387,6 +1613,24 @@ function setLanguage(lang) {
     if (dict[key]) el.innerText = dict[key];
     else if (translations.en[key]) el.innerText = translations.en[key];
   });
+  // If user had manually edited terms, ask before regenerating in the new language
+  if (termsManuallyEdited) {
+    const currentTerms = $('terms_conditions').value.trim();
+    // Only ask if the current content actually differs from the preset (heuristic to avoid spurious prompts)
+    if (currentTerms && currentTerms.length > 0) {
+      const regenerate = confirm(
+        'You have manually edited the Terms & Conditions.\n\n' +
+        'OK = regenerate terms in the new language (your edits will be lost)\n' +
+        'Cancel = keep your edits as-is (they will stay in the previous language)'
+      );
+      if (regenerate) {
+        termsManuallyEdited = false;
+        const preset = $('terms_preset').value;
+        const set = allTermsPresets[lang] || allTermsPresets.en;
+        $('terms_conditions').value = set[preset];
+      }
+    }
+  }
   syncAndCalculate();
 }
 
@@ -1727,6 +1971,18 @@ function collectFormData() {
   const bankFields = [];
   document.querySelectorAll('#pi-section .manual-input').forEach(inp => bankFields.push(inp.value));
 
+  // Compute total in USD for indexing (currency-agnostic so list shows comparable amounts)
+  let subtotalUSD = 0;
+  const rate = exchangeRates[$('currency').value]?.rate || 1;
+  items.forEach(it => {
+    const qty = parseFloat(it.qty) || 0;
+    const priceUSD = (parseFloat(it.price) || 0) / rate;
+    subtotalUSD += qty * priceUSD;
+  });
+  const discountPct = parseFloat($('discount_percentage').value) || 0;
+  const freightUSD = parseFloat($('freight_cost').value) || 0;
+  const totalUSD = subtotalUSD * (1 - discountPct / 100) + freightUSD;
+
   return {
     language_select:    $('language_select').value,
     seller_website:     $('seller_website').value,
@@ -1750,13 +2006,24 @@ function collectFormData() {
     terms_preset:       $('terms_preset').value,
     terms_conditions:   $('terms_conditions').value,
     pl_remarks:         ($('pl_remarks') || {}).value || '',
+    // Metadata for cloud indexing & lifecycle
+    _status:            currentQuoteStatus || 'draft',
+    _total_usd:         Math.round(totalUSD * 100) / 100,
+    _created_at:        currentCreatedAt || new Date().toISOString(),
+    _updated_at:        new Date().toISOString(),
+    _sku_list:          items.map(i => (i.sku || '').trim()).filter(Boolean).join(','),
     bankFields, items
   };
 }
 function restoreDataToForm(d) {
-  const skip = new Set(['items','bankFields','pl_remarks']);
+  // Set metadata FIRST so any sync triggered by form changes below has correct values
+  currentCreatedAt = d._created_at || new Date().toISOString();
+  // (we set status AFTER form is populated so the UI buttons reflect it; safe since collectFormData reads currentQuoteStatus directly)
+
+  const skip = new Set(['items','bankFields','pl_remarks','_status','_total_usd','_created_at','_updated_at','_sku_list']);
   for (const k in d) {
     if (skip.has(k)) continue;
+    if (k.startsWith('_')) continue;
     const el = $(k);
     if (el) el.value = d[k];
   }
@@ -1771,6 +2038,8 @@ function restoreDataToForm(d) {
   (d.items || []).forEach(it => addItem(it));
   const lang = d.language_select || 'en';
   $('language_select').value = lang;
+  // Set status before setLanguage to ensure any sync triggered has the correct status
+  setQuoteStatus(d._status || 'draft');
   setLanguage(lang);
 }
 
@@ -1808,6 +2077,10 @@ function restoreFromDraft() {
 function newQuote() {
   if (!confirm('Start a new quote? This clears the current form and the saved draft.')) return;
   localStorage.removeItem(draftKey);
+  currentLoadedPath = null;
+  currentLoadedSha = null;
+  currentCreatedAt = new Date().toISOString();
+  setQuoteStatus('draft');
   $('master-items').innerHTML = '';
   ['buyer_info','buyer_email','shipping_info','shipping_tel'].forEach(id => { const e = $(id); if (e) e.value = ''; });
   ['freight_cost','discount_percentage'].forEach(id => { const e = $(id); if (e) e.value = 0; });
@@ -1847,11 +2120,14 @@ function updateSaveSlotsDropdown(filter) {
 }
 function filterSaveSlots() { updateSaveSlotsDropdown($('save_search').value); }
 function saveData() {
-  const name = prompt('Enter a name for this entry:', `Quote ${new Date().toLocaleDateString()} ${$('pi_number').value}`);
+  const data = collectFormData();
+  const buyerName = getBuyerNameFromData(data) || $('pi_number').value || 'Quote';
+  const defaultName = `${buyerName} - ${new Date().toLocaleDateString()}`;
+  const name = prompt('Enter a name for this entry:', defaultName);
   if (!name) return;
-  const data = getSavedData();
-  data[name] = collectFormData();
-  localStorage.setItem(storageKey, JSON.stringify(data));
+  const savedData = getSavedData();
+  savedData[name] = data;
+  localStorage.setItem(storageKey, JSON.stringify(savedData));
   updateSaveSlotsDropdown();
   showFeedback(`Saved as "${name}"!`);
 }
@@ -1884,6 +2160,154 @@ const GH_REPO   = 'meigong-kpi';
 const GH_BRANCH = 'main';
 const GH_QUOTES_PATH = 'quotes';
 
+/* Sanitize a string into a filename-safe token.
+   Keeps Unicode letters/digits, replaces whitespace + path separators
+   with hyphens, removes URL-unsafe characters and quotes. Truncates to 50 chars. */
+function sanitizeForFilename(s) {
+  if (!s) return '';
+  const first = String(s).split('\n')[0].trim();
+  return first
+    .replace(/[\\\/\?<>:\*\|"'#%&\.`]/g, '')  // strip URL-unsafe, quotes, dot, backtick
+    .replace(/[\s_]+/g, '-')                   // whitespace & underscore → hyphen
+    .replace(/-+/g, '-')                       // collapse repeated hyphens
+    .replace(/^-+|-+$/g, '')                   // trim hyphens
+    .slice(0, 50) || '';
+}
+
+/* Extract a display name for the buyer (first non-empty line of buyer_info,
+   falling back to email local-part). Used as the primary filename token. */
+function getBuyerNameFromData(d) {
+  const info = (d.buyer_info || '').trim();
+  if (info) {
+    const firstLine = info.split('\n')[0].trim();
+    if (firstLine) return firstLine;
+  }
+  const email = (d.buyer_email || '').trim();
+  if (email && email.includes('@')) return email.split('@')[0];
+  return '';
+}
+
+/* Duplicate the currently-loaded quote as a new draft: auto-increment PI,
+   reset status to draft, reset created_at, and clear the loaded-record link. */
+function duplicateAsNew() {
+  // Bump PI number locally so the duplicate gets the next free slot
+  const cur = $('pi_number').value;
+  const m = cur.match(/^(.*?)(\d+)$/);
+  if (m) {
+    const incremented = (parseInt(m[2], 10) + 1).toString().padStart(m[2].length, '0');
+    $('pi_number').value = m[1] + incremented;
+    // Mirror to quote_number / po_number based on seller prefix
+    const sellerKey = $('seller_website').value;
+    const prefix = sellerData[sellerKey]?.prefix || '';
+    if (prefix && incremented) {
+      $('quote_number').value = `Q-${prefix}-${incremented}`;
+      $('po_number').value    = `JDI-${prefix}-${incremented}`;
+      orderNumberPart = incremented;
+    }
+  } else {
+    showToast('Could not parse current PI number — please set it manually', 'err');
+  }
+  // Reset state markers so save creates a NEW record
+  currentLoadedPath = null;
+  currentLoadedSha = null;
+  currentCreatedAt = new Date().toISOString();
+  setQuoteStatus('draft');
+  // Update date to today
+  const today = new Date();
+  $('date_of_issue').valueAsDate = today;
+  const v = new Date(); v.setDate(today.getDate() + 30);
+  $('valid_until').valueAsDate = v;
+  scheduleSync();
+  showToast('Duplicated as new draft. Save when ready.', 'ok');
+}
+
+/* Export the currently filtered cloud list to a CSV file. */
+function exportCSV() {
+  if (!cloudRecords.length) { showToast('No records loaded — refresh first', 'err'); return; }
+  // Re-apply same filters as renderCloudList by reading filter inputs
+  const search = ($('cloud-search')?.value || '').toLowerCase();
+  const uf = $('cloud-user-filter')?.value || '';
+  const dateFilter = $('cloud-date-filter')?.value || 'all';
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfYesterday = new Date(startOfToday); startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+  const startOfWeek = new Date(startOfToday); startOfWeek.setDate(startOfWeek.getDate() - 6);
+  const startOfMonth = new Date(startOfToday); startOfMonth.setDate(startOfMonth.getDate() - 29);
+  function passesDate(rec) {
+    if (dateFilter === 'all') return true;
+    if (!rec.date) return false;
+    const iso = rec.date.replace(/T(\d{2})-(\d{2})/, 'T$1:$2');
+    const d = new Date(iso);
+    if (isNaN(d)) return false;
+    if (dateFilter === 'today') return d >= startOfToday;
+    if (dateFilter === 'yesterday') return d >= startOfYesterday && d < startOfToday;
+    if (dateFilter === 'week') return d >= startOfWeek;
+    if (dateFilter === 'month') return d >= startOfMonth;
+    return true;
+  }
+  const rows = cloudRecords.filter(r => {
+    if (uf && r.user !== uf) return false;
+    if (!passesDate(r)) return false;
+    if (statusFilter && r.status !== statusFilter) return false;
+    if (search) {
+      const hay = `${r.buyerName} ${r.piNo} ${r.user} ${r.status}`.toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+  if (!rows.length) { showToast('Nothing to export (filtered list is empty)', 'err'); return; }
+
+  // Build CSV (RFC 4180-compatible)
+  const escape = v => {
+    if (v == null) return '';
+    const s = String(v);
+    return /["\n,]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const lines = [['Date','User','Customer','PI No.','Status','Amount (USD)','View'].join(',')];
+  rows.forEach(r => {
+    const dateDisplay = r.date ? r.date.replace('T',' ').replace(/-(\d{2})$/, ':$1').slice(0,16) : '';
+    const viewUrl = r.downloadUrl || '';
+    lines.push([dateDisplay, r.user, r.buyerName, r.piNo, r.status, r.amount, viewUrl].map(escape).join(','));
+  });
+  const csv = '\uFEFF' + lines.join('\n'); // BOM so Excel reads UTF-8 correctly
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `quotes-export-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${rows.length} record(s) to CSV`, 'ok');
+}
+
+/* Set PI auto-increment to (max-existing + 1) within the currently-selected seller.
+   Called after a fresh cloud list load to avoid PI number collisions. */
+function refreshPiAutoIncrement() {
+  const sellerKey = $('seller_website').value;
+  const prefix = sellerData[sellerKey]?.prefix;
+  if (!prefix) return;
+  // Match piNo strings like "RD-1023" or "JRI-1024" — pull the numeric tail
+  let maxNum = 1000; // baseline so first record is 1001
+  cloudRecords.forEach(r => {
+    if (!r.piNo) return;
+    // Accept records where the piNo contains the seller prefix
+    if (!r.piNo.includes(prefix)) return;
+    const tail = r.piNo.match(/(\d+)\s*$/);
+    if (tail) {
+      const n = parseInt(tail[1], 10);
+      if (n > maxNum) maxNum = n;
+    }
+  });
+  // Only update if user hasn't already manually set something higher
+  const current = parseInt(orderNumberPart, 10) || 0;
+  if (maxNum >= current) {
+    orderNumberPart = (maxNum + 1).toString();
+    // Only auto-update the visible fields if this is a fresh quote (no loaded record)
+    if (!currentLoadedPath) updateOrderNumbers();
+  }
+}
+
 function getSettings()  { try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; } catch(e) { return {}; } }
 function getToken()     { return getSettings().token    || ''; }
 function getUsername()  { return getSettings().username || ''; }
@@ -1892,6 +2316,18 @@ function saveSetup() {
   const token = $('setup-token').value.trim();
   if (!name)  { alert('Please enter your name.'); return; }
   if (!token) { alert('Please enter the GitHub token.'); return; }
+  const prev = getSettings();
+  if (prev.username && prev.username !== name) {
+    const hasMyRecords = cloudRecords.some(r => r.user === prev.username);
+    if (hasMyRecords) {
+      const proceed = confirm(
+        `You are about to change your name from "${prev.username}" to "${name}".\n\n` +
+        `Your existing ${cloudRecords.filter(r => r.user === prev.username).length} quote(s) will remain under "${prev.username}" in Team view, ` +
+        `and new saves will go under "${name}". Continue?`
+      );
+      if (!proceed) return;
+    }
+  }
   localStorage.setItem(SETTINGS_KEY, JSON.stringify({ username: name, token }));
   closeSettings();
   renderUserBar();
@@ -1901,6 +2337,13 @@ function openSettings() {
   const s = getSettings();
   $('setup-name').value  = s.username || '';
   $('setup-token').value = s.token    || '';
+  // If a username is already set AND the user has cloud records, warn about orphaning
+  const warning = $('setup-name-locked-warning');
+  if (warning) {
+    const hasExistingName = !!s.username;
+    const hasMyRecords = cloudRecords.some(r => r.user === s.username);
+    warning.style.display = (hasExistingName && hasMyRecords) ? '' : 'none';
+  }
   $('settings-overlay').classList.remove('hidden');
 }
 function closeSettings() { $('settings-overlay').classList.add('hidden'); }
@@ -1928,7 +2371,9 @@ function renderUserBar() {
 async function ghAPI(path, method, body) {
   const token = getToken();
   if (!token) { setCloudStatus('Please set up your token first (click ⚙)', 'err'); return null; }
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`;
+  // URL-encode path segments individually (preserves slashes) so Chinese/unicode/space-laden filenames work
+  const encodedPath = path.split('/').map(seg => encodeURIComponent(seg)).join('/');
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${encodedPath}`;
   const opts = { method, headers: { 'Authorization':'token '+token, 'Accept':'application/vnd.github.v3+json', 'Content-Type':'application/json' } };
   if (body) opts.body = JSON.stringify(body);
   try {
@@ -1940,43 +2385,207 @@ async function ghAPI(path, method, body) {
 }
 let cloudRecords = [];
 let selectedCloudItem = null;
+let cloudViewMode = 'mine';        // 'mine' | 'all'
+let currentLoadedPath = null;       // track currently-loaded record
+let teamUserCounts = {};            // for team-mode count
+
+function setCloudViewMode(mode) {
+  cloudViewMode = mode;
+  document.querySelectorAll('.view-mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === mode);
+  });
+  // Show team-member filter only in 'all' mode
+  const uf = $('cloud-user-filter');
+  if (uf) uf.style.display = mode === 'all' ? '' : 'none';
+  // Show Empty Trash button only in trash mode
+  const trashBtn = $('btn-empty-trash');
+  if (trashBtn) trashBtn.style.display = mode === 'trash' ? '' : 'none';
+  loadCloudList();
+}
+
+function setStatusFilter(status) {
+  statusFilter = status;
+  document.querySelectorAll('.status-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.status === status);
+  });
+  renderCloudList();
+}
+
 async function loadCloudList() {
   if (!getToken()) { openSettings(); return; }
+  const me = getUsername();
   setCloudStatus('<span class="loading-spinner"></span> Loading from GitHub…', '');
   $('cloud-list').innerHTML = '<div class="cloud-list-empty"><span class="loading-spinner"></span> Fetching records…</div>';
-  const usersData = await ghAPI(GH_QUOTES_PATH, 'GET');
-  if (!usersData || usersData._notFound) { cloudRecords = []; renderCloudList(); setCloudStatus('No cloud records yet. Save your first quote!', ''); return; }
-  if (!Array.isArray(usersData)) { setCloudStatus('Unexpected response from GitHub.', 'err'); return; }
-  const userFolders = usersData.filter(f => f.type === 'dir');
   cloudRecords = [];
-  await Promise.all(userFolders.map(async folder => {
-    const files = await ghAPI(`${GH_QUOTES_PATH}/${folder.name}`, 'GET');
-    if (!Array.isArray(files)) return;
-    files.filter(f => f.name.endsWith('.json')).forEach(f => {
-      const parts = f.name.replace('.json','').split('__');
-      cloudRecords.push({ user: folder.name, filename: f.name, path: f.path, sha: f.sha, downloadUrl: f.download_url, quoteName: parts[0]||f.name, date: parts[1]||'' });
+
+  if (cloudViewMode === 'mine') {
+    // Fast path: ONLY load this user's folder
+    const files = await ghAPI(`${GH_QUOTES_PATH}/${me}`, 'GET');
+    if (files && !files._notFound && Array.isArray(files)) {
+      files.filter(f => f.name.endsWith('.json')).forEach(f => {
+        cloudRecords.push(parseCloudFile(f, me));
+      });
+    }
+    $('count-mine').textContent = cloudRecords.length;
+  } else if (cloudViewMode === 'trash') {
+    // Trash mode: scan the _trash folder (all users)
+    const trashRoot = await ghAPI(TRASH_PATH, 'GET');
+    if (trashRoot && !trashRoot._notFound && Array.isArray(trashRoot)) {
+      const trashUsers = trashRoot.filter(f => f.type === 'dir');
+      await Promise.all(trashUsers.map(async folder => {
+        const files = await ghAPI(`${TRASH_PATH}/${folder.name}`, 'GET');
+        if (!Array.isArray(files)) return;
+        files.filter(f => f.name.endsWith('.json')).forEach(f => {
+          const rec = parseCloudFile(f, folder.name);
+          rec.trashed = true;
+          cloudRecords.push(rec);
+        });
+      }));
+    }
+    $('count-trash').textContent = cloudRecords.length;
+  } else {
+    // Team mode
+    const usersData = await ghAPI(GH_QUOTES_PATH, 'GET');
+    if (!usersData || usersData._notFound) {
+      cloudRecords = []; renderCloudList();
+      setCloudStatus('No cloud records yet. Save your first quote!', '');
+      $('count-mine').textContent = '0'; $('count-all').textContent = '0';
+      return;
+    }
+    if (!Array.isArray(usersData)) { setCloudStatus('Unexpected response from GitHub.', 'err'); return; }
+    // Skip the _trash folder when counting team records
+    const userFolders = usersData.filter(f => f.type === 'dir' && !f.name.startsWith('_'));
+    teamUserCounts = {};
+    await Promise.all(userFolders.map(async folder => {
+      const files = await ghAPI(`${GH_QUOTES_PATH}/${folder.name}`, 'GET');
+      if (!Array.isArray(files)) return;
+      const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+      teamUserCounts[folder.name] = jsonFiles.length;
+      jsonFiles.forEach(f => cloudRecords.push(parseCloudFile(f, folder.name)));
+    }));
+    const uf = $('cloud-user-filter');
+    const cur = uf.value;
+    uf.innerHTML = '<option value="">All members</option>';
+    [...new Set(cloudRecords.map(r => r.user))].sort().forEach(u => {
+      const o = document.createElement('option');
+      o.value = u; o.textContent = `${u} (${teamUserCounts[u] || 0})`;
+      uf.appendChild(o);
     });
-  }));
+    if (cur) uf.value = cur;
+    $('count-mine').textContent = (teamUserCounts[me] || 0);
+    $('count-all').textContent = cloudRecords.length;
+  }
   cloudRecords.sort((a,b) => b.date.localeCompare(a.date));
-  const uf = $('cloud-user-filter');
-  const cur = uf.value;
-  uf.innerHTML = '<option value="">All team members</option>';
-  [...new Set(cloudRecords.map(r => r.user))].forEach(u => { const o = document.createElement('option'); o.value=u; o.textContent=u; uf.appendChild(o); });
-  if (cur) uf.value = cur;
+
+  // Update PI auto-increment to be max + 1 within this seller's records
+  refreshPiAutoIncrement();
+
   renderCloudList();
   setCloudStatus(`✓ ${cloudRecords.length} record(s) loaded`, 'ok');
+}
+
+// Parse a cloud filename into structured fields. Handles 3 historical formats:
+// v3 (latest): {buyerName}__{piNo}__{status}__{amount}__{dateStr}.json  (5 parts)
+// v2:          {buyerName}__{piNo}__{dateStr}.json                       (3 parts)
+// v1 (old):    {piNo}__{dateStr}.json                                    (2 parts)
+function parseCloudFile(f, user) {
+  const parts = f.name.replace('.json','').split('__');
+  let buyerName = '', piNo = '', status = 'draft', amount = 0, date = '';
+  if (parts.length >= 5) {
+    buyerName = parts[0]; piNo = parts[1]; status = parts[2];
+    amount = parseFloat(parts[3]) || 0;
+    date = parts.slice(4).join('__');
+  } else if (parts.length === 3) {
+    buyerName = parts[0]; piNo = parts[1]; date = parts[2];
+  } else if (parts.length === 2) {
+    piNo = parts[0]; date = parts[1];
+  } else {
+    piNo = parts[0] || f.name;
+  }
+  // Validate status (treat unknown as draft for forward-compat safety)
+  if (!['draft','sent','won','lost','archived'].includes(status)) status = 'draft';
+  const displayName = buyerName ? buyerName.replace(/-/g, ' ') : '(unnamed customer)';
+  return {
+    user, filename: f.name, path: f.path, sha: f.sha, downloadUrl: f.download_url,
+    buyerName: displayName, piNo, date, status, amount,
+    quoteName: displayName
+  };
 }
 function renderCloudList() {
   const search = ($('cloud-search')?.value || '').toLowerCase();
   const uf = $('cloud-user-filter')?.value || '';
+  const dateFilter = $('cloud-date-filter')?.value || 'all';
   const list = $('cloud-list');
-  const filtered = cloudRecords.filter(r => (!uf || r.user===uf) && (!search || r.quoteName.toLowerCase().includes(search) || r.user.toLowerCase().includes(search)));
-  if (!filtered.length) { list.innerHTML = `<div class="cloud-list-empty">${cloudRecords.length===0?'No cloud records yet.':'No matches found.'}</div>`; selectedCloudItem=null; $('btn-cloud-load').disabled=true; return; }
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfYesterday = new Date(startOfToday); startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+  const startOfWeek = new Date(startOfToday); startOfWeek.setDate(startOfWeek.getDate() - 6);
+  const startOfMonth = new Date(startOfToday); startOfMonth.setDate(startOfMonth.getDate() - 29);
+
+  function passesDateFilter(rec) {
+    if (dateFilter === 'all') return true;
+    if (!rec.date) return false;
+    const iso = rec.date.replace(/T(\d{2})-(\d{2})/, 'T$1:$2');
+    const d = new Date(iso);
+    if (isNaN(d)) return false;
+    if (dateFilter === 'today') return d >= startOfToday;
+    if (dateFilter === 'yesterday') return d >= startOfYesterday && d < startOfToday;
+    if (dateFilter === 'week') return d >= startOfWeek;
+    if (dateFilter === 'month') return d >= startOfMonth;
+    return true;
+  }
+
+  const filtered = cloudRecords.filter(r => {
+    if (uf && r.user !== uf) return false;
+    if (!passesDateFilter(r)) return false;
+    if (statusFilter && r.status !== statusFilter) return false;
+    if (search) {
+      // Search across buyerName, piNo, user, status
+      const hay = `${r.buyerName} ${r.piNo} ${r.user} ${r.status}`.toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  if (!filtered.length) {
+    const baseMsg = cloudRecords.length === 0
+      ? (cloudViewMode === 'mine' ? 'No quotes yet. Click ⬆ Save to Cloud to create your first one.' :
+         cloudViewMode === 'trash' ? 'Trash is empty.' : 'No team records yet.')
+      : 'No matches for current filters.';
+    list.innerHTML = `<div class="cloud-list-empty">${baseMsg}</div>`;
+    selectedCloudItem = null; $('btn-cloud-load').disabled = true;
+    return;
+  }
+
   list.innerHTML = '';
   filtered.forEach(r => {
+    const isCurrent = currentLoadedPath && currentLoadedPath === r.path;
     const div = document.createElement('div');
-    div.className = 'cloud-list-item' + (selectedCloudItem?.path === r.path ? ' selected' : '');
-    div.innerHTML = `<div class="cloud-item-avatar" style="background:${nameToColor(r.user)}">${r.user.charAt(0).toUpperCase()}</div><div class="cloud-item-info"><div class="cloud-item-name">${r.quoteName}</div><div class="cloud-item-meta">${r.user} · ${r.date?r.date.replace('T',' ').slice(0,16):'—'}</div></div><button class="cloud-item-del" onclick="event.stopPropagation();cloudDelete('${r.path}','${r.sha}','${r.quoteName.replace(/'/g,'')}')">✕</button>`;
+    div.className = 'cloud-list-item'
+      + (selectedCloudItem?.path === r.path ? ' selected' : '')
+      + (isCurrent ? ' is-current' : '')
+      + (r.trashed ? ' is-trashed' : '');
+    const dateDisplay = r.date ? r.date.replace('T',' ').replace(/-(\d{2})$/, ':$1').slice(0,16) : '—';
+    const amountDisplay = r.amount ? `$${r.amount.toLocaleString('en-US', {maximumFractionDigits: 0})}` : '';
+    // Strip ALL quotes from name BEFORE injecting into JS onclick arg (avoids breaking the string literal)
+    const safeName = (r.buyerName || '').replace(/['"]/g, '');
+    const delBtn = r.trashed
+      ? `<button class="cloud-item-del" title="Restore" onclick="event.stopPropagation();restoreFromTrash('${r.path}','${r.sha}','${safeName}')">↺</button>
+         <button class="cloud-item-del" title="Permanently delete" onclick="event.stopPropagation();permanentDelete('${r.path}','${r.sha}','${safeName}')">✕</button>`
+      : `<button class="cloud-item-del" title="Move to trash" onclick="event.stopPropagation();cloudDelete('${r.path}','${r.sha}','${safeName}')">✕</button>`;
+    div.innerHTML = `
+      <div class="cloud-item-avatar" style="background:${nameToColor(r.user)}">${r.user.charAt(0).toUpperCase()}</div>
+      <div class="cloud-item-info">
+        <div class="cloud-item-name">
+          ${escapeHTML(r.buyerName)}
+          <span class="status-tag ${r.status}">${r.status}</span>
+          ${isCurrent ? '<span class="current-pill">CURRENT</span>' : ''}
+        </div>
+        <div class="cloud-item-meta">${escapeHTML(r.user)} · ${dateDisplay}${amountDisplay ? ` · <strong>${amountDisplay}</strong>` : ''}</div>
+        <div class="cloud-item-secondary">PI: ${escapeHTML(r.piNo)}</div>
+      </div>
+      <div style="display:flex;gap:2px;">${delBtn}</div>`;
     div.addEventListener('click', () => {
       selectedCloudItem = r;
       document.querySelectorAll('.cloud-list-item').forEach(e => e.classList.remove('selected'));
@@ -1986,42 +2595,220 @@ function renderCloudList() {
     list.appendChild(div);
   });
 }
+
+function escapeHTML(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 async function cloudSave() {
   const username = getUsername();
   if (!username) { openSettings(); return; }
   const data = collectFormData();
-  const piNo = (data.pi_number || 'QUOTE').replace(/[^a-zA-Z0-9\-_]/g, '_');
+  const piNo = sanitizeForFilename(data.pi_number || 'QUOTE') || 'QUOTE';
+  const buyerName = sanitizeForFilename(getBuyerNameFromData(data)) || 'Unnamed';
+  const status = data._status || 'draft';
+  const amountInt = Math.round(data._total_usd || 0);
   const dateStr = new Date().toISOString().slice(0,16).replace(':','-');
-  const path = `${GH_QUOTES_PATH}/${username}/${piNo}__${dateStr}.json`;
+  // New filename format (5 segments): {buyerName}__{piNo}__{status}__{amount}__{date}.json
+  const filename = `${buyerName}__${piNo}__${status}__${amountInt}__${dateStr}.json`;
+  const path = `${GH_QUOTES_PATH}/${username}/${filename}`;
+
+  // Size sanity check before sending (GitHub: 100MB hard limit per file; we warn at 5MB)
+  const payload = JSON.stringify(data, null, 2);
+  const sizeKB = Math.round(payload.length / 1024);
+  if (sizeKB > 5000) {
+    if (!confirm(`This quote is ${sizeKB}KB (mostly from pasted images). Saving may be slow or fail at >100MB. Continue?`)) return;
+  }
+
   setCloudStatus('<span class="loading-spinner"></span> Saving to GitHub…', '');
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-  const existing = await ghAPI(path, 'GET');
-  const body = { message: `Save quote: ${piNo} by ${username}`, content, branch: GH_BRANCH };
-  if (existing && existing.sha) body.sha = existing.sha;
+  const content = btoa(unescape(encodeURIComponent(payload)));
+
+  // Find any existing record for this same logical quote (same path OR same buyerName+piNo combo by this user)
+  let existingPath = currentLoadedPath;
+  let existingSha = null;
+  if (existingPath) {
+    const existing = await ghAPI(existingPath, 'GET');
+    if (existing && !existing._notFound && existing.sha) {
+      existingSha = existing.sha;
+      // CONFLICT DETECTION: if the sha on the server differs from what we loaded, someone else edited it
+      if (currentLoadedSha && existingSha !== currentLoadedSha) {
+        const proceed = confirm(
+          '⚠ Conflict detected!\n\n' +
+          'This quote has been modified in the cloud since you loaded it ' +
+          '(possibly by another team member).\n\n' +
+          'OK = overwrite their changes with yours\n' +
+          'Cancel = abort save (recommended: refresh the list and reload)'
+        );
+        if (!proceed) {
+          setCloudStatus('Save cancelled — please reload to see latest changes.', 'err');
+          return;
+        }
+      }
+    }
+  }
+
+  // If the new path differs from the existing path (e.g. user changed PI no, buyer name, status, or amount),
+  // we delete the old record after the new one is saved to avoid orphan duplicates.
+  const pathChanged = existingPath && existingPath !== path;
+
+  const body = { message: `Save quote: ${buyerName} (${piNo}) [${status}] by ${username}`, content, branch: GH_BRANCH };
+  // If saving to the same path that exists, include sha for atomic update
+  if (!pathChanged && existingSha) body.sha = existingSha;
+  // If new path, check whether that path already exists (e.g. dup save)
+  if (pathChanged) {
+    const collide = await ghAPI(path, 'GET');
+    if (collide && collide.sha) body.sha = collide.sha;
+  }
+
   const result = await ghAPI(path, 'PUT', body);
-  if (result && result.content) { setCloudStatus(`✓ Saved to cloud: ${piNo}`, 'ok'); showToast('Saved to cloud', 'ok'); loadCloudList(); }
+  if (result && result.content) {
+    // Clean up old record if path changed (orphan prevention)
+    if (pathChanged && existingSha) {
+      const cleanup = await ghAPI(existingPath, 'DELETE', {
+        message: `Cleanup superseded: ${existingPath.split('/').pop()}`,
+        sha: existingSha,
+        branch: GH_BRANCH
+      });
+      if (cleanup !== null) console.log('Cleaned up old record at', existingPath);
+    }
+    setCloudStatus(`✓ Saved: ${getBuyerNameFromData(data) || piNo} [${status}]`, 'ok');
+    showToast('Saved to cloud', 'ok');
+    currentLoadedPath = path;
+    currentLoadedSha = result.content.sha;
+    loadCloudList();
+  }
 }
 async function cloudLoad() {
   if (!selectedCloudItem) return;
+  if (selectedCloudItem.trashed) {
+    showToast('This is a trashed record. Restore it first to edit.', 'err');
+    return;
+  }
   setCloudStatus('<span class="loading-spinner"></span> Loading…', '');
   try {
     const resp = await fetch(selectedCloudItem.downloadUrl);
     const data = await resp.json();
     restoreDataToForm(data);
-    setCloudStatus(`✓ Loaded: ${selectedCloudItem.quoteName}`, 'ok');
+    currentLoadedPath = selectedCloudItem.path;
+    currentLoadedSha = selectedCloudItem.sha; // remember sha for conflict detection on next save
+    setCloudStatus(`✓ Loaded: ${selectedCloudItem.buyerName || selectedCloudItem.piNo}`, 'ok');
     showToast('Loaded from cloud', 'ok');
+    renderCloudList();
   } catch(e) { setCloudStatus('Failed to load: ' + e.message, 'err'); }
 }
+/* Soft delete: move record to _trash folder (instead of permanent deletion).
+   GitHub Contents API has no rename, so we create-then-delete. */
 async function cloudDelete(path, sha, name) {
-  if (!confirm(`Delete "${name}" from the cloud? This cannot be undone.`)) return;
-  setCloudStatus('<span class="loading-spinner"></span> Deleting…', '');
-  const result = await ghAPI(path, 'DELETE', { message:`Delete quote: ${name}`, sha, branch: GH_BRANCH });
-  if (result !== null) {
+  if (!confirm(`Move "${name}" to Trash? You can restore it later.`)) return;
+  setCloudStatus('<span class="loading-spinner"></span> Moving to trash…', '');
+  // 1. Read the file content
+  const orig = await ghAPI(path, 'GET');
+  if (!orig || orig._notFound) {
+    setCloudStatus('Source not found — refreshing list.', 'err');
+    loadCloudList(); return;
+  }
+  // 2. Write to trash path
+  const parts = path.split('/');
+  const username = parts[1] || 'unknown';
+  const filename = parts[parts.length - 1];
+  const trashPath = `${TRASH_PATH}/${username}/${filename}`;
+  const writeResult = await ghAPI(trashPath, 'PUT', {
+    message: `Trash: ${filename}`,
+    content: orig.content.replace(/\n/g, ''), // GH returns base64 wrapped; PUT wants unwrapped
+    branch: GH_BRANCH
+  });
+  if (!writeResult || !writeResult.content) {
+    setCloudStatus('Failed to move to trash (write step).', 'err');
+    return;
+  }
+  // 3. Delete original
+  const delResult = await ghAPI(path, 'DELETE', {
+    message: `Move to trash: ${filename}`,
+    sha,
+    branch: GH_BRANCH
+  });
+  if (delResult !== null) {
     cloudRecords = cloudRecords.filter(r => r.path !== path);
     if (selectedCloudItem?.path === path) { selectedCloudItem = null; $('btn-cloud-load').disabled = true; }
+    if (currentLoadedPath === path) { currentLoadedPath = null; currentLoadedSha = null; }
+    setCloudStatus(`✓ Moved "${name}" to trash`, 'ok');
+    showToast('Moved to trash (restore from 🗑 Trash view)', 'ok');
     renderCloudList();
-    setCloudStatus(`✓ Deleted "${name}"`, 'ok');
   }
+}
+
+async function restoreFromTrash(trashPath, sha, name) {
+  if (!confirm(`Restore "${name}" from trash?`)) return;
+  setCloudStatus('<span class="loading-spinner"></span> Restoring…', '');
+  const orig = await ghAPI(trashPath, 'GET');
+  if (!orig || orig._notFound) { setCloudStatus('Source not found.', 'err'); return; }
+  const parts = trashPath.split('/');
+  // trashPath is like quotes/_trash/{username}/{filename}
+  const username = parts[2] || 'unknown';
+  const filename = parts[parts.length - 1];
+  const restorePath = `${GH_QUOTES_PATH}/${username}/${filename}`;
+  // Avoid clobbering if same path already exists
+  const existing = await ghAPI(restorePath, 'GET');
+  if (existing && existing.sha) {
+    if (!confirm('A record with the same filename already exists in the active list. Overwrite it?')) {
+      setCloudStatus('Restore cancelled.', '');
+      return;
+    }
+  }
+  const writeBody = {
+    message: `Restore from trash: ${filename}`,
+    content: orig.content.replace(/\n/g, ''),
+    branch: GH_BRANCH
+  };
+  if (existing && existing.sha) writeBody.sha = existing.sha;
+  const writeResult = await ghAPI(restorePath, 'PUT', writeBody);
+  if (!writeResult || !writeResult.content) {
+    setCloudStatus('Failed to restore.', 'err'); return;
+  }
+  // Delete from trash
+  await ghAPI(trashPath, 'DELETE', {
+    message: `Restore complete, remove trash copy: ${filename}`,
+    sha,
+    branch: GH_BRANCH
+  });
+  setCloudStatus(`✓ Restored "${name}"`, 'ok');
+  showToast('Restored from trash', 'ok');
+  loadCloudList();
+}
+
+async function permanentDelete(path, sha, name) {
+  if (!confirm(`Permanently delete "${name}"? This cannot be undone.`)) return;
+  if (!confirm('Are you absolutely sure? This will erase the record forever.')) return;
+  setCloudStatus('<span class="loading-spinner"></span> Permanently deleting…', '');
+  const result = await ghAPI(path, 'DELETE', {
+    message: `Permanent delete: ${path.split('/').pop()}`,
+    sha,
+    branch: GH_BRANCH
+  });
+  if (result !== null) {
+    cloudRecords = cloudRecords.filter(r => r.path !== path);
+    setCloudStatus(`✓ Permanently deleted "${name}"`, 'ok');
+    renderCloudList();
+  }
+}
+
+async function emptyTrash() {
+  const trashedRecords = cloudRecords.filter(r => r.trashed);
+  if (!trashedRecords.length) { showToast('Trash is already empty', 'ok'); return; }
+  if (!confirm(`Permanently delete ALL ${trashedRecords.length} item(s) in the trash? This cannot be undone.`)) return;
+  if (!confirm('This will erase everything in the trash. Really proceed?')) return;
+  setCloudStatus(`<span class="loading-spinner"></span> Emptying trash (${trashedRecords.length})…`, '');
+  let successCount = 0;
+  for (const r of trashedRecords) {
+    const result = await ghAPI(r.path, 'DELETE', {
+      message: `Empty trash: ${r.filename}`,
+      sha: r.sha,
+      branch: GH_BRANCH
+    });
+    if (result !== null) successCount++;
+  }
+  setCloudStatus(`✓ Emptied trash (${successCount}/${trashedRecords.length} deleted)`, 'ok');
+  showToast('Trash emptied', 'ok');
+  loadCloudList();
 }
 function setCloudStatus(html, type) {
   const el = $('cloud-status');
@@ -2097,6 +2884,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   renderUserBar();
 
+  // Initialize created_at for new quotes
+  if (!currentCreatedAt) currentCreatedAt = new Date().toISOString();
+
   // Restore draft if any, else fresh state
   const restored = restoreFromDraft();
   if (!restored) {
@@ -2105,6 +2895,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTerms();
     addItem();
     setLanguage('en');
+    setQuoteStatus('draft');
   }
 
   switchPreview('quotation');
