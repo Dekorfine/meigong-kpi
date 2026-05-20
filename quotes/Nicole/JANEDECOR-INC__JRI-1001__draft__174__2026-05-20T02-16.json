@@ -1,0 +1,49 @@
+{
+  "language_select": "en",
+  "seller_website": "jiangmen_radilum",
+  "quote_number": "Q-JRI-1001",
+  "pi_number": "JRI-1001",
+  "po_number": "JDI-JRI-1001",
+  "date_of_issue": "2026-05-15",
+  "valid_until": "2026-06-14",
+  "currency": "USD",
+  "buyer_info": "JANEDECOR INC\n424 LINDSEY LN, TYLER, TX 75701-1590,\nUnited States",
+  "buyer_email": "lvy@dekorfine.com",
+  "shipping_info": "",
+  "shipping_tel": "15877063827",
+  "freight_cost": "0",
+  "seller_name": "Radilum Inc",
+  "seller_address": "Room 301, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China",
+  "seller_phone": "+8615876099121",
+  "seller_email": "info@mooielight.com",
+  "seller_website_url": "n/a",
+  "discount_percentage": "15",
+  "terms_preset": "standard",
+  "terms_conditions": "1. Prices are quoted in USD and do not include customs duties or taxes.\n2. This quotation is valid for 30 days.\n3. Payment Terms: For orders over $1000, a 30% deposit is required upon order confirmation, with the 70% balance due before shipment.\n4. Lead Time: 4-6 weeks upon receipt of deposit.",
+  "pl_remarks": "",
+  "_status": "draft",
+  "_total_usd": 174.25,
+  "_created_at": "2026-05-20T02:15:51.750Z",
+  "_updated_at": "2026-05-20T02:16:00.609Z",
+  "_sku_list": "bk-00254",
+  "bankFields": [
+    "China Merchants Bank Co., Ltd., Zhongshan Guzhen Branch",
+    "No. 17, Zhongxing Avenue, Guzhen Town, Zhongshan City, Guangdong Province",
+    "Radilum INC",
+    "76090192D632009",
+    "CMBCCNBSXXX"
+  ],
+  "items": [
+    {
+      "sku": "bk-00254",
+      "description": "",
+      "qty": "1",
+      "price": "205.00",
+      "imageSrc": "",
+      "cartonNo": "",
+      "nw": "0.00",
+      "gw": "0.00",
+      "cbm": "0.000"
+    }
+  ]
+}
