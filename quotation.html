@@ -212,164 +212,6 @@ input, textarea, select { font-family: inherit; }
   font-size: 12px; font-weight: 600; color: #64748b;
 }
 .tabs button.active { background: #fff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-
-/* My Quotes / Team toggle */
-.cloud-view-toggle {
-  display: flex; gap: 4px;
-  background: #f1f5f9; border-radius: 7px; padding: 3px;
-  margin-bottom: 8px;
-}
-.view-mode-btn {
-  flex: 1; padding: 7px 10px;
-  background: transparent; border: none; border-radius: 5px;
-  font-size: 12px; font-weight: 600; color: #64748b;
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  transition: background 0.15s, color 0.15s;
-}
-.view-mode-btn:hover { color: #0f172a; }
-.view-mode-btn.active { background: #fff; color: #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-.count-badge {
-  display: inline-block; background: #e2e8f0; color: #475569;
-  font-size: 10px; font-weight: 700; border-radius: 99px;
-  padding: 1px 7px; min-width: 18px; text-align: center;
-}
-.view-mode-btn.active .count-badge { background: #dbeafe; color: #1d4ed8; }
-
-/* Currently loaded indicator */
-.cloud-list-item.is-current {
-  background: linear-gradient(90deg, #ecfdf5 0%, #fff 100%);
-}
-.cloud-list-item.is-current::before {
-  content: '● '; color: #16a34a; font-size: 9px; margin-right: -4px;
-}
-.current-pill {
-  display: inline-block; background: #dcfce7; color: #15803d;
-  font-size: 9px; font-weight: 700; border-radius: 99px;
-  padding: 1px 6px; margin-left: 6px; vertical-align: middle;
-}
-.cloud-item-secondary {
-  font-size: 10px; color: #94a3b8; margin-top: 2px;
-}
-
-/* Status pill (draft / sent / won / lost / archived) */
-.status-tag {
-  display: inline-block; font-size: 9px; font-weight: 700;
-  padding: 1px 7px; border-radius: 99px;
-  margin-left: 6px; vertical-align: middle;
-  text-transform: uppercase; letter-spacing: 0.04em;
-}
-.status-tag.draft    { background: #f1f5f9; color: #475569; }
-.status-tag.sent     { background: #dbeafe; color: #1d4ed8; }
-.status-tag.won      { background: #dcfce7; color: #15803d; }
-.status-tag.lost     { background: #fee2e2; color: #b91c1c; }
-.status-tag.archived { background: #f3e8ff; color: #6b21a8; }
-
-/* Status selector in form */
-.form-status-row {
-  display: flex; gap: 6px; align-items: center;
-  flex-wrap: wrap;
-}
-.status-btn {
-  flex: 1; min-width: 70px;
-  padding: 6px 8px; border: 1px solid #e2e8f0;
-  background: #fff; color: #64748b;
-  border-radius: 5px; font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.04em;
-  cursor: pointer; transition: all 0.15s;
-}
-.status-btn:hover { border-color: #94a3b8; }
-.status-btn.active.draft    { background: #f1f5f9; color: #1e293b; border-color: #cbd5e1; }
-.status-btn.active.sent     { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
-.status-btn.active.won      { background: #dcfce7; color: #15803d; border-color: #86efac; }
-.status-btn.active.lost     { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
-.status-btn.active.archived { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
-
-/* Amount display in list */
-.cloud-item-amount {
-  font-size: 11px; font-weight: 700; color: #0f172a;
-  margin-left: 8px; white-space: nowrap;
-}
-
-/* Toolbar actions inside the cloud panel */
-.cloud-toolbar {
-  display: flex; gap: 6px; margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-.toolbar-btn {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: #fff; border: 1px solid #cbd5e1; color: #475569;
-  padding: 6px 10px; border-radius: 5px;
-  font-size: 11px; font-weight: 600;
-  cursor: pointer; transition: all 0.15s;
-}
-.toolbar-btn:hover { background: #f8fafc; border-color: #94a3b8; }
-.toolbar-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.toolbar-btn.primary { background: #2563eb; color: #fff; border-color: #2563eb; }
-.toolbar-btn.primary:hover { background: #1d4ed8; }
-
-/* Status filter chips */
-.status-filter-row {
-  display: flex; gap: 4px; flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-.status-chip {
-  padding: 3px 9px; border-radius: 99px;
-  background: #f1f5f9; border: 1px solid transparent;
-  font-size: 10px; font-weight: 600; color: #64748b;
-  cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em;
-  transition: all 0.15s;
-}
-.status-chip:hover { background: #e2e8f0; }
-.status-chip.active { background: #0f172a; color: #fff; }
-
-/* Conflict / dirty warning */
-.conflict-banner {
-  background: #fff7ed; border: 1px solid #fdba74;
-  border-radius: 6px; padding: 8px 12px; margin-bottom: 8px;
-  font-size: 12px; color: #9a3412;
-  display: flex; gap: 8px; align-items: center;
-}
-
-/* Trash view */
-.view-mode-btn.trash-mode.active { color: #b91c1c; }
-.cloud-list-item.is-trashed { opacity: 0.7; }
-.cloud-list-item.is-trashed .cloud-item-name { text-decoration: line-through; }
-
-/* Image-too-large warning */
-.size-warning {
-  background: #fef3c7; border: 1px solid #fcd34d;
-  color: #92400e; padding: 6px 10px; border-radius: 5px;
-  font-size: 11px; margin-top: 6px;
-  display: none;
-}
-.size-warning.show { display: block; }
-
-/* Token security note */
-.security-warning {
-  background: #fef2f2; border: 1px solid #fecaca;
-  border-radius: 6px; padding: 10px 12px; margin-top: 10px;
-  font-size: 11px; color: #991b1b; line-height: 1.5;
-}
-
-/* Better mobile layout (sub-720 already exists; extend) */
-@media (max-width: 720px) {
-  .cloud-filter-row { flex-direction: column; }
-  .cloud-filter-row input,
-  .cloud-filter-row select,
-  .cloud-filter-row .btn-refresh { width: 100%; }
-  .cloud-toolbar .toolbar-btn { flex: 1; justify-content: center; }
-  .form-status-row { gap: 4px; }
-  .status-btn { font-size: 10px; padding: 5px 6px; }
-  .topbar-right .user-chip { display: none; }
-  .btn-cloud .kbd { display: none; }
-}
-@media (max-width: 480px) {
-  .cloud-view-toggle { flex-direction: column; }
-  .view-mode-btn { width: 100%; }
-  .status-filter-row { gap: 3px; }
-  .status-chip { padding: 2px 7px; font-size: 9px; }
-  .form-grid.cols-3 { grid-template-columns: 1fr; }
-}
 .cloud-filter-row {
   display: flex; gap: 6px; margin-bottom: 8px;
 }
@@ -749,19 +591,20 @@ input, textarea, select { font-family: inherit; }
      ============================================================ -->
 <div class="topbar">
   <div class="topbar-left">
-    <span class="topbar-title">📄 Quotation Tool</span>
-    <a href="index.html" class="topbar-link">← Back to Home</a>
+    <span class="topbar-title">📄 报价单工具 / Quotation Tool</span>
+    <a href="index.html" class="topbar-link">← 返回首页 / Back to Home</a>
   </div>
   <div class="topbar-right">
-    <span class="status-pill" id="status-pill">Not set up</span>
-    <button class="btn-cloud" onclick="quickSave()" title="Save current quote to cloud (Ctrl+S)">
-      ☁ Save to Cloud <span class="kbd">Ctrl+S</span>
+    <span class="status-pill" id="status-pill">未设置 / Not set up</span>
+    <button class="btn-cloud" onclick="quickSave()" title="保存当前报价到云端 / Save current quote to cloud (Ctrl+S)">
+      ☁ 保存到云端 / Save to Cloud <span class="kbd">Ctrl+S</span>
     </button>
+    <button class="btn-icon" onclick="openHelp()" title="使用说明 / Help">?</button>
     <div class="user-chip">
       <span class="user-avatar" id="user-avatar">?</span>
-      <span id="user-name-label">Guest</span>
+      <span id="user-name-label">访客 / Guest</span>
     </div>
-    <button class="btn-icon" onclick="openSettings()">⚙</button>
+    <button class="btn-icon" onclick="openSettings()" title="设置 / Settings">⚙</button>
   </div>
 </div>
 
@@ -769,8 +612,8 @@ input, textarea, select { font-family: inherit; }
 
 <!-- Setup prompt -->
 <div class="alert-banner" id="setup-banner" style="display:none;">
-  <span>⚠️ Account not set up. Cloud save is disabled — please complete setup first.</span>
-  <button class="btn-setup" onclick="openSettings()">Setup Now →</button>
+  <span>⚠️ 账号未设置，云端保存功能不可用，请先完成设置。 / Account not set up. Cloud save is disabled — please complete setup first.</span>
+  <button class="btn-setup" onclick="openSettings()">立即设置 / Setup Now →</button>
 </div>
 
 <!-- ============================================================
@@ -778,67 +621,29 @@ input, textarea, select { font-family: inherit; }
      ============================================================ -->
 <div class="card card-collapsible collapsed">
   <div class="card-header" onclick="toggleCard(this)">
-    <h2><span class="icon">💾</span> Save / Load <span id="autosave-mini" style="font-size:11px;color:#16a34a;font-weight:500;margin-left:8px;">● Draft auto-saved</span></h2>
+    <h2><span class="icon">💾</span> 保存 / 加载 · Save / Load <span id="autosave-mini" style="font-size:11px;color:#16a34a;font-weight:500;margin-left:8px;">● 草稿已自动保存 / Draft auto-saved</span></h2>
   </div>
   <div class="card-body">
     <div class="tabs">
-      <button class="active" id="tab-btn-cloud" onclick="switchTab('cloud',this)">☁️ Cloud Records</button>
-      <button id="tab-btn-local" onclick="switchTab('local',this)">💻 Local Browser</button>
+      <button class="active" id="tab-btn-cloud" onclick="switchTab('cloud',this)">☁️ 云端记录 / Cloud Records</button>
+      <button id="tab-btn-local" onclick="switchTab('local',this)">💻 本地浏览 / Local Browser</button>
     </div>
 
     <!-- Cloud tab -->
     <div id="tab-cloud" class="tab-pane">
-      <!-- View mode segmented control: My / Team / Trash -->
-      <div class="cloud-view-toggle">
-        <button class="view-mode-btn active" data-view="mine" onclick="setCloudViewMode('mine')">
-          👤 My Quotes <span class="count-badge" id="count-mine">0</span>
-        </button>
-        <button class="view-mode-btn" data-view="all" onclick="setCloudViewMode('all')">
-          👥 Team <span class="count-badge" id="count-all">0</span>
-        </button>
-        <button class="view-mode-btn trash-mode" data-view="trash" onclick="setCloudViewMode('trash')">
-          🗑 Trash <span class="count-badge" id="count-trash">0</span>
-        </button>
-      </div>
-
-      <!-- Status filter chips -->
-      <div class="status-filter-row" id="status-filter-row">
-        <button class="status-chip active" data-status="" onclick="setStatusFilter('')">All</button>
-        <button class="status-chip" data-status="draft" onclick="setStatusFilter('draft')">Draft</button>
-        <button class="status-chip" data-status="sent" onclick="setStatusFilter('sent')">Sent</button>
-        <button class="status-chip" data-status="won" onclick="setStatusFilter('won')">Won</button>
-        <button class="status-chip" data-status="lost" onclick="setStatusFilter('lost')">Lost</button>
-        <button class="status-chip" data-status="archived" onclick="setStatusFilter('archived')">Archived</button>
-      </div>
-
       <div class="cloud-filter-row">
-        <input type="text" id="cloud-search" placeholder="Customer, PI no, or SKU…" oninput="renderCloudList()">
-        <select id="cloud-date-filter" onchange="renderCloudList()" title="Filter by date">
-          <option value="all">All dates</option>
-          <option value="today">Today</option>
-          <option value="yesterday">Yesterday</option>
-          <option value="week">Last 7 days</option>
-          <option value="month">Last 30 days</option>
+        <input type="text" id="cloud-search" placeholder="按名称或单号搜索… / Search by name, quote no…" oninput="renderCloudList()">
+        <select id="cloud-user-filter" onchange="renderCloudList()">
+          <option value="">所有成员 / All team members</option>
         </select>
-        <select id="cloud-user-filter" onchange="renderCloudList()" title="Filter by team member" style="display:none;">
-          <option value="">All members</option>
-        </select>
-        <button class="btn-refresh" onclick="loadCloudList()" title="Refresh">↺</button>
+        <button class="btn-refresh" onclick="loadCloudList()" title="刷新 / Refresh">↺</button>
       </div>
-
-      <!-- Action toolbar: Duplicate, Export, Empty Trash -->
-      <div class="cloud-toolbar">
-        <button class="toolbar-btn" onclick="duplicateAsNew()" title="Copy current quote as a new draft with auto-incremented PI">📋 Duplicate as New</button>
-        <button class="toolbar-btn" onclick="exportCSV()" title="Export filtered list to CSV">📊 Export CSV</button>
-        <button class="toolbar-btn" id="btn-empty-trash" onclick="emptyTrash()" style="display:none;color:#b91c1c;">🗑 Empty Trash</button>
-      </div>
-
       <div class="cloud-list" id="cloud-list">
-        <div class="cloud-list-empty">Click ↺ to load cloud records</div>
+        <div class="cloud-list-empty">点击 ↺ 加载云端记录 / Click ↺ to load cloud records</div>
       </div>
       <div class="cloud-action-row">
-        <button class="btn-cloud-load" id="btn-cloud-load" onclick="cloudLoad()" disabled>⬇ Load Selected</button>
-        <button class="btn-cloud-save" onclick="cloudSave()">⬆ Save to Cloud</button>
+        <button class="btn-cloud-load" id="btn-cloud-load" onclick="cloudLoad()" disabled>⬇ 加载所选 / Load Selected</button>
+        <button class="btn-cloud-save" onclick="cloudSave()">⬆ 保存到云端 / Save to Cloud</button>
       </div>
       <p class="cloud-status-msg" id="cloud-status"></p>
     </div>
@@ -846,22 +651,22 @@ input, textarea, select { font-family: inherit; }
     <!-- Local tab -->
     <div id="tab-local" class="tab-pane" style="display:none;">
       <div class="form-row" style="margin-bottom:8px;">
-        <label>Filter</label>
-        <input type="text" id="save_search" placeholder="Filter by name…" oninput="filterSaveSlots()">
+        <label>筛选 / Filter</label>
+        <input type="text" id="save_search" placeholder="按名称筛选… / Filter by name…" oninput="filterSaveSlots()">
       </div>
       <div class="local-row">
         <div>
-          <label style="font-size:12px;font-weight:600;color:#475569;">Saved Entries <span id="save-count-badge" class="save-count">0</span></label>
+          <label style="font-size:12px;font-weight:600;color:#475569;">已保存条目 / Saved Entries <span id="save-count-badge" class="save-count">0</span></label>
           <select id="save_slots"></select>
         </div>
-        <button id="load_button" class="btn-local load">Load</button>
-        <button id="save_button" class="btn-local save">Save</button>
-        <button id="delete_button" class="btn-local delete">Delete</button>
+        <button id="load_button" class="btn-local load">加载 / Load</button>
+        <button id="save_button" class="btn-local save">保存 / Save</button>
+        <button id="delete_button" class="btn-local delete">删除 / Delete</button>
       </div>
       <p class="feedback-msg" id="feedback_message"></p>
     </div>
 
-    <button class="btn-icon" style="background:#fff;color:#475569;border:1px solid #cbd5e1;margin-top:10px;" onclick="newQuote()">＋ New Quote (clear all)</button>
+    <button class="btn-icon" style="background:#fff;color:#475569;border:1px solid #cbd5e1;margin-top:10px;" onclick="newQuote()">＋ 新建报价（清空） / New Quote (clear all)</button>
   </div>
 </div>
 
@@ -870,12 +675,12 @@ input, textarea, select { font-family: inherit; }
      ============================================================ -->
 <div class="card">
   <div class="card-header">
-    <h2><span class="icon">📝</span> Master Input Form</h2>
+    <h2><span class="icon">📝</span> 主表单 / Master Input Form</h2>
     <div style="display:flex;gap:8px;align-items:center;">
-      <label style="font-size:12px;color:#64748b;font-weight:500;">Language</label>
+      <label style="font-size:12px;color:#64748b;font-weight:500;">语言 / Language</label>
       <select id="language_select" style="padding:5px 8px;border:1px solid #cbd5e1;border-radius:5px;font-size:12px;">
+        <option value="bilingual" selected>English / 中文</option>
         <option value="en">English</option>
-        <option value="bilingual">English / 中文</option>
         <option value="es">Spanish</option>
         <option value="de">German</option>
         <option value="fr">French</option>
@@ -902,23 +707,13 @@ input, textarea, select { font-family: inherit; }
         <div class="form-row" style="margin-top:6px;"><label data-lang-key="valid_until">Valid Until</label><input type="date" id="valid_until"></div>
         <div class="form-row" style="margin-top:6px;"><label data-lang-key="currency">Currency</label>
           <select id="currency">
-            <option value="USD">USD ($)</option>
-            <option value="CNY">RMB (¥)</option>
-            <option value="EUR">Euro (€)</option>
-            <option value="GBP">GBP (£)</option>
-            <option value="AUD">AUD (A$)</option>
-            <option value="CAD">CAD (C$)</option>
+            <option value="USD">美元 USD ($)</option>
+            <option value="CNY">人民币 RMB (¥)</option>
+            <option value="EUR">欧元 EUR (€)</option>
+            <option value="GBP">英镑 GBP (£)</option>
+            <option value="AUD">澳元 AUD (A$)</option>
+            <option value="CAD">加元 CAD (C$)</option>
           </select>
-        </div>
-        <div class="form-row" style="margin-top:8px;">
-          <label>Status</label>
-          <div class="form-status-row" id="status-selector">
-            <button type="button" class="status-btn active draft" data-status="draft" onclick="setQuoteStatus('draft')">Draft</button>
-            <button type="button" class="status-btn sent" data-status="sent" onclick="setQuoteStatus('sent')">Sent</button>
-            <button type="button" class="status-btn won" data-status="won" onclick="setQuoteStatus('won')">Won</button>
-            <button type="button" class="status-btn lost" data-status="lost" onclick="setQuoteStatus('lost')">Lost</button>
-            <button type="button" class="status-btn archived" data-status="archived" onclick="setQuoteStatus('archived')">Archive</button>
-          </div>
         </div>
       </fieldset>
 
@@ -932,8 +727,17 @@ input, textarea, select { font-family: inherit; }
         <legend style="font-size:12px;font-weight:700;color:#334155;padding:0 6px;" data-lang-key="shipping_info">Shipping Information</legend>
         <div class="form-row"><label data-lang-key="ship_to_name_address">Ship To Name & Address</label><textarea id="shipping_info" rows="5"></textarea></div>
         <div class="form-row" style="margin-top:6px;"><label data-lang-key="shipping_tel">Shipping Tel</label><input type="text" id="shipping_tel"></div>
-        <div class="form-row" style="margin-top:6px;"><label data-lang-key="freight_cost">Freight Cost (in USD)</label><input type="number" id="freight_cost" value="0" min="0" step="0.01"></div>
+        <div class="form-row" style="margin-top:6px;"><label><span data-lang-key="freight_cost_label">Freight Cost</span> (<span id="freight_currency_indicator">USD</span>)</label><input type="number" id="freight_cost" value="0" min="0" step="0.01"></div>
       </fieldset>
+    </div>
+
+    <!-- PI options bar -->
+    <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;margin-bottom:14px;font-size:12px;">
+      <strong style="color:#334155;">PI 选项 / PI Options:</strong>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" id="show_bank_info" checked onchange="scheduleSync()" style="width:auto;margin:0;">
+        <span>在 PI 上显示收款人银行信息 / Show Beneficiary Bank Info</span>
+      </label>
     </div>
 
     <!-- Seller info (editable, collapsible) -->
@@ -988,10 +792,10 @@ input, textarea, select { font-family: inherit; }
         <div class="form-row">
           <label data-lang-key="select_preset">Select a Preset</label>
           <select id="terms_preset" style="margin-bottom:6px;">
-            <option value="standard">Standard Terms</option>
-            <option value="full_payment">Full Payment for Small Orders</option>
-            <option value="custom_product">Custom Products</option>
-            <option value="exw">EXW Price</option>
+            <option value="standard">标准条款 / Standard Terms</option>
+            <option value="full_payment">小额订单全款 / Full Payment for Small Orders</option>
+            <option value="custom_product">定制产品 / Custom Products</option>
+            <option value="exw">EXW 出厂价 / EXW Price</option>
           </select>
           <textarea id="terms_conditions" rows="5"></textarea>
         </div>
@@ -1021,15 +825,15 @@ input, textarea, select { font-family: inherit; }
 
   <div class="preview-toolbar">
     <div class="preview-toolbar-info">
-      Currently viewing: <strong id="preview-name">Quotation</strong>
-      <span style="margin-left:8px;color:#94a3b8;">·  what you see is what gets exported</span>
+      当前显示 / Currently viewing: <strong id="preview-name">报价单 / Quotation</strong>
+      <span style="margin-left:8px;color:#94a3b8;">·  所见即所得 / what you see is what gets exported</span>
     </div>
     <div class="preview-toolbar-actions">
-      <button class="btn-export-all" onclick="exportPDF('all')" title="Print all 4 documents (one per page)">
-        📄 Export All
+      <button class="btn-export-all" onclick="exportPDF('all')" title="一次打印全部 4 份单据 / Print all 4 documents (one per page)">
+        📄 全部导出 / Export All
       </button>
       <button class="btn-export" id="btn-export-current" onclick="exportCurrent()">
-        📥 Export This PDF
+        📥 导出此 PDF / Export This PDF
       </button>
     </div>
   </div>
@@ -1129,11 +933,12 @@ input, textarea, select { font-family: inherit; }
         </div>
         <table class="doc-table">
           <thead><tr>
-            <th style="width:18%;" data-doc-key="th_sku">SKU</th>
-            <th style="width:50%;" data-doc-key="th_description">Description</th>
-            <th style="width:10%;" data-doc-key="th_qty">Qty</th>
+            <th style="width:13%;" data-doc-key="th_image">Image</th>
+            <th style="width:14%;" data-doc-key="th_sku">SKU</th>
+            <th style="width:42%;" data-doc-key="th_description">Description</th>
+            <th style="width:8%;" data-doc-key="th_qty">Qty</th>
             <th style="width:11%;" id="pi-unit-price-header">Unit Price</th>
-            <th style="width:11%;" id="pi-total-header">Total</th>
+            <th style="width:12%;" id="pi-total-header">Total</th>
           </tr></thead>
           <tbody id="pi-items-table"></tbody>
         </table>
@@ -1143,18 +948,18 @@ input, textarea, select { font-family: inherit; }
           <p><span data-doc-key="freight">Freight</span>: <span id="pi-currency-symbol-3"></span><span id="pi-freight">0.00</span></p>
           <p class="grand"><strong><span data-doc-key="total_due">TOTAL AMOUNT DUE</span>: <span id="pi-currency-symbol-4"></span><span id="pi-total">0.00</span></strong></p>
         </div>
-        <div class="info-box" style="margin-top:14px;">
+        <div class="info-box" id="pi-bank-info-section" style="margin-top:14px;">
           <h3 data-doc-key="bank_info">BENEFICIARY BANK INFORMATION:</h3>
           <label data-doc-key="bank_name" style="font-size:11px;font-weight:600;margin-top:4px;">Bank Name:</label>
-          <input type="text" id="pi_bank_name" class="manual-input" placeholder="Manual Entry">
+          <input type="text" id="pi_bank_name" class="manual-input" placeholder="手动输入 / Manual Entry">
           <label data-doc-key="bank_address" style="font-size:11px;font-weight:600;margin-top:4px;">Bank Address:</label>
-          <input type="text" id="pi_bank_address" class="manual-input" placeholder="Manual Entry">
+          <input type="text" id="pi_bank_address" class="manual-input" placeholder="手动输入 / Manual Entry">
           <label data-doc-key="account_name" style="font-size:11px;font-weight:600;margin-top:4px;">Account Name:</label>
-          <input type="text" id="pi_account_name" class="manual-input" placeholder="Manual Entry">
+          <input type="text" id="pi_account_name" class="manual-input" placeholder="手动输入 / Manual Entry">
           <label data-doc-key="account_number" style="font-size:11px;font-weight:600;margin-top:4px;">Account Number:</label>
-          <input type="text" id="pi_account_number" class="manual-input" placeholder="Manual Entry">
+          <input type="text" id="pi_account_number" class="manual-input" placeholder="手动输入 / Manual Entry">
           <label data-doc-key="swift_code" style="font-size:11px;font-weight:600;margin-top:4px;">Swift Code or ABA:</label>
-          <input type="text" id="pi_swift_code" class="manual-input" placeholder="Manual Entry">
+          <input type="text" id="pi_swift_code" class="manual-input" placeholder="手动输入 / Manual Entry">
           <p style="margin-top:6px;"><strong data-doc-key="notes">Notes:</strong> <span data-doc-key="notes_text">Please include Invoice No.</span> <strong id="pi_notes_ref"></strong> <span data-doc-key="notes_text_2">in payment reference.</span></p>
         </div>
         <div class="signature-block">
@@ -1197,7 +1002,7 @@ input, textarea, select { font-family: inherit; }
         </table>
         <div class="info-box" style="margin-top:14px;">
           <h3 data-doc-key="remarks">Remarks:</h3>
-          <textarea id="pl_remarks" class="manual-input" rows="3" placeholder="Manual Entry" style="width:100%;"></textarea>
+          <textarea id="pl_remarks" class="manual-input" rows="3" placeholder="手动输入 / Manual Entry" style="width:100%;"></textarea>
         </div>
         <div class="signature-block">
           <div class="label" data-doc-key="auth_sig">Authorized Signature</div>
@@ -1213,24 +1018,104 @@ input, textarea, select { font-family: inherit; }
 <!-- Settings modal -->
 <div class="modal-overlay hidden" id="settings-overlay" onclick="if(event.target===this)closeSettings()">
   <div class="modal">
-    <h3>👤 Account Setup</h3>
-    <p>Enter your name and the team's shared GitHub Token. Credentials are stored only in <strong>your own browser</strong> — never committed to the repository.</p>
-    <label>Your Name * <span style="font-weight:400;color:#94a3b8;">(used to label quotes you save)</span></label>
-    <input type="text" id="setup-name" placeholder="e.g., Alice, Bob, Charlie…">
-    <p id="setup-name-locked-warning" style="display:none;font-size:11px;color:#b91c1c;margin:4px 0 0;">⚠ Changing your name will orphan your existing cloud quotes (they will still be visible under the old name in Team view).</p>
-    <label style="margin-top:14px;">GitHub Token * <span style="font-weight:400;color:#94a3b8;">(get from admin, starts with github_pat_)</span></label>
+    <h3>👤 账号设置 / Account Setup</h3>
+    <p>请输入你的姓名和团队共享的 GitHub Token。凭证只存在<strong>你自己的浏览器</strong>里，不会提交到代码仓库。<br>Enter your name and the team's shared GitHub Token. Credentials are stored only in <strong>your own browser</strong> — never committed to the repository.</p>
+    <label>姓名 / Your Name * <span style="font-weight:400;color:#94a3b8;">（用于标记你保存的报价 / used to label quotes you save）</span></label>
+    <input type="text" id="setup-name" placeholder="例如 Alice、Bob、Charlie… / e.g., Alice, Bob, Charlie…">
+    <label style="margin-top:14px;">GitHub Token * <span style="font-weight:400;color:#94a3b8;">（向管理员索要，以 github_pat_ 开头 / get from admin, starts with github_pat_）</span></label>
     <input type="password" id="setup-token" placeholder="github_pat_…">
     <div class="modal-tip">
-      💡 After setup, click <strong>☁ Save to Cloud</strong> at the top of the page or press <kbd style="background:#e0f2fe;border:1px solid #bae6fd;padding:1px 4px;border-radius:3px;font-size:11px;">Ctrl+S</kbd> to save quickly.
-    </div>
-    <div class="security-warning">
-      <strong>🔒 Security note:</strong> This tool uses a <em>shared</em> team token. If someone leaves the team, an admin should regenerate the token on GitHub and re-distribute it to remaining members. Anyone with the token has full access to all quotes.
+      💡 设置完成后，点击页面顶部的 <strong>☁ 保存到云端</strong> 或按 <kbd style="background:#e0f2fe;border:1px solid #bae6fd;padding:1px 4px;border-radius:3px;font-size:11px;">Ctrl+S</kbd> 即可快速保存。<br>After setup, click <strong>☁ Save to Cloud</strong> at the top of the page or press <kbd style="background:#e0f2fe;border:1px solid #bae6fd;padding:1px 4px;border-radius:3px;font-size:11px;">Ctrl+S</kbd> to save quickly.
     </div>
     <div class="modal-actions">
-      <button class="btn-modal-primary" onclick="saveSetup()">✓ Save & Continue</button>
-      <button class="btn-modal-cancel" onclick="closeSettings()">Cancel</button>
+      <button class="btn-modal-primary" onclick="saveSetup()">✓ 保存并继续 / Save & Continue</button>
+      <button class="btn-modal-cancel" onclick="closeSettings()">取消 / Cancel</button>
     </div>
-    <p class="modal-note">🔒 Token is stored in your browser's localStorage only. It is never committed to the repository.</p>
+    <p class="modal-note">🔒 Token 仅存于浏览器 localStorage，不会提交到仓库。Token is stored in your browser's localStorage only. It is never committed to the repository.</p>
+  </div>
+</div>
+
+<!-- Help modal -->
+<div class="modal-overlay hidden" id="help-overlay" onclick="if(event.target===this)closeHelp()">
+  <div class="modal" style="max-width:720px;max-height:88vh;overflow-y:auto;">
+    <h3>📘 报价单工具使用说明</h3>
+    <div style="font-size:13px;line-height:1.7;color:#334155;">
+
+      <h4 style="margin:14px 0 6px;color:#0f172a;font-size:14px;">🎯 这个工具能做什么</h4>
+      <p>一份表单一次填好，自动生成 4 份单据：</p>
+      <ul style="margin:4px 0 0 18px;padding:0;">
+        <li><strong>报价单 (Quotation)</strong> — 给买家看的报价</li>
+        <li><strong>采购单 (PO)</strong> — 买家发给卖家的订单</li>
+        <li><strong>形式发票 (PI)</strong> — 卖家给买家的正式发票</li>
+        <li><strong>装箱单 (Packing List)</strong> — 出货时附的装箱明细</li>
+      </ul>
+
+      <h4 style="margin:14px 0 6px;color:#0f172a;font-size:14px;">📝 基本操作步骤</h4>
+      <ol style="margin:4px 0 0 18px;padding:0;">
+        <li><strong>选择卖家网站</strong>（顶部下拉框）—— 系统会自动填好卖家信息、订单号前缀、银行信息（如 Radilum 系列）。</li>
+        <li><strong>填写订单信息</strong>：报价单号、PI 号、PO 号会自动联动；只要改其中一个的末尾数字，其它自动同步。</li>
+        <li><strong>选择货币</strong>：默认 USD，可切到 CNY / EUR / GBP / AUD / CAD。<strong>切换货币后，运费输入框的币种提示也会自动变。</strong></li>
+        <li><strong>填买家信息和收货信息</strong>。</li>
+        <li><strong>填运费</strong>：直接按你刚才选的货币填整数即可（比如选了 CNY 就填 ¥68 而不是 9.5 美元换算）。</li>
+        <li><strong>添加产品项目</strong>：每行可以填 SKU、描述、数量、单价、箱号、净重、毛重、体积。</li>
+        <li><strong>插入图片</strong>：在某行的"图片"格里直接 <strong>Ctrl+V 粘贴</strong> 截图，或拖文件进去。图片会出现在报价单和 PI 上。</li>
+        <li><strong>设置折扣百分比</strong>（如果有）。</li>
+        <li><strong>选条款模板</strong> 或自己手动编辑条款文本（手动改过之后系统就不再覆盖你的内容）。</li>
+        <li><strong>切换右侧预览 Tab</strong> 检查每份单据，确认无误后点击对应 Tab 的 <strong>📥 导出此 PDF</strong> 按钮。</li>
+      </ol>
+
+      <h4 style="margin:14px 0 6px;color:#0f172a;font-size:14px;">📥 PDF 导出</h4>
+      <ul style="margin:4px 0 0 18px;padding:0;">
+        <li>预览区有 4 个 Tab：Quotation / PO / PI / Packing List。</li>
+        <li>每个 Tab 顶部都有 <strong>📥 导出此 PDF</strong>，只导出当前这一份。</li>
+        <li>右上角的 <strong>📄 导出全部</strong> 把 4 份一起打印（旧版本的行为）。</li>
+        <li>导出原理：调用浏览器打印对话框，选"另存为 PDF"即可。Chrome / Edge / Safari 都支持。</li>
+      </ul>
+
+      <h4 style="margin:14px 0 6px;color:#0f172a;font-size:14px;">☁️ 云端保存（多次保存不再产生重复文件）</h4>
+      <ul style="margin:4px 0 0 18px;padding:0;">
+        <li>第一次使用前点右上角 <strong>⚙ 齿轮</strong>，填入用户名和 GitHub Token。</li>
+        <li>点 <strong>☁ Save to Cloud</strong> 或按 <strong>Ctrl+S</strong> 即可保存。</li>
+        <li><strong>同一个 PI 号会覆盖原文件</strong>——改 3 次只留最后一次，不再像旧版那样累积 3 份。</li>
+        <li>列表里如果显示 <span style="color:#94a3b8;">[旧]</span> 标记，那是旧版按时间戳累积的重复文件。当列表里有重复时，状态栏会出现 <span style="color:#2563eb;text-decoration:underline;">"清理 N 个旧版重复文件"</span> 链接，点一下就自动只保留每个 PI 号最新的一份。</li>
+        <li>每次进入页面会自动加载所有云端记录，按用户筛选、按名称搜索均可。</li>
+      </ul>
+
+      <h4 style="margin:14px 0 6px;color:#0f172a;font-size:14px;">💾 本地保存 & 草稿恢复</h4>
+      <ul style="margin:4px 0 0 18px;padding:0;">
+        <li>切到本地保存 Tab，可以在浏览器里临时存几份。</li>
+        <li>所有操作都会被 <strong>自动保存为草稿</strong>，意外关掉浏览器再打开会自动恢复上次的内容。</li>
+        <li>点击 <strong>"开始新报价"</strong> 才会清空当前表单。</li>
+      </ul>
+
+      <h4 style="margin:14px 0 6px;color:#0f172a;font-size:14px;">🏦 PI 银行信息开关</h4>
+      <p>表单上方有 <strong>"PI 选项 / PI Options"</strong> 区，里面的 <strong>"显示收款人银行信息"</strong> 复选框控制 PI 上的银行信息块：</p>
+      <ul style="margin:4px 0 0 18px;padding:0;">
+        <li>勾上 → PI 上显示银行信息（默认状态）。</li>
+        <li>取消勾选 → PI 上不显示，导出 PDF 也不会有这块。</li>
+        <li>这个状态会跟着报价单一起保存到云端。</li>
+      </ul>
+
+      <h4 style="margin:14px 0 6px;color:#0f172a;font-size:14px;">🌐 多语言</h4>
+      <p>顶部"语言"下拉可以切换：英文、中英对照、西班牙语、德语、法语、阿拉伯语、俄语。表单和单据上的固定文案都会跟着切换。</p>
+
+      <h4 style="margin:14px 0 6px;color:#0f172a;font-size:14px;">⚡ 快捷键</h4>
+      <ul style="margin:4px 0 0 18px;padding:0;">
+        <li><kbd style="background:#e0f2fe;border:1px solid #bae6fd;padding:1px 5px;border-radius:3px;font-size:11px;">Ctrl+S</kbd> — 保存到云端</li>
+        <li><kbd style="background:#e0f2fe;border:1px solid #bae6fd;padding:1px 5px;border-radius:3px;font-size:11px;">Ctrl+V</kbd> 在图片格里 — 粘贴图片</li>
+      </ul>
+
+      <h4 style="margin:14px 0 6px;color:#0f172a;font-size:14px;">❗ 常见问题</h4>
+      <ul style="margin:4px 0 0 18px;padding:0;">
+        <li><strong>预览没更新？</strong> 输入后约 200ms 才刷新（防抖），稍等一下。</li>
+        <li><strong>导出后图片不显示？</strong> 确认浏览器打印选项里勾上"背景图形 / Background graphics"。</li>
+        <li><strong>云端保存失败？</strong> Token 可能过期，找管理员要新的，在 ⚙ 设置里更新。</li>
+        <li><strong>想完全删除某份云端记录？</strong> 在列表里点右侧的 ✕ 按钮。</li>
+      </ul>
+    </div>
+    <div class="modal-actions" style="margin-top:18px;">
+      <button class="btn-modal-primary" onclick="closeHelp()">知道了 / Got it</button>
+    </div>
   </div>
 </div>
 
@@ -1248,7 +1133,7 @@ const translations = {
     select_seller:"Select Seller Website", order_info:"Order Information", quote_no:"Quote No.", invoice_no:"Invoice No.", po_no:"PO No.",
     date_of_issue:"Date of Issue", valid_until:"Valid Until", currency:"Currency",
     buyer_info:"Buyer Information", buyer_name_address:"Buyer Name & Address", buyer_email:"Buyer Email",
-    shipping_info:"Shipping Information", ship_to_name_address:"Ship To Name & Address", shipping_tel:"Shipping Tel", freight_cost:"Freight Cost (in USD)",
+    shipping_info:"Shipping Information", ship_to_name_address:"Ship To Name & Address", shipping_tel:"Shipping Tel", freight_cost_label:"Freight Cost",
     seller_info_editable:"Seller Information (Editable)", seller_name:"Seller Name", seller_address:"Seller Address", seller_phone:"Seller Phone", seller_email:"Seller Email", seller_website:"Seller Website",
     product_items_packing:"Product Items & Packing Details", th_sku:"SKU", th_description:"Description", th_image:"Image", th_qty:"Qty",
     th_unit_price_usd:"Unit Price", th_carton_no:"Carton No.", th_nw:"N.W. (kgs)", th_gw:"G.W. (kgs)", th_meas:"Meas (cbm)",
@@ -1259,7 +1144,7 @@ const translations = {
     select_seller:"Select Seller Website / 选择卖家网站", order_info:"Order Information / 订单信息", quote_no:"Quote No. / 报价单号", invoice_no:"Invoice No. / 发票号", po_no:"PO No. / 采购订单号",
     date_of_issue:"Date of Issue / 签发日期", valid_until:"Valid Until / 有效期至", currency:"Currency / 货币",
     buyer_info:"Buyer Information / 买家信息", buyer_name_address:"Buyer Name & Address / 买家名称和地址", buyer_email:"Buyer Email / 买家邮箱",
-    shipping_info:"Shipping Information / 运输信息", ship_to_name_address:"Ship To Name & Address / 收货人名称和地址", shipping_tel:"Shipping Tel / 收货电话", freight_cost:"Freight Cost (in USD) / 运费 (美元)",
+    shipping_info:"Shipping Information / 运输信息", ship_to_name_address:"Ship To Name & Address / 收货人名称和地址", shipping_tel:"Shipping Tel / 收货电话", freight_cost_label:"Freight Cost / 运费",
     seller_info_editable:"Seller Information (Editable) / 卖家信息 (可编辑)", seller_name:"Seller Name / 卖家名称", seller_address:"Seller Address / 卖家地址", seller_phone:"Seller Phone / 卖家电话", seller_email:"Seller Email / 卖家邮箱", seller_website:"Seller Website / 卖家网站",
     product_items_packing:"Product Items & Packing Details / 产品项目和包装细节", th_sku:"SKU / 产品编号", th_description:"Description / 描述", th_image:"Image / 图片", th_qty:"Qty / 数量",
     th_unit_price_usd:"Unit Price / 单价", th_carton_no:"Carton No. / 箱号", th_nw:"N.W. (kgs) / 净重 (公斤)", th_gw:"G.W. (kgs) / 毛重 (公斤)", th_meas:"Meas (cbm) / 体积 (立方米)",
@@ -1270,7 +1155,7 @@ const translations = {
     select_seller:"Seleccionar Sitio Web del Vendedor", order_info:"Información del Pedido", quote_no:"Nº de Cotización", invoice_no:"Nº de Factura", po_no:"Nº de Pedido (PO)",
     date_of_issue:"Fecha de Emisión", valid_until:"Válido Hasta", currency:"Moneda",
     buyer_info:"Información del Comprador", buyer_name_address:"Nombre y Dirección del Comprador", buyer_email:"Email del Comprador",
-    shipping_info:"Información de Envío", ship_to_name_address:"Nombre y Dirección de Envío", shipping_tel:"Teléfono de Envío", freight_cost:"Costo de Flete (en USD)",
+    shipping_info:"Información de Envío", ship_to_name_address:"Nombre y Dirección de Envío", shipping_tel:"Teléfono de Envío", freight_cost_label:"Costo de Flete",
     seller_info_editable:"Información del Vendedor (Editable)", seller_name:"Nombre del Vendedor", seller_address:"Dirección del Vendedor", seller_phone:"Teléfono del Vendedor", seller_email:"Email del Vendedor", seller_website:"Sitio Web del Vendedor",
     product_items_packing:"Artículos del Producto y Detalles de Embalaje", th_sku:"SKU", th_description:"Descripción", th_image:"Imagen", th_qty:"Cant.",
     th_unit_price_usd:"Precio Unitario", th_carton_no:"Nº de Caja", th_nw:"P.N. (kgs)", th_gw:"P.B. (kgs)", th_meas:"Med. (cbm)",
@@ -1281,7 +1166,7 @@ const translations = {
     select_seller:"Verkäufer-Website Auswählen", order_info:"Bestellinformationen", quote_no:"Angebot Nr.", invoice_no:"Rechnung Nr.", po_no:"Bestell-Nr.",
     date_of_issue:"Ausstellungsdatum", valid_until:"Gültig Bis", currency:"Währung",
     buyer_info:"Käuferinformationen", buyer_name_address:"Name & Adresse des Käufers", buyer_email:"Käufer-E-Mail",
-    shipping_info:"Versandinformationen", ship_to_name_address:"Lieferadresse", shipping_tel:"Versand-Telefon", freight_cost:"Frachtkosten (in USD)",
+    shipping_info:"Versandinformationen", ship_to_name_address:"Lieferadresse", shipping_tel:"Versand-Telefon", freight_cost_label:"Frachtkosten",
     seller_info_editable:"Verkäuferinformationen (Bearbeitbar)", seller_name:"Name des Verkäufers", seller_address:"Adresse des Verkäufers", seller_phone:"Telefon des Verkäufers", seller_email:"E-Mail des Verkäufers", seller_website:"Website des Verkäufers",
     product_items_packing:"Produktartikel & Verpackungsdetails", th_sku:"SKU", th_description:"Beschreibung", th_image:"Bild", th_qty:"Menge",
     th_unit_price_usd:"Stückpreis", th_carton_no:"Karton Nr.", th_nw:"N.G. (kg)", th_gw:"B.G. (kg)", th_meas:"Maß (cbm)",
@@ -1292,7 +1177,7 @@ const translations = {
     select_seller:"Sélectionner le Site Web du Vendeur", order_info:"Informations sur la Commande", quote_no:"N° de Devis", invoice_no:"N° de Facture", po_no:"N° de Bon de Commande",
     date_of_issue:"Date d'Émission", valid_until:"Valable Jusqu'au", currency:"Devise",
     buyer_info:"Informations sur l'Acheteur", buyer_name_address:"Nom et Adresse de l'Acheteur", buyer_email:"Email de l'Acheteur",
-    shipping_info:"Informations d'Expédition", ship_to_name_address:"Nom et Adresse de Livraison", shipping_tel:"Tél. de Livraison", freight_cost:"Frais de Transport (en USD)",
+    shipping_info:"Informations d'Expédition", ship_to_name_address:"Nom et Adresse de Livraison", shipping_tel:"Tél. de Livraison", freight_cost_label:"Frais de Transport",
     seller_info_editable:"Informations sur le Vendeur (Modifiables)", seller_name:"Nom du Vendeur", seller_address:"Adresse du Vendeur", seller_phone:"Téléphone du Vendeur", seller_email:"Email du Vendeur", seller_website:"Site Web du Vendeur",
     product_items_packing:"Articles de Produit et Détails d'Emballage", th_sku:"SKU", th_description:"Description", th_image:"Image", th_qty:"Qté",
     th_unit_price_usd:"Prix Unitaire", th_carton_no:"N° de Carton", th_nw:"P.N. (kgs)", th_gw:"P.B. (kgs)", th_meas:"Mes. (cbm)",
@@ -1303,7 +1188,7 @@ const translations = {
     select_seller:"تحديد موقع البائع", order_info:"معلومات الطلب", quote_no:"رقم عرض السعر", invoice_no:"رقم الفاتورة", po_no:"رقم طلب الشراء",
     date_of_issue:"تاريخ الإصدار", valid_until:"صالح حتى", currency:"العملة",
     buyer_info:"معلومات المشتري", buyer_name_address:"اسم وعنوان المشتري", buyer_email:"البريد الإلكتروني للمشتري",
-    shipping_info:"معلومات الشحن", ship_to_name_address:"اسم وعنوان المستلم", shipping_tel:"هاتف المستلم", freight_cost:"تكلفة الشحن (بالدولار الأمريكي)",
+    shipping_info:"معلومات الشحن", ship_to_name_address:"اسم وعنوان المستلم", shipping_tel:"هاتف المستلم", freight_cost_label:"تكلفة الشحن",
     seller_info_editable:"معلومات البائع (قابلة للتعديل)", seller_name:"اسم البائع", seller_address:"عنوان البائع", seller_phone:"هاتف البائع", seller_email:"البريد الإلكتروني للبائع", seller_website:"موقع البائع",
     product_items_packing:"بنود المنتج وتفاصيل التغليف", th_sku:"SKU", th_description:"الوصف", th_image:"الصورة", th_qty:"الكمية",
     th_unit_price_usd:"سعر الوحدة", th_carton_no:"رقم الكرتون", th_nw:"الوزن الصافي (كجم)", th_gw:"الوزن الإجمالي (كجم)", th_meas:"القياس (متر مكعب)",
@@ -1314,7 +1199,7 @@ const translations = {
     select_seller:"Выберите Сайт Продавца", order_info:"Информация о Заказе", quote_no:"№ Предложения", invoice_no:"№ Счета", po_no:"№ Заказа на Покупку",
     date_of_issue:"Дата Выдачи", valid_until:"Действительно До", currency:"Валюта",
     buyer_info:"Информация о Покупателе", buyer_name_address:"Имя и Адрес Покупателя", buyer_email:"Email Покупателя",
-    shipping_info:"Информация о Доставке", ship_to_name_address:"Имя и Адрес Получателя", shipping_tel:"Телефон для Доставки", freight_cost:"Стоимость Фрахта (в USD)",
+    shipping_info:"Информация о Доставке", ship_to_name_address:"Имя и Адрес Получателя", shipping_tel:"Телефон для Доставки", freight_cost_label:"Стоимость Фрахта",
     seller_info_editable:"Информация о Продавце (Редактируемая)", seller_name:"Имя Продавца", seller_address:"Адрес Продавца", seller_phone:"Телефон Продавца", seller_email:"Email Продавца", seller_website:"Веб-сайт Продавца",
     product_items_packing:"Информация о Продукте и Упаковке", th_sku:"SKU", th_description:"Описание", th_image:"Изображение", th_qty:"Кол-во",
     th_unit_price_usd:"Цена за Ед.", th_carton_no:"№ Коробки", th_nw:"Вес Нетто (кг)", th_gw:"Вес Брутто (кг)", th_meas:"Объем (м³)",
@@ -1435,7 +1320,7 @@ const sellerData = {
   pinlighting:     { name:"Pinlighting",     prefix:"PL",  address:"1833 Wind Gate Rd, Baltimore, MD 21227",                               phone:"+1 800-953-1356",  website:"pinlighting.com", email:"info@pinlighting.com",     theme:"theme-blue"   },
   rayonshine:      { name:"Rayonshine",      prefix:"RS",  address:"2435 Sulphur Spring Rd, Baltimore, MD 21227",                          phone:"+1 800-978-5754",  website:"rayonshine.com",  email:"support@rayonshine.com",   theme:"theme-green"  },
   lumioshine:      { name:"Lumioshine",      prefix:"LS",  address:"1520 Caton Center Dr. Suite L-M, Baltimore MD 21227 USA",             phone:"+1 800-978-5754",  website:"lumioshine.com",  email:"service@lumioshine.com",   theme:"theme-gray"   },
-  jiangmen_radilum:{ name:"Radilum Inc",     prefix:"JRI", address:"Room 301, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone:"+8615876099121", website:"n/a", email:"",                          theme:"theme-red"    },
+  jiangmen_radilum:{ name:"Radilum Inc",     prefix:"JRI", address:"Room 301, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone:"+8615876099121", website:"n/a", email:"info@mooielight.com",  theme:"theme-red"    },
   jiangmen_vakker: { name:"Vakker Limited",  prefix:"JVL", address:"Room 401, Building 3, No. 80, Longxi Road, Jianghai District, Jiangmen City, China", phone:"+8615876099121", website:"n/a", email:"info@vakkerlimited.com", theme:"theme-blue"  }
 };
 
@@ -1502,30 +1387,14 @@ let termsManuallyEdited = false;
 let currentPreviewDoc = 'quotation';
 let syncTimer = null;
 let autoSaveTimer = null;
-let currentQuoteStatus = 'draft';      // status of the quote currently in the form
-let currentCreatedAt = null;            // ISO timestamp; preserved across saves of the same quote
-let currentLoadedSha = null;            // sha of the loaded record (for conflict detection)
-let statusFilter = '';                  // active status filter in cloud list ('' = all)
 const storageKey = 'quoteGeneratorSaves_v4';
 const draftKey   = 'quoteGenerator_draft_v1';
 const SETTINGS_KEY = 'quoteToolSettings_v1';
-const TRASH_PATH = 'quotes/_trash';     // soft-delete location
 
 /* ============================================================
    UTILITY
    ============================================================ */
 function $(id) { return document.getElementById(id); }
-
-/* Set the active status (also updates buttons UI). Triggers autosave. */
-function setQuoteStatus(status) {
-  const valid = ['draft','sent','won','lost','archived'];
-  if (!valid.includes(status)) status = 'draft';
-  currentQuoteStatus = status;
-  document.querySelectorAll('#status-selector .status-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.status === status);
-  });
-  scheduleSync();
-}
 function showToast(msg, type) {
   const t = $('toast');
   t.textContent = msg;
@@ -1541,6 +1410,14 @@ function nameToColor(n) {
   const c = ['#3b82f6','#8b5cf6','#ec4899','#f97316','#14b8a6','#10b981','#f59e0b','#6366f1'];
   let h = 0; for (let i = 0; i < n.length; i++) h = n.charCodeAt(i) + ((h<<5)-h);
   return c[Math.abs(h) % c.length];
+}
+function formatCloudDate(s) {
+  if (!s) return '—';
+  // Accepts: '2026-05-19T10-14' (legacy), '2026-05-19T10:14:23.000Z' (new ISO)
+  // Normalises both to: '2026-05-19 10:14'
+  const datePart = s.slice(0, 10);
+  const timePart = s.slice(11, 16).replace('-', ':'); // legacy uses '-' between hh and mm
+  return timePart ? `${datePart} ${timePart}` : datePart;
 }
 function toggleCard(headerEl) {
   headerEl.parentElement.classList.toggle('collapsed');
@@ -1567,9 +1444,9 @@ function switchPreview(doc) {
     if (!el) return;
     el.classList.toggle('is-hidden-preview', k !== doc);
   });
-  const label = { quotation:'Quotation', po:'Purchase Order', pi:'Proforma Invoice', packing:'Packing List' }[doc];
+  const label = { quotation:'报价单 / Quotation', po:'采购单 / Purchase Order', pi:'形式发票 / Proforma Invoice', packing:'装箱单 / Packing List' }[doc];
   $('preview-name').textContent = label;
-  $('btn-export-current').innerHTML = '📥 Export ' + label + ' PDF';
+  $('btn-export-current').innerHTML = '📥 导出此' + label.split(' / ')[0] + ' / Export ' + label.split(' / ')[1] + ' PDF';
 }
 
 /* ============================================================
@@ -1613,24 +1490,6 @@ function setLanguage(lang) {
     if (dict[key]) el.innerText = dict[key];
     else if (translations.en[key]) el.innerText = translations.en[key];
   });
-  // If user had manually edited terms, ask before regenerating in the new language
-  if (termsManuallyEdited) {
-    const currentTerms = $('terms_conditions').value.trim();
-    // Only ask if the current content actually differs from the preset (heuristic to avoid spurious prompts)
-    if (currentTerms && currentTerms.length > 0) {
-      const regenerate = confirm(
-        'You have manually edited the Terms & Conditions.\n\n' +
-        'OK = regenerate terms in the new language (your edits will be lost)\n' +
-        'Cancel = keep your edits as-is (they will stay in the previous language)'
-      );
-      if (regenerate) {
-        termsManuallyEdited = false;
-        const preset = $('terms_preset').value;
-        const set = allTermsPresets[lang] || allTermsPresets.en;
-        $('terms_conditions').value = set[preset];
-      }
-    }
-  }
   syncAndCalculate();
 }
 
@@ -1720,8 +1579,13 @@ function syncAndCalculate() {
   const buyerEmail    = $('buyer_email').value;
   const shippingInfo  = $('shipping_info').value;
   const shippingTel   = $('shipping_tel').value;
-  const freightCostUSD = parseFloat($('freight_cost').value) || 0;
+  const freightInSelectedCurrency = parseFloat($('freight_cost').value) || 0; // entered in the selected currency
+  const freightCostUSD = rate > 0 ? freightInSelectedCurrency / rate : 0;     // USD equivalent for math
   const discountPct    = parseFloat($('discount_percentage').value) || 0;
+
+  // Live update of the freight currency indicator on the form label
+  const freightIndicator = $('freight_currency_indicator');
+  if (freightIndicator) freightIndicator.innerText = currency;
 
   // Terms: simpler than before — manual edit just freezes user text.
   let processedTerms;
@@ -1731,7 +1595,7 @@ function syncAndCalculate() {
     const preset = $('terms_preset').value;
     const presetSet = allTermsPresets[lang] || allTermsPresets.en;
     let baseTerms = presetSet[preset];
-    if (freightCostUSD > 0) {
+    if (freightInSelectedCurrency > 0) {
       // Same lead-time tweak as before (when freight already settled in USD)
       baseTerms = baseTerms
         .replace(/Lead Time: 4-6 weeks/g, "Lead Time: 1-3 weeks")
@@ -1777,6 +1641,9 @@ function syncAndCalculate() {
   $('pi_po_ref').innerText = poNumber;
   $('pi_notes_ref').innerText = piNumber;
   $('pi_auth_signature').innerText = sellerName;
+  const showBank = $('show_bank_info')?.checked !== false; // default true if missing
+  const piBank = $('pi-bank-info-section');
+  if (piBank) piBank.style.display = showBank ? '' : 'none';
 
   // Quotation
   $('quote_seller_info').innerHTML = sellerInfoWithWebsiteHTML;
@@ -1826,7 +1693,7 @@ function syncAndCalculate() {
     const safeCarton = cartonNo.replace(/</g, '&lt;');
 
     poRows.push(`<tr><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
-    piRows.push(`<tr><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
+    piRows.push(`<tr><td>${imageSrc ? `<img src="${imageSrc}" class="quote-item-image">` : ''}</td><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
     quoteRows.push(`<tr><td>${imageSrc ? `<img src="${imageSrc}" class="quote-item-image">` : ''}</td><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
     plRows.push(`<tr><td>${safeCarton}</td><td>${safeDesc}<br><strong>SKU: ${safeSku}</strong></td><td>${qty}</td><td>${nw.toFixed(2)}</td><td>${gw.toFixed(2)}</td><td>${cbm.toFixed(3)}</td></tr>`);
   });
@@ -1842,7 +1709,7 @@ function syncAndCalculate() {
 
   const convSubtotal = subtotalUSD * rate;
   const convDiscount = discountAmtUSD * rate;
-  const convFreight  = freightCostUSD * rate;
+  const convFreight  = freightInSelectedCurrency; // user-entered, no conversion round-trip
   const convTotal    = finalTotalUSD * rate;
 
   ['quote','po','pi'].forEach(doc => {
@@ -1891,8 +1758,8 @@ function addItem(item) {
     <td><input type="text" class="sku" placeholder="SKU" value="${item.sku || ''}"></td>
     <td><textarea rows="2" class="description">${item.description || ''}</textarea></td>
     <td>
-      <div class="paste-area" contenteditable="true" title="Click then paste (Ctrl+V) an image">${item.imageSrc ? `<img src="${item.imageSrc}">` : 'Paste'}</div>
-      <button onclick="removeImage(this)" class="btn-row-remove-img${item.imageSrc ? '' : ' hidden'}">Remove img</button>
+      <div class="paste-area" contenteditable="true" title="点击后按 Ctrl+V 粘贴图片 / Click then paste (Ctrl+V) an image">${item.imageSrc ? `<img src="${item.imageSrc}">` : '粘贴 / Paste'}</div>
+      <button onclick="removeImage(this)" class="btn-row-remove-img${item.imageSrc ? '' : ' hidden'}">移除 / Remove</button>
     </td>
     <td><input type="number" value="${item.qty}" class="qty"></td>
     <td><input type="number" value="${parseFloat(item.price || 0).toFixed(2)}" class="price" step="0.01"></td>
@@ -1914,7 +1781,7 @@ function removeImage(btn) {
   const td = btn.parentElement;
   const area = td.querySelector('.paste-area');
   const tr = td.closest('tr');
-  area.innerHTML = 'Paste';
+  area.innerHTML = '粘贴 / Paste';
   tr.dataset.imageSrc = '';
   btn.classList.add('hidden');
   scheduleSync();
@@ -1971,18 +1838,6 @@ function collectFormData() {
   const bankFields = [];
   document.querySelectorAll('#pi-section .manual-input').forEach(inp => bankFields.push(inp.value));
 
-  // Compute total in USD for indexing (currency-agnostic so list shows comparable amounts)
-  let subtotalUSD = 0;
-  const rate = exchangeRates[$('currency').value]?.rate || 1;
-  items.forEach(it => {
-    const qty = parseFloat(it.qty) || 0;
-    const priceUSD = (parseFloat(it.price) || 0) / rate;
-    subtotalUSD += qty * priceUSD;
-  });
-  const discountPct = parseFloat($('discount_percentage').value) || 0;
-  const freightUSD = parseFloat($('freight_cost').value) || 0;
-  const totalUSD = subtotalUSD * (1 - discountPct / 100) + freightUSD;
-
   return {
     language_select:    $('language_select').value,
     seller_website:     $('seller_website').value,
@@ -2006,27 +1861,19 @@ function collectFormData() {
     terms_preset:       $('terms_preset').value,
     terms_conditions:   $('terms_conditions').value,
     pl_remarks:         ($('pl_remarks') || {}).value || '',
-    // Metadata for cloud indexing & lifecycle
-    _status:            currentQuoteStatus || 'draft',
-    _total_usd:         Math.round(totalUSD * 100) / 100,
-    _created_at:        currentCreatedAt || new Date().toISOString(),
-    _updated_at:        new Date().toISOString(),
-    _sku_list:          items.map(i => (i.sku || '').trim()).filter(Boolean).join(','),
+    show_bank_info:     $('show_bank_info') ? $('show_bank_info').checked : true,
     bankFields, items
   };
 }
 function restoreDataToForm(d) {
-  // Set metadata FIRST so any sync triggered by form changes below has correct values
-  currentCreatedAt = d._created_at || new Date().toISOString();
-  // (we set status AFTER form is populated so the UI buttons reflect it; safe since collectFormData reads currentQuoteStatus directly)
-
-  const skip = new Set(['items','bankFields','pl_remarks','_status','_total_usd','_created_at','_updated_at','_sku_list']);
+  const skip = new Set(['items','bankFields','pl_remarks','show_bank_info','_savedAt']);
   for (const k in d) {
     if (skip.has(k)) continue;
-    if (k.startsWith('_')) continue;
     const el = $(k);
     if (el) el.value = d[k];
   }
+  const bankToggle = $('show_bank_info');
+  if (bankToggle) bankToggle.checked = (d.show_bank_info !== false); // default true if absent
   if (d.bankFields) {
     document.querySelectorAll('#pi-section .manual-input').forEach((inp, i) => {
       if (d.bankFields[i] !== undefined) inp.value = d.bankFields[i];
@@ -2038,8 +1885,6 @@ function restoreDataToForm(d) {
   (d.items || []).forEach(it => addItem(it));
   const lang = d.language_select || 'en';
   $('language_select').value = lang;
-  // Set status before setLanguage to ensure any sync triggered has the correct status
-  setQuoteStatus(d._status || 'draft');
   setLanguage(lang);
 }
 
@@ -2049,9 +1894,9 @@ function restoreDataToForm(d) {
 function setAutoSaveStatus(state) {
   const el = $('autosave-mini');
   if (!el) return;
-  if (state === 'saving')   { el.style.color = '#ca8a04'; el.textContent = '● Saving draft…'; }
-  if (state === 'saved')    { el.style.color = '#16a34a'; el.textContent = '● Draft auto-saved'; }
-  if (state === 'restored') { el.style.color = '#0369a1'; el.textContent = '● Restored from last session'; }
+  if (state === 'saving')   { el.style.color = '#ca8a04'; el.textContent = '● 正在保存草稿… / Saving draft…'; }
+  if (state === 'saved')    { el.style.color = '#16a34a'; el.textContent = '● 草稿已自动保存 / Draft auto-saved'; }
+  if (state === 'restored') { el.style.color = '#0369a1'; el.textContent = '● 已从上次恢复 / Restored from last session'; }
 }
 function triggerAutoSave() {
   setAutoSaveStatus('saving');
@@ -2075,12 +1920,8 @@ function restoreFromDraft() {
   } catch(e) { return false; }
 }
 function newQuote() {
-  if (!confirm('Start a new quote? This clears the current form and the saved draft.')) return;
+  if (!confirm('开始新报价？将清空当前表单和已保存的草稿。\n\nStart a new quote? This clears the current form and the saved draft.')) return;
   localStorage.removeItem(draftKey);
-  currentLoadedPath = null;
-  currentLoadedSha = null;
-  currentCreatedAt = new Date().toISOString();
-  setQuoteStatus('draft');
   $('master-items').innerHTML = '';
   ['buyer_info','buyer_email','shipping_info','shipping_tel'].forEach(id => { const e = $(id); if (e) e.value = ''; });
   ['freight_cost','discount_percentage'].forEach(id => { const e = $(id); if (e) e.value = 0; });
@@ -2097,7 +1938,7 @@ function newQuote() {
   updateTerms();
   syncAndCalculate();
   setAutoSaveStatus('saved');
-  showToast('New quote started', 'ok');
+  showToast('已新建报价 / New quote started', 'ok');
 }
 
 /* ============================================================
@@ -2113,43 +1954,40 @@ function updateSaveSlotsDropdown(filter) {
   if (badge) badge.textContent = Object.keys(data).length;
   if (keys.length === 0) {
     const o = document.createElement('option');
-    o.textContent = filter ? 'No matches' : 'No saved entries';
+    o.textContent = filter ? '未找到匹配项 / No matches' : '暂无已保存条目 / No saved entries';
     o.disabled = true;
     sel.appendChild(o);
   } else keys.forEach(k => { const o = document.createElement('option'); o.value = k; o.textContent = k; sel.appendChild(o); });
 }
 function filterSaveSlots() { updateSaveSlotsDropdown($('save_search').value); }
 function saveData() {
-  const data = collectFormData();
-  const buyerName = getBuyerNameFromData(data) || $('pi_number').value || 'Quote';
-  const defaultName = `${buyerName} - ${new Date().toLocaleDateString()}`;
-  const name = prompt('Enter a name for this entry:', defaultName);
+  const name = prompt('为该条目命名 / Enter a name for this entry:', `Quote ${new Date().toLocaleDateString()} ${$('pi_number').value}`);
   if (!name) return;
-  const savedData = getSavedData();
-  savedData[name] = data;
-  localStorage.setItem(storageKey, JSON.stringify(savedData));
+  const data = getSavedData();
+  data[name] = collectFormData();
+  localStorage.setItem(storageKey, JSON.stringify(data));
   updateSaveSlotsDropdown();
-  showFeedback(`Saved as "${name}"!`);
+  showFeedback(`已保存为 "${name}" / Saved as "${name}"!`);
 }
 function loadData() {
   const sel = $('save_slots');
   const name = sel.value;
-  if (!name || sel.options[sel.selectedIndex].disabled) { showFeedback('Please select an entry to load.'); return; }
+  if (!name || sel.options[sel.selectedIndex].disabled) { showFeedback('请先选择一项 / Please select an entry to load.'); return; }
   const d = getSavedData()[name];
-  if (!d) { showFeedback('Error loading.'); return; }
+  if (!d) { showFeedback('加载出错 / Error loading.'); return; }
   restoreDataToForm(d);
-  showFeedback(`Loaded "${name}"!`);
+  showFeedback(`已加载 "${name}" / Loaded "${name}"!`);
 }
 function deleteData() {
   const sel = $('save_slots');
   const name = sel.value;
-  if (!name || sel.options[sel.selectedIndex].disabled) { showFeedback('Please select an entry to delete.'); return; }
-  if (!confirm(`Delete "${name}"?`)) return;
+  if (!name || sel.options[sel.selectedIndex].disabled) { showFeedback('请先选择一项 / Please select an entry to delete.'); return; }
+  if (!confirm(`删除 "${name}"？/ Delete "${name}"?`)) return;
   const data = getSavedData();
   delete data[name];
   localStorage.setItem(storageKey, JSON.stringify(data));
   updateSaveSlotsDropdown();
-  showFeedback(`Deleted "${name}"`);
+  showFeedback(`已删除 "${name}" / Deleted "${name}"`);
 }
 
 /* ============================================================
@@ -2160,174 +1998,14 @@ const GH_REPO   = 'meigong-kpi';
 const GH_BRANCH = 'main';
 const GH_QUOTES_PATH = 'quotes';
 
-/* Sanitize a string into a filename-safe token.
-   Keeps Unicode letters/digits, replaces whitespace + path separators
-   with hyphens, removes URL-unsafe characters and quotes. Truncates to 50 chars. */
-function sanitizeForFilename(s) {
-  if (!s) return '';
-  const first = String(s).split('\n')[0].trim();
-  return first
-    .replace(/[\\\/\?<>:\*\|"'#%&\.`]/g, '')  // strip URL-unsafe, quotes, dot, backtick
-    .replace(/[\s_]+/g, '-')                   // whitespace & underscore → hyphen
-    .replace(/-+/g, '-')                       // collapse repeated hyphens
-    .replace(/^-+|-+$/g, '')                   // trim hyphens
-    .slice(0, 50) || '';
-}
-
-/* Extract a display name for the buyer (first non-empty line of buyer_info,
-   falling back to email local-part). Used as the primary filename token. */
-function getBuyerNameFromData(d) {
-  const info = (d.buyer_info || '').trim();
-  if (info) {
-    const firstLine = info.split('\n')[0].trim();
-    if (firstLine) return firstLine;
-  }
-  const email = (d.buyer_email || '').trim();
-  if (email && email.includes('@')) return email.split('@')[0];
-  return '';
-}
-
-/* Duplicate the currently-loaded quote as a new draft: auto-increment PI,
-   reset status to draft, reset created_at, and clear the loaded-record link. */
-function duplicateAsNew() {
-  // Bump PI number locally so the duplicate gets the next free slot
-  const cur = $('pi_number').value;
-  const m = cur.match(/^(.*?)(\d+)$/);
-  if (m) {
-    const incremented = (parseInt(m[2], 10) + 1).toString().padStart(m[2].length, '0');
-    $('pi_number').value = m[1] + incremented;
-    // Mirror to quote_number / po_number based on seller prefix
-    const sellerKey = $('seller_website').value;
-    const prefix = sellerData[sellerKey]?.prefix || '';
-    if (prefix && incremented) {
-      $('quote_number').value = `Q-${prefix}-${incremented}`;
-      $('po_number').value    = `JDI-${prefix}-${incremented}`;
-      orderNumberPart = incremented;
-    }
-  } else {
-    showToast('Could not parse current PI number — please set it manually', 'err');
-  }
-  // Reset state markers so save creates a NEW record
-  currentLoadedPath = null;
-  currentLoadedSha = null;
-  currentCreatedAt = new Date().toISOString();
-  setQuoteStatus('draft');
-  // Update date to today
-  const today = new Date();
-  $('date_of_issue').valueAsDate = today;
-  const v = new Date(); v.setDate(today.getDate() + 30);
-  $('valid_until').valueAsDate = v;
-  scheduleSync();
-  showToast('Duplicated as new draft. Save when ready.', 'ok');
-}
-
-/* Export the currently filtered cloud list to a CSV file. */
-function exportCSV() {
-  if (!cloudRecords.length) { showToast('No records loaded — refresh first', 'err'); return; }
-  // Re-apply same filters as renderCloudList by reading filter inputs
-  const search = ($('cloud-search')?.value || '').toLowerCase();
-  const uf = $('cloud-user-filter')?.value || '';
-  const dateFilter = $('cloud-date-filter')?.value || 'all';
-  const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const startOfYesterday = new Date(startOfToday); startOfYesterday.setDate(startOfYesterday.getDate() - 1);
-  const startOfWeek = new Date(startOfToday); startOfWeek.setDate(startOfWeek.getDate() - 6);
-  const startOfMonth = new Date(startOfToday); startOfMonth.setDate(startOfMonth.getDate() - 29);
-  function passesDate(rec) {
-    if (dateFilter === 'all') return true;
-    if (!rec.date) return false;
-    const iso = rec.date.replace(/T(\d{2})-(\d{2})/, 'T$1:$2');
-    const d = new Date(iso);
-    if (isNaN(d)) return false;
-    if (dateFilter === 'today') return d >= startOfToday;
-    if (dateFilter === 'yesterday') return d >= startOfYesterday && d < startOfToday;
-    if (dateFilter === 'week') return d >= startOfWeek;
-    if (dateFilter === 'month') return d >= startOfMonth;
-    return true;
-  }
-  const rows = cloudRecords.filter(r => {
-    if (uf && r.user !== uf) return false;
-    if (!passesDate(r)) return false;
-    if (statusFilter && r.status !== statusFilter) return false;
-    if (search) {
-      const hay = `${r.buyerName} ${r.piNo} ${r.user} ${r.status}`.toLowerCase();
-      if (!hay.includes(search)) return false;
-    }
-    return true;
-  });
-  if (!rows.length) { showToast('Nothing to export (filtered list is empty)', 'err'); return; }
-
-  // Build CSV (RFC 4180-compatible)
-  const escape = v => {
-    if (v == null) return '';
-    const s = String(v);
-    return /["\n,]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  const lines = [['Date','User','Customer','PI No.','Status','Amount (USD)','View'].join(',')];
-  rows.forEach(r => {
-    const dateDisplay = r.date ? r.date.replace('T',' ').replace(/-(\d{2})$/, ':$1').slice(0,16) : '';
-    const viewUrl = r.downloadUrl || '';
-    lines.push([dateDisplay, r.user, r.buyerName, r.piNo, r.status, r.amount, viewUrl].map(escape).join(','));
-  });
-  const csv = '\uFEFF' + lines.join('\n'); // BOM so Excel reads UTF-8 correctly
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `quotes-export-${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast(`Exported ${rows.length} record(s) to CSV`, 'ok');
-}
-
-/* Set PI auto-increment to (max-existing + 1) within the currently-selected seller.
-   Called after a fresh cloud list load to avoid PI number collisions. */
-function refreshPiAutoIncrement() {
-  const sellerKey = $('seller_website').value;
-  const prefix = sellerData[sellerKey]?.prefix;
-  if (!prefix) return;
-  // Match piNo strings like "RD-1023" or "JRI-1024" — pull the numeric tail
-  let maxNum = 1000; // baseline so first record is 1001
-  cloudRecords.forEach(r => {
-    if (!r.piNo) return;
-    // Accept records where the piNo contains the seller prefix
-    if (!r.piNo.includes(prefix)) return;
-    const tail = r.piNo.match(/(\d+)\s*$/);
-    if (tail) {
-      const n = parseInt(tail[1], 10);
-      if (n > maxNum) maxNum = n;
-    }
-  });
-  // Only update if user hasn't already manually set something higher
-  const current = parseInt(orderNumberPart, 10) || 0;
-  if (maxNum >= current) {
-    orderNumberPart = (maxNum + 1).toString();
-    // Only auto-update the visible fields if this is a fresh quote (no loaded record)
-    if (!currentLoadedPath) updateOrderNumbers();
-  }
-}
-
 function getSettings()  { try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; } catch(e) { return {}; } }
 function getToken()     { return getSettings().token    || ''; }
 function getUsername()  { return getSettings().username || ''; }
 function saveSetup() {
   const name  = $('setup-name').value.trim();
   const token = $('setup-token').value.trim();
-  if (!name)  { alert('Please enter your name.'); return; }
-  if (!token) { alert('Please enter the GitHub token.'); return; }
-  const prev = getSettings();
-  if (prev.username && prev.username !== name) {
-    const hasMyRecords = cloudRecords.some(r => r.user === prev.username);
-    if (hasMyRecords) {
-      const proceed = confirm(
-        `You are about to change your name from "${prev.username}" to "${name}".\n\n` +
-        `Your existing ${cloudRecords.filter(r => r.user === prev.username).length} quote(s) will remain under "${prev.username}" in Team view, ` +
-        `and new saves will go under "${name}". Continue?`
-      );
-      if (!proceed) return;
-    }
-  }
+  if (!name)  { alert('请输入你的姓名 / Please enter your name.'); return; }
+  if (!token) { alert('请输入 GitHub Token / Please enter the GitHub token.'); return; }
   localStorage.setItem(SETTINGS_KEY, JSON.stringify({ username: name, token }));
   closeSettings();
   renderUserBar();
@@ -2337,16 +2015,11 @@ function openSettings() {
   const s = getSettings();
   $('setup-name').value  = s.username || '';
   $('setup-token').value = s.token    || '';
-  // If a username is already set AND the user has cloud records, warn about orphaning
-  const warning = $('setup-name-locked-warning');
-  if (warning) {
-    const hasExistingName = !!s.username;
-    const hasMyRecords = cloudRecords.some(r => r.user === s.username);
-    warning.style.display = (hasExistingName && hasMyRecords) ? '' : 'none';
-  }
   $('settings-overlay').classList.remove('hidden');
 }
 function closeSettings() { $('settings-overlay').classList.add('hidden'); }
+function openHelp()  { $('help-overlay').classList.remove('hidden'); }
+function closeHelp() { $('help-overlay').classList.add('hidden'); }
 function renderUserBar() {
   const name = getUsername();
   const avatar = $('user-avatar');
@@ -2357,13 +2030,13 @@ function renderUserBar() {
     avatar.textContent = name.charAt(0).toUpperCase();
     avatar.style.background = nameToColor(name);
     nameLabel.textContent = name;
-    pill.textContent = 'Cloud Ready';
+    pill.textContent = '云端就绪 / Cloud Ready';
     pill.className = 'status-pill ok';
     banner.style.display = 'none';
   } else {
     avatar.textContent = '?';
-    nameLabel.textContent = 'Guest';
-    pill.textContent = 'Not set up';
+    nameLabel.textContent = '访客 / Guest';
+    pill.textContent = '未设置 / Not set up';
     pill.className = 'status-pill';
     banner.style.display = 'flex';
   }
@@ -2371,9 +2044,7 @@ function renderUserBar() {
 async function ghAPI(path, method, body) {
   const token = getToken();
   if (!token) { setCloudStatus('Please set up your token first (click ⚙)', 'err'); return null; }
-  // URL-encode path segments individually (preserves slashes) so Chinese/unicode/space-laden filenames work
-  const encodedPath = path.split('/').map(seg => encodeURIComponent(seg)).join('/');
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${encodedPath}`;
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`;
   const opts = { method, headers: { 'Authorization':'token '+token, 'Accept':'application/vnd.github.v3+json', 'Content-Type':'application/json' } };
   if (body) opts.body = JSON.stringify(body);
   try {
@@ -2385,207 +2056,102 @@ async function ghAPI(path, method, body) {
 }
 let cloudRecords = [];
 let selectedCloudItem = null;
-let cloudViewMode = 'mine';        // 'mine' | 'all'
-let currentLoadedPath = null;       // track currently-loaded record
-let teamUserCounts = {};            // for team-mode count
-
-function setCloudViewMode(mode) {
-  cloudViewMode = mode;
-  document.querySelectorAll('.view-mode-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.view === mode);
-  });
-  // Show team-member filter only in 'all' mode
-  const uf = $('cloud-user-filter');
-  if (uf) uf.style.display = mode === 'all' ? '' : 'none';
-  // Show Empty Trash button only in trash mode
-  const trashBtn = $('btn-empty-trash');
-  if (trashBtn) trashBtn.style.display = mode === 'trash' ? '' : 'none';
-  loadCloudList();
-}
-
-function setStatusFilter(status) {
-  statusFilter = status;
-  document.querySelectorAll('.status-chip').forEach(c => {
-    c.classList.toggle('active', c.dataset.status === status);
-  });
-  renderCloudList();
-}
-
 async function loadCloudList() {
   if (!getToken()) { openSettings(); return; }
-  const me = getUsername();
-  setCloudStatus('<span class="loading-spinner"></span> Loading from GitHub…', '');
-  $('cloud-list').innerHTML = '<div class="cloud-list-empty"><span class="loading-spinner"></span> Fetching records…</div>';
+  setCloudStatus('<span class="loading-spinner"></span> 正在从 GitHub 加载… / Loading from GitHub…', '');
+  $('cloud-list').innerHTML = '<div class="cloud-list-empty"><span class="loading-spinner"></span> 正在获取记录… / Fetching records…</div>';
+  const usersData = await ghAPI(GH_QUOTES_PATH, 'GET');
+  if (!usersData || usersData._notFound) { cloudRecords = []; renderCloudList(); setCloudStatus('云端暂无记录，保存你的第一份报价吧！ / No cloud records yet. Save your first quote!', ''); return; }
+  if (!Array.isArray(usersData)) { setCloudStatus('GitHub 返回结果异常 / Unexpected response from GitHub.', 'err'); return; }
+  const userFolders = usersData.filter(f => f.type === 'dir');
   cloudRecords = [];
-
-  if (cloudViewMode === 'mine') {
-    // Fast path: ONLY load this user's folder
-    const files = await ghAPI(`${GH_QUOTES_PATH}/${me}`, 'GET');
-    if (files && !files._notFound && Array.isArray(files)) {
-      files.filter(f => f.name.endsWith('.json')).forEach(f => {
-        cloudRecords.push(parseCloudFile(f, me));
+  await Promise.all(userFolders.map(async folder => {
+    const files = await ghAPI(`${GH_QUOTES_PATH}/${folder.name}`, 'GET');
+    if (!Array.isArray(files)) return;
+    files.filter(f => f.name.endsWith('.json')).forEach(f => {
+      const parts = f.name.replace('.json','').split('__');
+      // Legacy filename: 'PI-1001__2026-05-19T10-14.json' (timestamp in name).
+      // New filename:    'PI-1001.json' (timestamp inside JSON as _savedAt).
+      const quoteName = parts[0] || f.name;
+      const legacyDate = parts[1] || '';
+      cloudRecords.push({
+        user: folder.name, filename: f.name, path: f.path, sha: f.sha,
+        downloadUrl: f.download_url, quoteName,
+        date: legacyDate,
+        isLegacy: !!legacyDate
       });
-    }
-    $('count-mine').textContent = cloudRecords.length;
-  } else if (cloudViewMode === 'trash') {
-    // Trash mode: scan the _trash folder (all users)
-    const trashRoot = await ghAPI(TRASH_PATH, 'GET');
-    if (trashRoot && !trashRoot._notFound && Array.isArray(trashRoot)) {
-      const trashUsers = trashRoot.filter(f => f.type === 'dir');
-      await Promise.all(trashUsers.map(async folder => {
-        const files = await ghAPI(`${TRASH_PATH}/${folder.name}`, 'GET');
-        if (!Array.isArray(files)) return;
-        files.filter(f => f.name.endsWith('.json')).forEach(f => {
-          const rec = parseCloudFile(f, folder.name);
-          rec.trashed = true;
-          cloudRecords.push(rec);
-        });
-      }));
-    }
-    $('count-trash').textContent = cloudRecords.length;
-  } else {
-    // Team mode
-    const usersData = await ghAPI(GH_QUOTES_PATH, 'GET');
-    if (!usersData || usersData._notFound) {
-      cloudRecords = []; renderCloudList();
-      setCloudStatus('No cloud records yet. Save your first quote!', '');
-      $('count-mine').textContent = '0'; $('count-all').textContent = '0';
-      return;
-    }
-    if (!Array.isArray(usersData)) { setCloudStatus('Unexpected response from GitHub.', 'err'); return; }
-    // Skip the _trash folder when counting team records
-    const userFolders = usersData.filter(f => f.type === 'dir' && !f.name.startsWith('_'));
-    teamUserCounts = {};
-    await Promise.all(userFolders.map(async folder => {
-      const files = await ghAPI(`${GH_QUOTES_PATH}/${folder.name}`, 'GET');
-      if (!Array.isArray(files)) return;
-      const jsonFiles = files.filter(f => f.name.endsWith('.json'));
-      teamUserCounts[folder.name] = jsonFiles.length;
-      jsonFiles.forEach(f => cloudRecords.push(parseCloudFile(f, folder.name)));
-    }));
-    const uf = $('cloud-user-filter');
-    const cur = uf.value;
-    uf.innerHTML = '<option value="">All members</option>';
-    [...new Set(cloudRecords.map(r => r.user))].sort().forEach(u => {
-      const o = document.createElement('option');
-      o.value = u; o.textContent = `${u} (${teamUserCounts[u] || 0})`;
-      uf.appendChild(o);
     });
-    if (cur) uf.value = cur;
-    $('count-mine').textContent = (teamUserCounts[me] || 0);
-    $('count-all').textContent = cloudRecords.length;
-  }
-  cloudRecords.sort((a,b) => b.date.localeCompare(a.date));
-
-  // Update PI auto-increment to be max + 1 within this seller's records
-  refreshPiAutoIncrement();
-
+  }));
+  // For new-format files, fetch _savedAt from JSON content (in parallel batches).
+  const newFormatRecords = cloudRecords.filter(r => !r.date);
+  await Promise.all(newFormatRecords.map(async r => {
+    try {
+      const resp = await fetch(r.downloadUrl, { cache: 'no-store' });
+      const j = await resp.json();
+      if (j && j._savedAt) r.date = j._savedAt;
+    } catch (e) { /* keep blank if fetch fails */ }
+  }));
+  cloudRecords.sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+  const uf = $('cloud-user-filter');
+  const cur = uf.value;
+  uf.innerHTML = '<option value="">All team members</option>';
+  [...new Set(cloudRecords.map(r => r.user))].forEach(u => { const o = document.createElement('option'); o.value=u; o.textContent=u; uf.appendChild(o); });
+  if (cur) uf.value = cur;
   renderCloudList();
-  setCloudStatus(`✓ ${cloudRecords.length} record(s) loaded`, 'ok');
+  // Show a hint if there are legacy duplicates (multiple files for the same PI number).
+  const dupGroups = {};
+  cloudRecords.forEach(r => {
+    const key = `${r.user}/${r.quoteName}`;
+    dupGroups[key] = (dupGroups[key] || 0) + 1;
+  });
+  const dupCount = Object.values(dupGroups).filter(n => n > 1).reduce((s,n) => s + (n - 1), 0);
+  if (dupCount > 0) {
+    setCloudStatus(`✓ 已加载 ${cloudRecords.length} 条记录 / ${cloudRecords.length} record(s) loaded — <button class="btn-link" onclick="cleanupLegacyDuplicates()" style="color:#2563eb;text-decoration:underline;background:none;border:0;cursor:pointer;padding:0;font:inherit;">清理 ${dupCount} 个旧版重复文件 / Clean up ${dupCount} duplicate(s)</button>`, 'ok');
+  } else {
+    setCloudStatus(`✓ 已加载 ${cloudRecords.length} 条记录 / ${cloudRecords.length} record(s) loaded`, 'ok');
+  }
 }
 
-// Parse a cloud filename into structured fields. Handles 3 historical formats:
-// v3 (latest): {buyerName}__{piNo}__{status}__{amount}__{dateStr}.json  (5 parts)
-// v2:          {buyerName}__{piNo}__{dateStr}.json                       (3 parts)
-// v1 (old):    {piNo}__{dateStr}.json                                    (2 parts)
-function parseCloudFile(f, user) {
-  const parts = f.name.replace('.json','').split('__');
-  let buyerName = '', piNo = '', status = 'draft', amount = 0, date = '';
-  if (parts.length >= 5) {
-    buyerName = parts[0]; piNo = parts[1]; status = parts[2];
-    amount = parseFloat(parts[3]) || 0;
-    date = parts.slice(4).join('__');
-  } else if (parts.length === 3) {
-    buyerName = parts[0]; piNo = parts[1]; date = parts[2];
-  } else if (parts.length === 2) {
-    piNo = parts[0]; date = parts[1];
-  } else {
-    piNo = parts[0] || f.name;
+// Sweep legacy duplicates: for each (user, quoteName), keep the one with the newest date and delete the rest.
+async function cleanupLegacyDuplicates() {
+  if (!confirm('将自动保留每个报价单号最新的一份，删除其余旧版重复文件。确定继续吗？\n\nThis keeps only the newest version of each PI number and deletes the older duplicates. Continue?')) return;
+  setCloudStatus('<span class="loading-spinner"></span> 正在清理重复文件… / Cleaning up duplicates…', '');
+  // Group by (user, quoteName)
+  const groups = {};
+  cloudRecords.forEach(r => {
+    const key = `${r.user}/${r.quoteName}`;
+    (groups[key] = groups[key] || []).push(r);
+  });
+  const toDelete = [];
+  Object.values(groups).forEach(group => {
+    if (group.length <= 1) return;
+    group.sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+    // Keep the first (newest), delete the rest
+    toDelete.push(...group.slice(1));
+  });
+  if (!toDelete.length) { setCloudStatus('没有需要清理的文件 / Nothing to clean up.', 'ok'); return; }
+  let ok = 0, fail = 0;
+  for (const r of toDelete) {
+    try {
+      const result = await ghAPI(r.path, 'DELETE', { message:`Cleanup: delete duplicate ${r.filename}`, sha: r.sha, branch: GH_BRANCH });
+      if (result !== null) ok++; else fail++;
+    } catch(e) { fail++; }
   }
-  // Validate status (treat unknown as draft for forward-compat safety)
-  if (!['draft','sent','won','lost','archived'].includes(status)) status = 'draft';
-  const displayName = buyerName ? buyerName.replace(/-/g, ' ') : '(unnamed customer)';
-  return {
-    user, filename: f.name, path: f.path, sha: f.sha, downloadUrl: f.download_url,
-    buyerName: displayName, piNo, date, status, amount,
-    quoteName: displayName
-  };
+  setCloudStatus(`✓ 清理完成：删除 ${ok} 个旧版文件${fail?`（${fail} 个失败）`:''} / Cleanup done: ${ok} deleted${fail?` (${fail} failed)`:''}`, 'ok');
+  showToast(`清理完成：${ok} 个 / Cleaned up: ${ok}`, 'ok');
+  loadCloudList();
 }
 function renderCloudList() {
   const search = ($('cloud-search')?.value || '').toLowerCase();
   const uf = $('cloud-user-filter')?.value || '';
-  const dateFilter = $('cloud-date-filter')?.value || 'all';
   const list = $('cloud-list');
-
-  const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const startOfYesterday = new Date(startOfToday); startOfYesterday.setDate(startOfYesterday.getDate() - 1);
-  const startOfWeek = new Date(startOfToday); startOfWeek.setDate(startOfWeek.getDate() - 6);
-  const startOfMonth = new Date(startOfToday); startOfMonth.setDate(startOfMonth.getDate() - 29);
-
-  function passesDateFilter(rec) {
-    if (dateFilter === 'all') return true;
-    if (!rec.date) return false;
-    const iso = rec.date.replace(/T(\d{2})-(\d{2})/, 'T$1:$2');
-    const d = new Date(iso);
-    if (isNaN(d)) return false;
-    if (dateFilter === 'today') return d >= startOfToday;
-    if (dateFilter === 'yesterday') return d >= startOfYesterday && d < startOfToday;
-    if (dateFilter === 'week') return d >= startOfWeek;
-    if (dateFilter === 'month') return d >= startOfMonth;
-    return true;
-  }
-
-  const filtered = cloudRecords.filter(r => {
-    if (uf && r.user !== uf) return false;
-    if (!passesDateFilter(r)) return false;
-    if (statusFilter && r.status !== statusFilter) return false;
-    if (search) {
-      // Search across buyerName, piNo, user, status
-      const hay = `${r.buyerName} ${r.piNo} ${r.user} ${r.status}`.toLowerCase();
-      if (!hay.includes(search)) return false;
-    }
-    return true;
-  });
-
-  if (!filtered.length) {
-    const baseMsg = cloudRecords.length === 0
-      ? (cloudViewMode === 'mine' ? 'No quotes yet. Click ⬆ Save to Cloud to create your first one.' :
-         cloudViewMode === 'trash' ? 'Trash is empty.' : 'No team records yet.')
-      : 'No matches for current filters.';
-    list.innerHTML = `<div class="cloud-list-empty">${baseMsg}</div>`;
-    selectedCloudItem = null; $('btn-cloud-load').disabled = true;
-    return;
-  }
-
+  const filtered = cloudRecords.filter(r => (!uf || r.user===uf) && (!search || r.quoteName.toLowerCase().includes(search) || r.user.toLowerCase().includes(search)));
+  if (!filtered.length) { list.innerHTML = `<div class="cloud-list-empty">${cloudRecords.length===0?'云端暂无记录 / No cloud records yet.':'未找到匹配项 / No matches found.'}</div>`; selectedCloudItem=null; $('btn-cloud-load').disabled=true; return; }
   list.innerHTML = '';
   filtered.forEach(r => {
-    const isCurrent = currentLoadedPath && currentLoadedPath === r.path;
     const div = document.createElement('div');
-    div.className = 'cloud-list-item'
-      + (selectedCloudItem?.path === r.path ? ' selected' : '')
-      + (isCurrent ? ' is-current' : '')
-      + (r.trashed ? ' is-trashed' : '');
-    const dateDisplay = r.date ? r.date.replace('T',' ').replace(/-(\d{2})$/, ':$1').slice(0,16) : '—';
-    const amountDisplay = r.amount ? `$${r.amount.toLocaleString('en-US', {maximumFractionDigits: 0})}` : '';
-    // Strip ALL quotes from name BEFORE injecting into JS onclick arg (avoids breaking the string literal)
-    const safeName = (r.buyerName || '').replace(/['"]/g, '');
-    const delBtn = r.trashed
-      ? `<button class="cloud-item-del" title="Restore" onclick="event.stopPropagation();restoreFromTrash('${r.path}','${r.sha}','${safeName}')">↺</button>
-         <button class="cloud-item-del" title="Permanently delete" onclick="event.stopPropagation();permanentDelete('${r.path}','${r.sha}','${safeName}')">✕</button>`
-      : `<button class="cloud-item-del" title="Move to trash" onclick="event.stopPropagation();cloudDelete('${r.path}','${r.sha}','${safeName}')">✕</button>`;
-    div.innerHTML = `
-      <div class="cloud-item-avatar" style="background:${nameToColor(r.user)}">${r.user.charAt(0).toUpperCase()}</div>
-      <div class="cloud-item-info">
-        <div class="cloud-item-name">
-          ${escapeHTML(r.buyerName)}
-          <span class="status-tag ${r.status}">${r.status}</span>
-          ${isCurrent ? '<span class="current-pill">CURRENT</span>' : ''}
-        </div>
-        <div class="cloud-item-meta">${escapeHTML(r.user)} · ${dateDisplay}${amountDisplay ? ` · <strong>${amountDisplay}</strong>` : ''}</div>
-        <div class="cloud-item-secondary">PI: ${escapeHTML(r.piNo)}</div>
-      </div>
-      <div style="display:flex;gap:2px;">${delBtn}</div>`;
+    div.className = 'cloud-list-item' + (selectedCloudItem?.path === r.path ? ' selected' : '');
+    div.innerHTML = `<div class="cloud-item-avatar" style="background:${nameToColor(r.user)}">${r.user.charAt(0).toUpperCase()}</div><div class="cloud-item-info"><div class="cloud-item-name">${r.quoteName}${r.isLegacy?' <span style=\"font-size:9px;color:#94a3b8;font-weight:500;\">[旧]</span>':''}</div><div class="cloud-item-meta">${r.user} · ${formatCloudDate(r.date)}</div></div><button class="cloud-item-del" onclick="event.stopPropagation();cloudDelete('${r.path}','${r.sha}','${r.quoteName.replace(/'/g,'')}')">✕</button>`;
     div.addEventListener('click', () => {
       selectedCloudItem = r;
       document.querySelectorAll('.cloud-list-item').forEach(e => e.classList.remove('selected'));
@@ -2595,220 +2161,49 @@ function renderCloudList() {
     list.appendChild(div);
   });
 }
-
-function escapeHTML(s) {
-  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
 async function cloudSave() {
   const username = getUsername();
   if (!username) { openSettings(); return; }
   const data = collectFormData();
-  const piNo = sanitizeForFilename(data.pi_number || 'QUOTE') || 'QUOTE';
-  const buyerName = sanitizeForFilename(getBuyerNameFromData(data)) || 'Unnamed';
-  const status = data._status || 'draft';
-  const amountInt = Math.round(data._total_usd || 0);
-  const dateStr = new Date().toISOString().slice(0,16).replace(':','-');
-  // New filename format (5 segments): {buyerName}__{piNo}__{status}__{amount}__{date}.json
-  const filename = `${buyerName}__${piNo}__${status}__${amountInt}__${dateStr}.json`;
-  const path = `${GH_QUOTES_PATH}/${username}/${filename}`;
-
-  // Size sanity check before sending (GitHub: 100MB hard limit per file; we warn at 5MB)
-  const payload = JSON.stringify(data, null, 2);
-  const sizeKB = Math.round(payload.length / 1024);
-  if (sizeKB > 5000) {
-    if (!confirm(`This quote is ${sizeKB}KB (mostly from pasted images). Saving may be slow or fail at >100MB. Continue?`)) return;
-  }
-
-  setCloudStatus('<span class="loading-spinner"></span> Saving to GitHub…', '');
-  const content = btoa(unescape(encodeURIComponent(payload)));
-
-  // Find any existing record for this same logical quote (same path OR same buyerName+piNo combo by this user)
-  let existingPath = currentLoadedPath;
-  let existingSha = null;
-  if (existingPath) {
-    const existing = await ghAPI(existingPath, 'GET');
-    if (existing && !existing._notFound && existing.sha) {
-      existingSha = existing.sha;
-      // CONFLICT DETECTION: if the sha on the server differs from what we loaded, someone else edited it
-      if (currentLoadedSha && existingSha !== currentLoadedSha) {
-        const proceed = confirm(
-          '⚠ Conflict detected!\n\n' +
-          'This quote has been modified in the cloud since you loaded it ' +
-          '(possibly by another team member).\n\n' +
-          'OK = overwrite their changes with yours\n' +
-          'Cancel = abort save (recommended: refresh the list and reload)'
-        );
-        if (!proceed) {
-          setCloudStatus('Save cancelled — please reload to see latest changes.', 'err');
-          return;
-        }
-      }
-    }
-  }
-
-  // If the new path differs from the existing path (e.g. user changed PI no, buyer name, status, or amount),
-  // we delete the old record after the new one is saved to avoid orphan duplicates.
-  const pathChanged = existingPath && existingPath !== path;
-
-  const body = { message: `Save quote: ${buyerName} (${piNo}) [${status}] by ${username}`, content, branch: GH_BRANCH };
-  // If saving to the same path that exists, include sha for atomic update
-  if (!pathChanged && existingSha) body.sha = existingSha;
-  // If new path, check whether that path already exists (e.g. dup save)
-  if (pathChanged) {
-    const collide = await ghAPI(path, 'GET');
-    if (collide && collide.sha) body.sha = collide.sha;
-  }
-
+  const piNo = (data.pi_number || 'QUOTE').replace(/[^a-zA-Z0-9\-_]/g, '_');
+  // Filename is just the PI number — same PI number = same file = overwrite.
+  // The timestamp is stored INSIDE the JSON as _savedAt, so list view still shows it.
+  const path = `${GH_QUOTES_PATH}/${username}/${piNo}.json`;
+  setCloudStatus('<span class="loading-spinner"></span> 正在保存到 GitHub… / Saving to GitHub…', '');
+  const dataWithMeta = { ...data, _savedAt: new Date().toISOString() };
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(dataWithMeta, null, 2))));
+  const existing = await ghAPI(path, 'GET');
+  const isUpdate = !!(existing && existing.sha);
+  const body = { message: `${isUpdate ? 'Update' : 'Save'} quote: ${piNo} by ${username}`, content, branch: GH_BRANCH };
+  if (isUpdate) body.sha = existing.sha;
   const result = await ghAPI(path, 'PUT', body);
   if (result && result.content) {
-    // Clean up old record if path changed (orphan prevention)
-    if (pathChanged && existingSha) {
-      const cleanup = await ghAPI(existingPath, 'DELETE', {
-        message: `Cleanup superseded: ${existingPath.split('/').pop()}`,
-        sha: existingSha,
-        branch: GH_BRANCH
-      });
-      if (cleanup !== null) console.log('Cleaned up old record at', existingPath);
-    }
-    setCloudStatus(`✓ Saved: ${getBuyerNameFromData(data) || piNo} [${status}]`, 'ok');
-    showToast('Saved to cloud', 'ok');
-    currentLoadedPath = path;
-    currentLoadedSha = result.content.sha;
+    setCloudStatus(`✓ 已${isUpdate ? '更新' : '保存'}：${piNo} / ${isUpdate ? 'Updated' : 'Saved'}: ${piNo}`, 'ok');
+    showToast(isUpdate ? '已更新到云端 / Updated in cloud' : '已保存到云端 / Saved to cloud', 'ok');
     loadCloudList();
   }
 }
 async function cloudLoad() {
   if (!selectedCloudItem) return;
-  if (selectedCloudItem.trashed) {
-    showToast('This is a trashed record. Restore it first to edit.', 'err');
-    return;
-  }
-  setCloudStatus('<span class="loading-spinner"></span> Loading…', '');
+  setCloudStatus('<span class="loading-spinner"></span> 正在加载… / Loading…', '');
   try {
     const resp = await fetch(selectedCloudItem.downloadUrl);
     const data = await resp.json();
     restoreDataToForm(data);
-    currentLoadedPath = selectedCloudItem.path;
-    currentLoadedSha = selectedCloudItem.sha; // remember sha for conflict detection on next save
-    setCloudStatus(`✓ Loaded: ${selectedCloudItem.buyerName || selectedCloudItem.piNo}`, 'ok');
-    showToast('Loaded from cloud', 'ok');
-    renderCloudList();
-  } catch(e) { setCloudStatus('Failed to load: ' + e.message, 'err'); }
+    setCloudStatus(`✓ 已加载：${selectedCloudItem.quoteName} / Loaded: ${selectedCloudItem.quoteName}`, 'ok');
+    showToast('已从云端加载 / Loaded from cloud', 'ok');
+  } catch(e) { setCloudStatus('加载失败 / Failed to load: ' + e.message, 'err'); }
 }
-/* Soft delete: move record to _trash folder (instead of permanent deletion).
-   GitHub Contents API has no rename, so we create-then-delete. */
 async function cloudDelete(path, sha, name) {
-  if (!confirm(`Move "${name}" to Trash? You can restore it later.`)) return;
-  setCloudStatus('<span class="loading-spinner"></span> Moving to trash…', '');
-  // 1. Read the file content
-  const orig = await ghAPI(path, 'GET');
-  if (!orig || orig._notFound) {
-    setCloudStatus('Source not found — refreshing list.', 'err');
-    loadCloudList(); return;
-  }
-  // 2. Write to trash path
-  const parts = path.split('/');
-  const username = parts[1] || 'unknown';
-  const filename = parts[parts.length - 1];
-  const trashPath = `${TRASH_PATH}/${username}/${filename}`;
-  const writeResult = await ghAPI(trashPath, 'PUT', {
-    message: `Trash: ${filename}`,
-    content: orig.content.replace(/\n/g, ''), // GH returns base64 wrapped; PUT wants unwrapped
-    branch: GH_BRANCH
-  });
-  if (!writeResult || !writeResult.content) {
-    setCloudStatus('Failed to move to trash (write step).', 'err');
-    return;
-  }
-  // 3. Delete original
-  const delResult = await ghAPI(path, 'DELETE', {
-    message: `Move to trash: ${filename}`,
-    sha,
-    branch: GH_BRANCH
-  });
-  if (delResult !== null) {
-    cloudRecords = cloudRecords.filter(r => r.path !== path);
-    if (selectedCloudItem?.path === path) { selectedCloudItem = null; $('btn-cloud-load').disabled = true; }
-    if (currentLoadedPath === path) { currentLoadedPath = null; currentLoadedSha = null; }
-    setCloudStatus(`✓ Moved "${name}" to trash`, 'ok');
-    showToast('Moved to trash (restore from 🗑 Trash view)', 'ok');
-    renderCloudList();
-  }
-}
-
-async function restoreFromTrash(trashPath, sha, name) {
-  if (!confirm(`Restore "${name}" from trash?`)) return;
-  setCloudStatus('<span class="loading-spinner"></span> Restoring…', '');
-  const orig = await ghAPI(trashPath, 'GET');
-  if (!orig || orig._notFound) { setCloudStatus('Source not found.', 'err'); return; }
-  const parts = trashPath.split('/');
-  // trashPath is like quotes/_trash/{username}/{filename}
-  const username = parts[2] || 'unknown';
-  const filename = parts[parts.length - 1];
-  const restorePath = `${GH_QUOTES_PATH}/${username}/${filename}`;
-  // Avoid clobbering if same path already exists
-  const existing = await ghAPI(restorePath, 'GET');
-  if (existing && existing.sha) {
-    if (!confirm('A record with the same filename already exists in the active list. Overwrite it?')) {
-      setCloudStatus('Restore cancelled.', '');
-      return;
-    }
-  }
-  const writeBody = {
-    message: `Restore from trash: ${filename}`,
-    content: orig.content.replace(/\n/g, ''),
-    branch: GH_BRANCH
-  };
-  if (existing && existing.sha) writeBody.sha = existing.sha;
-  const writeResult = await ghAPI(restorePath, 'PUT', writeBody);
-  if (!writeResult || !writeResult.content) {
-    setCloudStatus('Failed to restore.', 'err'); return;
-  }
-  // Delete from trash
-  await ghAPI(trashPath, 'DELETE', {
-    message: `Restore complete, remove trash copy: ${filename}`,
-    sha,
-    branch: GH_BRANCH
-  });
-  setCloudStatus(`✓ Restored "${name}"`, 'ok');
-  showToast('Restored from trash', 'ok');
-  loadCloudList();
-}
-
-async function permanentDelete(path, sha, name) {
-  if (!confirm(`Permanently delete "${name}"? This cannot be undone.`)) return;
-  if (!confirm('Are you absolutely sure? This will erase the record forever.')) return;
-  setCloudStatus('<span class="loading-spinner"></span> Permanently deleting…', '');
-  const result = await ghAPI(path, 'DELETE', {
-    message: `Permanent delete: ${path.split('/').pop()}`,
-    sha,
-    branch: GH_BRANCH
-  });
+  if (!confirm(`从云端删除 "${name}"？此操作不可撤销。\n\nDelete "${name}" from the cloud? This cannot be undone.`)) return;
+  setCloudStatus('<span class="loading-spinner"></span> 正在删除… / Deleting…', '');
+  const result = await ghAPI(path, 'DELETE', { message:`Delete quote: ${name}`, sha, branch: GH_BRANCH });
   if (result !== null) {
     cloudRecords = cloudRecords.filter(r => r.path !== path);
-    setCloudStatus(`✓ Permanently deleted "${name}"`, 'ok');
+    if (selectedCloudItem?.path === path) { selectedCloudItem = null; $('btn-cloud-load').disabled = true; }
     renderCloudList();
+    setCloudStatus(`✓ 已删除 "${name}" / Deleted "${name}"`, 'ok');
   }
-}
-
-async function emptyTrash() {
-  const trashedRecords = cloudRecords.filter(r => r.trashed);
-  if (!trashedRecords.length) { showToast('Trash is already empty', 'ok'); return; }
-  if (!confirm(`Permanently delete ALL ${trashedRecords.length} item(s) in the trash? This cannot be undone.`)) return;
-  if (!confirm('This will erase everything in the trash. Really proceed?')) return;
-  setCloudStatus(`<span class="loading-spinner"></span> Emptying trash (${trashedRecords.length})…`, '');
-  let successCount = 0;
-  for (const r of trashedRecords) {
-    const result = await ghAPI(r.path, 'DELETE', {
-      message: `Empty trash: ${r.filename}`,
-      sha: r.sha,
-      branch: GH_BRANCH
-    });
-    if (result !== null) successCount++;
-  }
-  setCloudStatus(`✓ Emptied trash (${successCount}/${trashedRecords.length} deleted)`, 'ok');
-  showToast('Trash emptied', 'ok');
-  loadCloudList();
 }
 function setCloudStatus(html, type) {
   const el = $('cloud-status');
@@ -2819,12 +2214,12 @@ function setCloudStatus(html, type) {
 async function quickSave() {
   if (!getUsername()) { openSettings(); return; }
   const pill = $('status-pill');
-  pill.textContent = 'Saving…'; pill.className = 'status-pill busy';
+  pill.textContent = '保存中… / Saving…'; pill.className = 'status-pill busy';
   await cloudSave();
   const cs = $('cloud-status').textContent;
-  if (cs.startsWith('✓')) { pill.textContent = 'Saved'; pill.className = 'status-pill ok'; }
-  else { pill.textContent = 'Failed'; pill.className = 'status-pill err'; }
-  setTimeout(() => { pill.textContent = getUsername() ? 'Cloud Ready' : 'Not set up'; pill.className = 'status-pill' + (getUsername()?' ok':''); }, 2400);
+  if (cs.startsWith('✓')) { pill.textContent = '已保存 / Saved'; pill.className = 'status-pill ok'; }
+  else { pill.textContent = '失败 / Failed'; pill.className = 'status-pill err'; }
+  setTimeout(() => { pill.textContent = getUsername() ? '云端就绪 / Cloud Ready' : '未设置 / Not set up'; pill.className = 'status-pill' + (getUsername()?' ok':''); }, 2400);
 }
 
 /* ============================================================
@@ -2884,9 +2279,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   renderUserBar();
 
-  // Initialize created_at for new quotes
-  if (!currentCreatedAt) currentCreatedAt = new Date().toISOString();
-
   // Restore draft if any, else fresh state
   const restored = restoreFromDraft();
   if (!restored) {
@@ -2894,8 +2286,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateOrderNumbers();
     updateTerms();
     addItem();
-    setLanguage('en');
-    setQuoteStatus('draft');
+    setLanguage('bilingual');
   }
 
   switchPreview('quotation');
