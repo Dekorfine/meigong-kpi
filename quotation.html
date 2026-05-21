@@ -152,6 +152,13 @@ input, textarea, select { font-family: inherit; }
 #item-table {
   width: 100%; border-collapse: collapse; min-width: 900px;
 }
+/* L/W/H columns: hidden by default, shown when the Show Dimensions toggle is on */
+#item-table .dim-col { display: none; }
+body.show-dim #item-table .dim-col { display: table-cell; }
+body.show-dim #item-table { min-width: 1080px; }
+/* Same for packing list dimension cols */
+#packing-list-section .pl-dim-col { display: none; }
+body.show-dim #packing-list-section .pl-dim-col { display: table-cell; }
 #item-table th {
   background: #f8fafc; font-size: 11px; font-weight: 700;
   color: #475569; text-transform: uppercase; letter-spacing: 0.03em;
@@ -731,13 +738,28 @@ input, textarea, select { font-family: inherit; }
       </fieldset>
     </div>
 
-    <!-- PI options bar -->
-    <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;margin-bottom:14px;font-size:12px;">
-      <strong style="color:#334155;">PI 选项 / PI Options:</strong>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-        <input type="checkbox" id="show_bank_info" checked onchange="scheduleSync()" style="width:auto;margin:0;">
-        <span>在 PI 上显示收款人银行信息 / Show Beneficiary Bank Info</span>
-      </label>
+    <!-- Document options bar -->
+    <div style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;margin-bottom:14px;font-size:12px;">
+      <strong style="color:#334155;display:block;margin-bottom:6px;">📄 单据选项 / Document Options:</strong>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="show_bank_info" checked onchange="scheduleSync()" style="width:auto;margin:0;">
+          <span>在 PI 显示收款人银行信息 / Show Bank Info on PI</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="show_deposit" onchange="scheduleSync()" style="width:auto;margin:0;">
+          <span>显示定金/余款 / Show Deposit & Balance</span>
+        </label>
+        <span id="deposit-pct-wrap" style="display:none;align-items:center;gap:4px;">
+          <span>定金比例 / Deposit:</span>
+          <input type="number" id="deposit_percent" value="30" min="0" max="100" step="1" onchange="scheduleSync()" oninput="scheduleSync()" style="width:55px;padding:3px 5px;margin:0;">
+          <span>%</span>
+        </span>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="show_dimensions" onchange="scheduleSync()" style="width:auto;margin:0;">
+          <span>装箱单显示长宽高 (cm) / Show L×W×H in Packing List</span>
+        </label>
+      </div>
     </div>
 
     <!-- Seller info (editable, collapsible) -->
@@ -769,6 +791,9 @@ input, textarea, select { font-family: inherit; }
               <th data-lang-key="th_qty" style="width:60px;">Qty</th>
               <th id="master-unit-price-header" style="width:90px;">Unit Price (USD)</th>
               <th data-lang-key="th_carton_no" style="width:80px;">Carton No.</th>
+              <th class="dim-col" data-lang-key="th_length" style="width:60px;">L (cm)</th>
+              <th class="dim-col" data-lang-key="th_width"  style="width:60px;">W (cm)</th>
+              <th class="dim-col" data-lang-key="th_height" style="width:60px;">H (cm)</th>
               <th data-lang-key="th_nw" style="width:70px;">N.W. (kgs)</th>
               <th data-lang-key="th_gw" style="width:70px;">G.W. (kgs)</th>
               <th data-lang-key="th_meas" style="width:70px;">Meas (cbm)</th>
@@ -868,6 +893,10 @@ input, textarea, select { font-family: inherit; }
           <p id="quote-discount-line"><span data-doc-key="discount">Discount</span> (<span id="quote-discount-perc">0</span>%): − <span id="quote-currency-symbol-2"></span><span id="quote-discount-amount">0.00</span></p>
           <p><span data-doc-key="freight">Freight</span>: <span id="quote-currency-symbol-3"></span><span id="quote-freight">0.00</span></p>
           <p class="grand"><strong><span data-doc-key="total">TOTAL</span>: <span id="quote-currency-symbol-4"></span><span id="quote-total">0.00</span></strong></p>
+          <div class="deposit-rows" id="quote-deposit-rows" style="display:none;border-top:1px dashed #cbd5e1;margin-top:6px;padding-top:6px;">
+            <p><span data-doc-key="first_deposit">First Deposit</span> <span class="quote-deposit-pct">30</span>%: <span class="quote-cur-sym"></span><span id="quote-deposit-amount">0.00</span></p>
+            <p class="grand-balance"><strong><span data-doc-key="balance">Balance</span>: <span class="quote-cur-sym"></span><span id="quote-balance-amount">0.00</span></strong></p>
+          </div>
         </div>
         <div class="info-box" style="margin-top:14px;">
           <h3 data-doc-key="terms_conditions">Terms & Conditions:</h3>
@@ -907,6 +936,10 @@ input, textarea, select { font-family: inherit; }
           <p id="po-discount-line"><span data-doc-key="discount">Discount</span> (<span id="po-discount-perc">0</span>%): − <span id="po-currency-symbol-2"></span><span id="po-discount-amount">0.00</span></p>
           <p><span data-doc-key="freight">Freight</span>: <span id="po-currency-symbol-3"></span><span id="po-freight">0.00</span></p>
           <p class="grand"><strong><span data-doc-key="total">TOTAL</span>: <span id="po-currency-symbol-4"></span><span id="po-total">0.00</span></strong></p>
+          <div class="deposit-rows" id="po-deposit-rows" style="display:none;border-top:1px dashed #cbd5e1;margin-top:6px;padding-top:6px;">
+            <p><span data-doc-key="first_deposit">First Deposit</span> <span class="po-deposit-pct">30</span>%: <span class="po-cur-sym"></span><span id="po-deposit-amount">0.00</span></p>
+            <p class="grand-balance"><strong><span data-doc-key="balance">Balance</span>: <span class="po-cur-sym"></span><span id="po-balance-amount">0.00</span></strong></p>
+          </div>
         </div>
         <div class="info-box" style="margin-top:14px;">
           <h3 data-doc-key="terms_conditions">Terms & Conditions:</h3>
@@ -947,6 +980,10 @@ input, textarea, select { font-family: inherit; }
           <p id="pi-discount-line"><span data-doc-key="discount">Discount</span> (<span id="pi-discount-perc">0</span>%): − <span id="pi-currency-symbol-2"></span><span id="pi-discount-amount">0.00</span></p>
           <p><span data-doc-key="freight">Freight</span>: <span id="pi-currency-symbol-3"></span><span id="pi-freight">0.00</span></p>
           <p class="grand"><strong><span data-doc-key="total_due">TOTAL AMOUNT DUE</span>: <span id="pi-currency-symbol-4"></span><span id="pi-total">0.00</span></strong></p>
+          <div class="deposit-rows" id="pi-deposit-rows" style="display:none;border-top:1px dashed #cbd5e1;margin-top:6px;padding-top:6px;">
+            <p><span data-doc-key="first_deposit">First Deposit</span> <span class="pi-deposit-pct">30</span>%: <span class="pi-cur-sym"></span><span id="pi-deposit-amount">0.00</span></p>
+            <p class="grand-balance"><strong><span data-doc-key="balance">Balance</span>: <span class="pi-cur-sym"></span><span id="pi-balance-amount">0.00</span></strong></p>
+          </div>
         </div>
         <div class="info-box" id="pi-bank-info-section" style="margin-top:14px;">
           <h3 data-doc-key="bank_info">BENEFICIARY BANK INFORMATION:</h3>
@@ -985,6 +1022,9 @@ input, textarea, select { font-family: inherit; }
             <th data-doc-key="th_carton_no">Carton No.</th>
             <th data-doc-key="th_item_desc_sku">Item Description / SKU</th>
             <th data-doc-key="th_qty_pcs">Quantity (PCS)</th>
+            <th class="pl-dim-col" data-doc-key="th_length_cm">L (cm)</th>
+            <th class="pl-dim-col" data-doc-key="th_width_cm">W (cm)</th>
+            <th class="pl-dim-col" data-doc-key="th_height_cm">H (cm)</th>
             <th data-doc-key="th_nw_kgs">Net Weight (KGS)</th>
             <th data-doc-key="th_gw_kgs">Gross Weight (KGS)</th>
             <th data-doc-key="th_meas_cbm">Measurement (CBM)</th>
@@ -994,6 +1034,9 @@ input, textarea, select { font-family: inherit; }
             <tr style="font-weight:700;background:#f8fafc;">
               <td colspan="2"><span data-doc-key="total_pl">TOTAL</span>:</td>
               <td id="pl-total-qty">0</td>
+              <td class="pl-dim-col"></td>
+              <td class="pl-dim-col"></td>
+              <td class="pl-dim-col"></td>
               <td id="pl-total-nw">0.00</td>
               <td id="pl-total-gw">0.00</td>
               <td id="pl-total-cbm">0.000</td>
@@ -1136,7 +1179,7 @@ const translations = {
     shipping_info:"Shipping Information", ship_to_name_address:"Ship To Name & Address", shipping_tel:"Shipping Tel", freight_cost_label:"Freight Cost",
     seller_info_editable:"Seller Information (Editable)", seller_name:"Seller Name", seller_address:"Seller Address", seller_phone:"Seller Phone", seller_email:"Seller Email", seller_website:"Seller Website",
     product_items_packing:"Product Items & Packing Details", th_sku:"SKU", th_description:"Description", th_image:"Image", th_qty:"Qty",
-    th_unit_price_usd:"Unit Price", th_carton_no:"Carton No.", th_nw:"N.W. (kgs)", th_gw:"G.W. (kgs)", th_meas:"Meas (cbm)",
+    th_unit_price_usd:"Unit Price", th_carton_no:"Carton No.", th_length:"L (cm)", th_width:"W (cm)", th_height:"H (cm)", th_nw:"N.W. (kgs)", th_gw:"G.W. (kgs)", th_meas:"Meas (cbm)",
     add_item:"Add Item", discount:"Discount", discount_perc:"Discount (%)",
     terms_conditions:"Terms & Conditions", select_preset:"Select a Preset"
   },
@@ -1147,7 +1190,7 @@ const translations = {
     shipping_info:"Shipping Information / 运输信息", ship_to_name_address:"Ship To Name & Address / 收货人名称和地址", shipping_tel:"Shipping Tel / 收货电话", freight_cost_label:"Freight Cost / 运费",
     seller_info_editable:"Seller Information (Editable) / 卖家信息 (可编辑)", seller_name:"Seller Name / 卖家名称", seller_address:"Seller Address / 卖家地址", seller_phone:"Seller Phone / 卖家电话", seller_email:"Seller Email / 卖家邮箱", seller_website:"Seller Website / 卖家网站",
     product_items_packing:"Product Items & Packing Details / 产品项目和包装细节", th_sku:"SKU / 产品编号", th_description:"Description / 描述", th_image:"Image / 图片", th_qty:"Qty / 数量",
-    th_unit_price_usd:"Unit Price / 单价", th_carton_no:"Carton No. / 箱号", th_nw:"N.W. (kgs) / 净重 (公斤)", th_gw:"G.W. (kgs) / 毛重 (公斤)", th_meas:"Meas (cbm) / 体积 (立方米)",
+    th_unit_price_usd:"Unit Price / 单价", th_carton_no:"Carton No. / 箱号", th_length:"L 长(cm)", th_width:"W 宽(cm)", th_height:"H 高(cm)", th_nw:"N.W. (kgs) / 净重 (公斤)", th_gw:"G.W. (kgs) / 毛重 (公斤)", th_meas:"Meas (cbm) / 体积 (立方米)",
     add_item:"Add Item / 添加项目", discount:"Discount / 折扣", discount_perc:"Discount (%) / 折扣 (%)",
     terms_conditions:"Terms & Conditions / 条款和条件", select_preset:"Select a Preset / 选择预设"
   },
@@ -1158,7 +1201,7 @@ const translations = {
     shipping_info:"Información de Envío", ship_to_name_address:"Nombre y Dirección de Envío", shipping_tel:"Teléfono de Envío", freight_cost_label:"Costo de Flete",
     seller_info_editable:"Información del Vendedor (Editable)", seller_name:"Nombre del Vendedor", seller_address:"Dirección del Vendedor", seller_phone:"Teléfono del Vendedor", seller_email:"Email del Vendedor", seller_website:"Sitio Web del Vendedor",
     product_items_packing:"Artículos del Producto y Detalles de Embalaje", th_sku:"SKU", th_description:"Descripción", th_image:"Imagen", th_qty:"Cant.",
-    th_unit_price_usd:"Precio Unitario", th_carton_no:"Nº de Caja", th_nw:"P.N. (kgs)", th_gw:"P.B. (kgs)", th_meas:"Med. (cbm)",
+    th_unit_price_usd:"Precio Unitario", th_carton_no:"Nº de Caja", th_length:"L (cm)", th_width:"An (cm)", th_height:"Al (cm)", th_nw:"P.N. (kgs)", th_gw:"P.B. (kgs)", th_meas:"Med. (cbm)",
     add_item:"Añadir Artículo", discount:"Descuento", discount_perc:"Descuento (%)",
     terms_conditions:"Términos y Condiciones", select_preset:"Seleccionar un Preajuste"
   },
@@ -1169,7 +1212,7 @@ const translations = {
     shipping_info:"Versandinformationen", ship_to_name_address:"Lieferadresse", shipping_tel:"Versand-Telefon", freight_cost_label:"Frachtkosten",
     seller_info_editable:"Verkäuferinformationen (Bearbeitbar)", seller_name:"Name des Verkäufers", seller_address:"Adresse des Verkäufers", seller_phone:"Telefon des Verkäufers", seller_email:"E-Mail des Verkäufers", seller_website:"Website des Verkäufers",
     product_items_packing:"Produktartikel & Verpackungsdetails", th_sku:"SKU", th_description:"Beschreibung", th_image:"Bild", th_qty:"Menge",
-    th_unit_price_usd:"Stückpreis", th_carton_no:"Karton Nr.", th_nw:"N.G. (kg)", th_gw:"B.G. (kg)", th_meas:"Maß (cbm)",
+    th_unit_price_usd:"Stückpreis", th_carton_no:"Karton Nr.", th_length:"L (cm)", th_width:"B (cm)", th_height:"H (cm)", th_nw:"N.G. (kg)", th_gw:"B.G. (kg)", th_meas:"Maß (cbm)",
     add_item:"Artikel Hinzufügen", discount:"Rabatt", discount_perc:"Rabatt (%)",
     terms_conditions:"Allgemeine Geschäftsbedingungen", select_preset:"Voreinstellung Auswählen"
   },
@@ -1180,7 +1223,7 @@ const translations = {
     shipping_info:"Informations d'Expédition", ship_to_name_address:"Nom et Adresse de Livraison", shipping_tel:"Tél. de Livraison", freight_cost_label:"Frais de Transport",
     seller_info_editable:"Informations sur le Vendeur (Modifiables)", seller_name:"Nom du Vendeur", seller_address:"Adresse du Vendeur", seller_phone:"Téléphone du Vendeur", seller_email:"Email du Vendeur", seller_website:"Site Web du Vendeur",
     product_items_packing:"Articles de Produit et Détails d'Emballage", th_sku:"SKU", th_description:"Description", th_image:"Image", th_qty:"Qté",
-    th_unit_price_usd:"Prix Unitaire", th_carton_no:"N° de Carton", th_nw:"P.N. (kgs)", th_gw:"P.B. (kgs)", th_meas:"Mes. (cbm)",
+    th_unit_price_usd:"Prix Unitaire", th_carton_no:"N° de Carton", th_length:"L (cm)", th_width:"l (cm)", th_height:"H (cm)", th_nw:"P.N. (kgs)", th_gw:"P.B. (kgs)", th_meas:"Mes. (cbm)",
     add_item:"Ajouter un Article", discount:"Remise", discount_perc:"Remise (%)",
     terms_conditions:"Termes et Conditions", select_preset:"Sélectionner un Préréglage"
   },
@@ -1191,7 +1234,7 @@ const translations = {
     shipping_info:"معلومات الشحن", ship_to_name_address:"اسم وعنوان المستلم", shipping_tel:"هاتف المستلم", freight_cost_label:"تكلفة الشحن",
     seller_info_editable:"معلومات البائع (قابلة للتعديل)", seller_name:"اسم البائع", seller_address:"عنوان البائع", seller_phone:"هاتف البائع", seller_email:"البريد الإلكتروني للبائع", seller_website:"موقع البائع",
     product_items_packing:"بنود المنتج وتفاصيل التغليف", th_sku:"SKU", th_description:"الوصف", th_image:"الصورة", th_qty:"الكمية",
-    th_unit_price_usd:"سعر الوحدة", th_carton_no:"رقم الكرتون", th_nw:"الوزن الصافي (كجم)", th_gw:"الوزن الإجمالي (كجم)", th_meas:"القياس (متر مكعب)",
+    th_unit_price_usd:"سعر الوحدة", th_carton_no:"رقم الكرتون", th_length:"الطول (سم)", th_width:"العرض (سم)", th_height:"الارتفاع (سم)", th_nw:"الوزن الصافي (كجم)", th_gw:"الوزن الإجمالي (كجم)", th_meas:"القياس (متر مكعب)",
     add_item:"إضافة بند", discount:"خصم", discount_perc:"الخصم (%)",
     terms_conditions:"الشروط والأحكام", select_preset:"تحديد إعداد مسبق"
   },
@@ -1202,7 +1245,7 @@ const translations = {
     shipping_info:"Информация о Доставке", ship_to_name_address:"Имя и Адрес Получателя", shipping_tel:"Телефон для Доставки", freight_cost_label:"Стоимость Фрахта",
     seller_info_editable:"Информация о Продавце (Редактируемая)", seller_name:"Имя Продавца", seller_address:"Адрес Продавца", seller_phone:"Телефон Продавца", seller_email:"Email Продавца", seller_website:"Веб-сайт Продавца",
     product_items_packing:"Информация о Продукте и Упаковке", th_sku:"SKU", th_description:"Описание", th_image:"Изображение", th_qty:"Кол-во",
-    th_unit_price_usd:"Цена за Ед.", th_carton_no:"№ Коробки", th_nw:"Вес Нетто (кг)", th_gw:"Вес Брутто (кг)", th_meas:"Объем (м³)",
+    th_unit_price_usd:"Цена за Ед.", th_carton_no:"№ Коробки", th_length:"Длина (см)", th_width:"Ширина (см)", th_height:"Высота (см)", th_nw:"Вес Нетто (кг)", th_gw:"Вес Брутто (кг)", th_meas:"Объем (м³)",
     add_item:"Добавить Товар", discount:"Скидка", discount_perc:"Скидка (%)",
     terms_conditions:"Условия и Положения", select_preset:"Выберите Шаблон"
   },
@@ -1214,11 +1257,11 @@ const translations = {
       quote_no:"Quote No.:", po_no:"PO Number:", invoice_no:"Invoice No.:", date:"Date:", valid_until:"Valid Until:", date_of_issue:"Date of Issue:",
       ref_pi_no:"Ref PI No.:", ref_po_no:"Ref PO No.:", tel:"Tel:",
       th_image:"Image", th_sku:"SKU", th_description:"Description", th_qty:"Qty", th_unit_price:"Unit Price", th_total:"Total",
-      subtotal:"SUBTOTAL", discount:"Discount", freight:"Freight", total:"TOTAL", total_due:"TOTAL AMOUNT DUE",
+      subtotal:"SUBTOTAL", discount:"Discount", freight:"Freight", total:"TOTAL", total_due:"TOTAL AMOUNT DUE", first_deposit:"First Deposit", balance:"Balance",
       terms_conditions:"Terms & Conditions:", auth_sig:"Authorized Signature",
       bank_info:"BENEFICIARY BANK INFORMATION:", bank_name:"Bank Name:", bank_address:"Bank Address:", account_name:"Account Name:", account_number:"Account Number:", swift_code:"Swift Code or ABA:",
       notes:"Notes:", notes_text:"Please include Invoice No.", notes_text_2:"in payment reference.",
-      th_carton_no:"Carton No.", th_item_desc_sku:"Item Description / SKU", th_qty_pcs:"Quantity (PCS)", th_nw_kgs:"Net Weight (KGS)", th_gw_kgs:"Gross Weight (KGS)", th_meas_cbm:"Measurement (CBM)",
+      th_carton_no:"Carton No.", th_item_desc_sku:"Item Description / SKU", th_qty_pcs:"Quantity (PCS)", th_length_cm:"L (cm)", th_width_cm:"W (cm)", th_height_cm:"H (cm)", th_nw_kgs:"Net Weight (KGS)", th_gw_kgs:"Gross Weight (KGS)", th_meas_cbm:"Measurement (CBM)",
       total_pl:"TOTAL", remarks:"Remarks:"
     },
     bilingual: {
@@ -1228,11 +1271,11 @@ const translations = {
       quote_no:"Quote No. / 报价单号:", po_no:"PO Number / 采购订单号:", invoice_no:"Invoice No. / 发票号:", date:"Date / 日期:", valid_until:"Valid Until / 有效期至:", date_of_issue:"Date of Issue / 签发日期:",
       ref_pi_no:"Ref PI No. / 参考发票号:", ref_po_no:"Ref PO No. / 参考订单号:", tel:"Tel / 电话:",
       th_image:"Image / 图片", th_sku:"SKU / 产品编号", th_description:"Description / 描述", th_qty:"Qty / 数量", th_unit_price:"Unit Price / 单价", th_total:"Total / 总计",
-      subtotal:"SUBTOTAL / 小计", discount:"Discount / 折扣", freight:"Freight / 运费", total:"TOTAL / 总计", total_due:"TOTAL AMOUNT DUE / 应付总额",
+      subtotal:"SUBTOTAL / 小计", discount:"Discount / 折扣", freight:"Freight / 运费", total:"TOTAL / 总计", total_due:"TOTAL AMOUNT DUE / 应付总额", first_deposit:"First Deposit / 首付定金", balance:"Balance / 余款",
       terms_conditions:"Terms & Conditions / 条款和条件:", auth_sig:"Authorized Signature / 授权签名",
       bank_info:"BENEFICIARY BANK INFORMATION / 收款银行信息:", bank_name:"Bank Name / 银行名称:", bank_address:"Bank Address / 银行地址:", account_name:"Account Name / 账户名称:", account_number:"Account Number / 账号:", swift_code:"Swift Code or ABA / 国际代码:",
       notes:"Notes / 备注:", notes_text:"Please include Invoice No.", notes_text_2:"in payment reference. / 请在付款备注中注明发票号。",
-      th_carton_no:"Carton No. / 箱号", th_item_desc_sku:"Item Description / SKU / 描述/产品编号", th_qty_pcs:"Quantity (PCS) / 数量 (件)", th_nw_kgs:"Net Weight (KGS) / 净重 (公斤)", th_gw_kgs:"Gross Weight (KGS) / 毛重 (公斤)", th_meas_cbm:"Measurement (CBM) / 体积 (立方米)",
+      th_carton_no:"Carton No. / 箱号", th_item_desc_sku:"Item Description / SKU / 描述/产品编号", th_qty_pcs:"Quantity (PCS) / 数量 (件)", th_length_cm:"L 长 (cm)", th_width_cm:"W 宽 (cm)", th_height_cm:"H 高 (cm)", th_nw_kgs:"Net Weight (KGS) / 净重 (公斤)", th_gw_kgs:"Gross Weight (KGS) / 毛重 (公斤)", th_meas_cbm:"Measurement (CBM) / 体积 (立方米)",
       total_pl:"TOTAL / 总计", remarks:"Remarks / 备注:"
     },
     es: {
@@ -1242,11 +1285,11 @@ const translations = {
       quote_no:"Nº de Cotización:", po_no:"Nº de Pedido (PO):", invoice_no:"Nº de Factura:", date:"Fecha:", valid_until:"Válido Hasta:", date_of_issue:"Fecha de Emisión:",
       ref_pi_no:"Ref. Factura Proforma:", ref_po_no:"Ref. Orden de Compra:", tel:"Tel:",
       th_image:"Imagen", th_sku:"SKU", th_description:"Descripción", th_qty:"Cant.", th_unit_price:"Precio Unit.", th_total:"Total",
-      subtotal:"SUBTOTAL", discount:"Descuento", freight:"Flete", total:"TOTAL", total_due:"IMPORTE TOTAL A PAGAR",
+      subtotal:"SUBTOTAL", discount:"Descuento", freight:"Flete", total:"TOTAL", total_due:"IMPORTE TOTAL A PAGAR", first_deposit:"Primer Depósito", balance:"Saldo",
       terms_conditions:"Términos y Condiciones:", auth_sig:"Firma Autorizada",
       bank_info:"INFORMACIÓN BANCARIA DEL BENEFICIARIO:", bank_name:"Nombre del Banco:", bank_address:"Dirección del Banco:", account_name:"Nombre de la Cuenta:", account_number:"Número de Cuenta:", swift_code:"Código Swift o ABA:",
       notes:"Notas:", notes_text:"Por favor incluya el Nº de Factura", notes_text_2:"en la referencia de pago.",
-      th_carton_no:"Nº de Caja", th_item_desc_sku:"Descripción del Artículo / SKU", th_qty_pcs:"Cantidad (PCS)", th_nw_kgs:"Peso Neto (KGS)", th_gw_kgs:"Peso Bruto (KGS)", th_meas_cbm:"Medida (CBM)",
+      th_carton_no:"Nº de Caja", th_item_desc_sku:"Descripción del Artículo / SKU", th_qty_pcs:"Cantidad (PCS)", th_length_cm:"L (cm)", th_width_cm:"An (cm)", th_height_cm:"Al (cm)", th_nw_kgs:"Peso Neto (KGS)", th_gw_kgs:"Peso Bruto (KGS)", th_meas_cbm:"Medida (CBM)",
       total_pl:"TOTAL", remarks:"Observaciones:"
     },
     de: {
@@ -1256,11 +1299,11 @@ const translations = {
       quote_no:"Angebot Nr.:", po_no:"Bestell-Nr.:", invoice_no:"Rechnung Nr.:", date:"Datum:", valid_until:"Gültig Bis:", date_of_issue:"Ausstellungsdatum:",
       ref_pi_no:"Ref. Proforma-Nr.:", ref_po_no:"Ref. Bestell-Nr.:", tel:"Tel:",
       th_image:"Bild", th_sku:"SKU", th_description:"Beschreibung", th_qty:"Menge", th_unit_price:"Stückpreis", th_total:"Gesamt",
-      subtotal:"ZWISCHENSUMME", discount:"Rabatt", freight:"Fracht", total:"GESAMT", total_due:"FÄLLIGER GESAMTBETRAG",
+      subtotal:"ZWISCHENSUMME", discount:"Rabatt", freight:"Fracht", total:"GESAMT", total_due:"FÄLLIGER GESAMTBETRAG", first_deposit:"Anzahlung", balance:"Restbetrag",
       terms_conditions:"Allgemeine Geschäftsbedingungen:", auth_sig:"Autorisierte Unterschrift",
       bank_info:"BANKVERBINDUNG DES BEGÜNSTIGTEN:", bank_name:"Name der Bank:", bank_address:"Adresse der Bank:", account_name:"Kontoinhaber:", account_number:"Kontonummer:", swift_code:"Swift-Code oder ABA:",
       notes:"Hinweise:", notes_text:"Bitte Rechnungs-Nr.", notes_text_2:"als Verwendungszweck angeben.",
-      th_carton_no:"Karton Nr.", th_item_desc_sku:"Artikelbeschreibung / SKU", th_qty_pcs:"Menge (Stk.)", th_nw_kgs:"Nettogewicht (KG)", th_gw_kgs:"Bruttogewicht (KG)", th_meas_cbm:"Maß (CBM)",
+      th_carton_no:"Karton Nr.", th_item_desc_sku:"Artikelbeschreibung / SKU", th_qty_pcs:"Menge (Stk.)", th_length_cm:"L (cm)", th_width_cm:"B (cm)", th_height_cm:"H (cm)", th_nw_kgs:"Nettogewicht (KG)", th_gw_kgs:"Bruttogewicht (KG)", th_meas_cbm:"Maß (CBM)",
       total_pl:"GESAMT", remarks:"Anmerkungen:"
     },
     fr: {
@@ -1270,11 +1313,11 @@ const translations = {
       quote_no:"N° de Devis:", po_no:"N° de Commande:", invoice_no:"N° de Facture:", date:"Date:", valid_until:"Valable Jusqu'au:", date_of_issue:"Date d'Émission:",
       ref_pi_no:"Réf. Facture Proforma:", ref_po_no:"Réf. Bon de Commande:", tel:"Tél:",
       th_image:"Image", th_sku:"SKU", th_description:"Description", th_qty:"Qté", th_unit_price:"Prix Unitaire", th_total:"Total",
-      subtotal:"SOUS-TOTAL", discount:"Remise", freight:"Transport", total:"TOTAL", total_due:"MONTANT TOTAL DÛ",
+      subtotal:"SOUS-TOTAL", discount:"Remise", freight:"Transport", total:"TOTAL", total_due:"MONTANT TOTAL DÛ", first_deposit:"Acompte", balance:"Solde",
       terms_conditions:"Termes et Conditions:", auth_sig:"Signature Autorisée",
       bank_info:"INFORMATIONS BANCAIRES DU BÉNÉFICIAIRE:", bank_name:"Nom de la Banque:", bank_address:"Adresse de la Banque:", account_name:"Nom du Compte:", account_number:"Numéro de Compte:", swift_code:"Code Swift ou ABA:",
       notes:"Notes:", notes_text:"Veuillez inclure le N° de Facture", notes_text_2:"dans la référence de paiement.",
-      th_carton_no:"N° de Carton", th_item_desc_sku:"Description de l'Article / SKU", th_qty_pcs:"Quantité (PCS)", th_nw_kgs:"Poids Net (KGS)", th_gw_kgs:"Poids Brut (KGS)", th_meas_cbm:"Mesure (CBM)",
+      th_carton_no:"N° de Carton", th_item_desc_sku:"Description de l'Article / SKU", th_qty_pcs:"Quantité (PCS)", th_length_cm:"L (cm)", th_width_cm:"l (cm)", th_height_cm:"H (cm)", th_nw_kgs:"Poids Net (KGS)", th_gw_kgs:"Poids Brut (KGS)", th_meas_cbm:"Mesure (CBM)",
       total_pl:"TOTAL", remarks:"Remarques:"
     },
     ar: {
@@ -1284,11 +1327,11 @@ const translations = {
       quote_no:"رقم عرض السعر:", po_no:"رقم طلب الشراء:", invoice_no:"رقم الفاتورة:", date:"التاريخ:", valid_until:"صالح حتى:", date_of_issue:"تاريخ الإصدار:",
       ref_pi_no:"مرجع الفاتورة الأولية:", ref_po_no:"مرجع طلب الشراء:", tel:"الهاتف:",
       th_image:"الصورة", th_sku:"SKU", th_description:"الوصف", th_qty:"الكمية", th_unit_price:"سعر الوحدة", th_total:"المجموع",
-      subtotal:"المجموع الفرعي", discount:"خصم", freight:"الشحن", total:"المجموع", total_due:"المبلغ الإجمالي المستحق",
+      subtotal:"المجموع الفرعي", discount:"خصم", freight:"الشحن", total:"المجموع", total_due:"المبلغ الإجمالي المستحق", first_deposit:"الدفعة الأولى", balance:"الرصيد",
       terms_conditions:"الشروط والأحكام:", auth_sig:"التوقيع المعتمد",
       bank_info:"معلومات البنك المستفيد:", bank_name:"اسم البنك:", bank_address:"عنوان البنك:", account_name:"اسم الحساب:", account_number:"رقم الحساب:", swift_code:"رمز سويفت أو ABA:",
       notes:"ملاحظات:", notes_text:"يرجى تضمين رقم الفاتورة", notes_text_2:"في مرجع الدفع.",
-      th_carton_no:"رقم الكرتون", th_item_desc_sku:"وصف الصنف / SKU", th_qty_pcs:"الكمية (قطعة)", th_nw_kgs:"الوزن الصافي (كجم)", th_gw_kgs:"الوزن الإجمالي (كجم)", th_meas_cbm:"القياس (متر مكعب)",
+      th_carton_no:"رقم الكرتون", th_item_desc_sku:"وصف الصنف / SKU", th_qty_pcs:"الكمية (قطعة)", th_length_cm:"الطول (سم)", th_width_cm:"العرض (سم)", th_height_cm:"الارتفاع (سم)", th_nw_kgs:"الوزن الصافي (كجم)", th_gw_kgs:"الوزن الإجمالي (كجم)", th_meas_cbm:"القياس (متر مكعب)",
       total_pl:"المجموع", remarks:"ملاحظات:"
     },
     ru: {
@@ -1298,11 +1341,11 @@ const translations = {
       quote_no:"№ Предложения:", po_no:"№ Заказа:", invoice_no:"№ Счета:", date:"Дата:", valid_until:"Действительно До:", date_of_issue:"Дата Выдачи:",
       ref_pi_no:"№ Счета-Проформы:", ref_po_no:"№ Заказа:", tel:"Тел:",
       th_image:"Изображение", th_sku:"SKU", th_description:"Описание", th_qty:"Кол-во", th_unit_price:"Цена за Ед.", th_total:"Итого",
-      subtotal:"ПОДЫТОГ", discount:"Скидка", freight:"Фрахт", total:"ИТОГО", total_due:"ИТОГОВАЯ СУММА К ОПЛАТЕ",
+      subtotal:"ПОДЫТОГ", discount:"Скидка", freight:"Фрахт", total:"ИТОГО", total_due:"ИТОГОВАЯ СУММА К ОПЛАТЕ", first_deposit:"Первый Взнос", balance:"Остаток",
       terms_conditions:"Условия и Положения:", auth_sig:"Авторизованная Подпись",
       bank_info:"БАНКОВСКАЯ ИНФОРМАЦИЯ БЕНЕФИЦИАРА:", bank_name:"Название Банка:", bank_address:"Адрес Банка:", account_name:"Имя Счета:", account_number:"Номер Счета:", swift_code:"Swift-Код или ABA:",
       notes:"Примечания:", notes_text:"Пожалуйста, укажите № Счета", notes_text_2:"в назначении платежа.",
-      th_carton_no:"№ Коробки", th_item_desc_sku:"Описание Товара / SKU", th_qty_pcs:"Количество (ШТ)", th_nw_kgs:"Вес Нетто (КГ)", th_gw_kgs:"Вес Брутто (КГ)", th_meas_cbm:"Объем (КУБ. М)",
+      th_carton_no:"№ Коробки", th_item_desc_sku:"Описание Товара / SKU", th_qty_pcs:"Количество (ШТ)", th_length_cm:"Длина (см)", th_width_cm:"Ширина (см)", th_height_cm:"Высота (см)", th_nw_kgs:"Вес Нетто (КГ)", th_gw_kgs:"Вес Брутто (КГ)", th_meas_cbm:"Объем (КУБ. М)",
       total_pl:"ИТОГО", remarks:"Примечания:"
     }
   }
@@ -1669,6 +1712,7 @@ function syncAndCalculate() {
 
   let subtotalUSD = 0;
   let totalQty = 0, totalNw = 0, totalGw = 0, totalCbm = 0;
+  const showDimEarly = $('show_dimensions')?.checked === true;
 
   document.querySelectorAll('#master-items tr').forEach(row => {
     const sku = row.querySelector('.sku').value;
@@ -1678,6 +1722,9 @@ function syncAndCalculate() {
     const priceUSD = priceInSelectedCurrency / rate;
     const imageSrc = row.dataset.imageSrc || '';
     const cartonNo = row.querySelector('.carton-no').value;
+    const length = parseFloat(row.querySelector('.length')?.value) || 0;
+    const width  = parseFloat(row.querySelector('.width' )?.value) || 0;
+    const height = parseFloat(row.querySelector('.height')?.value) || 0;
     const nw = parseFloat(row.querySelector('.nw').value) || 0;
     const gw = parseFloat(row.querySelector('.gw').value) || 0;
     const cbm = parseFloat(row.querySelector('.cbm').value) || 0;
@@ -1695,7 +1742,10 @@ function syncAndCalculate() {
     poRows.push(`<tr><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
     piRows.push(`<tr><td>${imageSrc ? `<img src="${imageSrc}" class="quote-item-image">` : ''}</td><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
     quoteRows.push(`<tr><td>${imageSrc ? `<img src="${imageSrc}" class="quote-item-image">` : ''}</td><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
-    plRows.push(`<tr><td>${safeCarton}</td><td>${safeDesc}<br><strong>SKU: ${safeSku}</strong></td><td>${qty}</td><td>${nw.toFixed(2)}</td><td>${gw.toFixed(2)}</td><td>${cbm.toFixed(3)}</td></tr>`);
+    const dimCells = showDimEarly
+      ? `<td>${length ? length.toFixed(1) : ''}</td><td>${width ? width.toFixed(1) : ''}</td><td>${height ? height.toFixed(1) : ''}</td>`
+      : '';
+    plRows.push(`<tr><td>${safeCarton}</td><td>${safeDesc}<br><strong>SKU: ${safeSku}</strong></td><td>${qty}</td>${dimCells}<td>${nw.toFixed(2)}</td><td>${gw.toFixed(2)}</td><td>${cbm.toFixed(3)}</td></tr>`);
   });
 
   $('po-items-table').innerHTML = poRows.join('');
@@ -1732,6 +1782,30 @@ function syncAndCalculate() {
     }
   });
 
+  // ── Deposit & Balance rows (Quote / PO / PI) ─────────────────────
+  const showDeposit  = $('show_deposit')?.checked === true;
+  const depositPct   = Math.min(100, Math.max(0, parseFloat($('deposit_percent')?.value) || 0));
+  const depositAmt   = convTotal * depositPct / 100;
+  const balanceAmt   = convTotal - depositAmt;
+  // Toggle the helper input visibility on the form
+  const depWrap = $('deposit-pct-wrap');
+  if (depWrap) depWrap.style.display = showDeposit ? 'inline-flex' : 'none';
+  // Render rows on each doc
+  ['quote','po','pi'].forEach(doc => {
+    const block = $(`${doc}-deposit-rows`);
+    if (!block) return;
+    block.style.display = showDeposit ? '' : 'none';
+    if (!showDeposit) return;
+    block.querySelectorAll(`.${doc}-deposit-pct`).forEach(el => el.innerText = depositPct);
+    $(`${doc}-deposit-amount`).innerText = depositAmt.toFixed(2);
+    $(`${doc}-balance-amount`).innerText = balanceAmt.toFixed(2);
+    block.querySelectorAll(`.${doc}-cur-sym`).forEach(el => el.innerText = symbol);
+  });
+
+  // ── L/W/H dimension columns toggle (master + packing list) ──────
+  const showDim = $('show_dimensions')?.checked === true;
+  document.body.classList.toggle('show-dim', showDim);
+
   $('pl-total-qty').innerText = totalQty;
   $('pl-total-nw').innerText  = totalNw.toFixed(2);
   $('pl-total-gw').innerText  = totalGw.toFixed(2);
@@ -1764,6 +1838,9 @@ function addItem(item) {
     <td><input type="number" value="${item.qty}" class="qty"></td>
     <td><input type="number" value="${parseFloat(item.price || 0).toFixed(2)}" class="price" step="0.01"></td>
     <td><input type="text" class="carton-no" value="${item.cartonNo || ''}"></td>
+    <td class="dim-col"><input type="number" value="${parseFloat(item.length || 0).toFixed(1)}" class="length" step="0.1"></td>
+    <td class="dim-col"><input type="number" value="${parseFloat(item.width  || 0).toFixed(1)}" class="width"  step="0.1"></td>
+    <td class="dim-col"><input type="number" value="${parseFloat(item.height || 0).toFixed(1)}" class="height" step="0.1"></td>
     <td><input type="number" value="${parseFloat(item.nw || 0).toFixed(2)}" class="nw" step="0.01"></td>
     <td><input type="number" value="${parseFloat(item.gw || 0).toFixed(2)}" class="gw" step="0.01"></td>
     <td><input type="number" value="${parseFloat(item.cbm || 0).toFixed(3)}" class="cbm" step="0.001"></td>
@@ -1830,6 +1907,9 @@ function collectFormData() {
       price:      row.querySelector('.price').value,
       imageSrc:   row.dataset.imageSrc || '',
       cartonNo:   row.querySelector('.carton-no').value,
+      length:     (row.querySelector('.length') || {}).value || '0',
+      width:      (row.querySelector('.width')  || {}).value || '0',
+      height:     (row.querySelector('.height') || {}).value || '0',
       nw:         row.querySelector('.nw').value,
       gw:         row.querySelector('.gw').value,
       cbm:        row.querySelector('.cbm').value,
@@ -1862,11 +1942,14 @@ function collectFormData() {
     terms_conditions:   $('terms_conditions').value,
     pl_remarks:         ($('pl_remarks') || {}).value || '',
     show_bank_info:     $('show_bank_info') ? $('show_bank_info').checked : true,
+    show_deposit:       $('show_deposit')   ? $('show_deposit').checked   : false,
+    deposit_percent:    $('deposit_percent')? $('deposit_percent').value  : '30',
+    show_dimensions:    $('show_dimensions')? $('show_dimensions').checked: false,
     bankFields, items
   };
 }
 function restoreDataToForm(d) {
-  const skip = new Set(['items','bankFields','pl_remarks','show_bank_info','_savedAt']);
+  const skip = new Set(['items','bankFields','pl_remarks','show_bank_info','show_deposit','show_dimensions','_savedAt']);
   for (const k in d) {
     if (skip.has(k)) continue;
     const el = $(k);
@@ -1874,6 +1957,10 @@ function restoreDataToForm(d) {
   }
   const bankToggle = $('show_bank_info');
   if (bankToggle) bankToggle.checked = (d.show_bank_info !== false); // default true if absent
+  const depToggle  = $('show_deposit');
+  if (depToggle)  depToggle.checked  = (d.show_deposit  === true);   // default false
+  const dimToggle  = $('show_dimensions');
+  if (dimToggle)  dimToggle.checked  = (d.show_dimensions === true); // default false
   if (d.bankFields) {
     document.querySelectorAll('#pi-section .manual-input').forEach((inp, i) => {
       if (d.bankFields[i] !== undefined) inp.value = d.bankFields[i];
@@ -1883,7 +1970,7 @@ function restoreDataToForm(d) {
   if (r && d.pl_remarks) r.value = d.pl_remarks;
   $('master-items').innerHTML = '';
   (d.items || []).forEach(it => addItem(it));
-  const lang = d.language_select || 'en';
+  const lang = d.language_select || 'bilingual';
   $('language_select').value = lang;
   setLanguage(lang);
 }
