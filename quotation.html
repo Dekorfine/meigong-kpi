@@ -533,24 +533,11 @@ body.show-dim #packing-list-section .pl-dim-col { display: table-cell; }
   .page { padding: 0 !important; margin: 0 !important; max-width: none !important; }
   .card.preview-card { border: none; border-radius: 0; margin: 0; }
 
-  /* By default the preview stage shows only the active document.
-     For print we want ALL docs visible (export-all) unless body has
-     a `print-only-<x>` class.                                    */
-  .document-container.is-hidden-preview { display: block !important; }
-
-  /* When body has print-only-X, hide every OTHER doc */
-  body.print-only-quotation #po-section,
-  body.print-only-quotation #pi-section,
-  body.print-only-quotation #packing-list-section { display: none !important; }
-  body.print-only-po #quotation-section,
-  body.print-only-po #pi-section,
-  body.print-only-po #packing-list-section { display: none !important; }
-  body.print-only-pi #quotation-section,
-  body.print-only-pi #po-section,
-  body.print-only-pi #packing-list-section { display: none !important; }
-  body.print-only-packing #quotation-section,
-  body.print-only-packing #po-section,
-  body.print-only-packing #pi-section { display: none !important; }
+  /* Visibility during print follows the SAME rule as on screen:
+     `.document-container.is-hidden-preview` is hidden. JS toggles that class
+     before printing to control which doc(s) print. EXCEPT when exporting all,
+     where we override to show every doc. */
+  body.export-all .document-container.is-hidden-preview { display: block !important; }
 
   .document-container {
     padding: 0 !important; min-height: 0 !important;
@@ -1499,17 +1486,31 @@ function exportCurrent() { exportPDF(currentPreviewDoc); }
 
 function exportPDF(which) {
   // 'quotation' | 'po' | 'pi' | 'packing' | 'all'
-  // 1. Make every document visible in DOM so CSS @media print sees them
-  document.querySelectorAll('.document-container').forEach(d => d.classList.remove('is-hidden-preview'));
+  const docMap = { quotation:'quotation-section', po:'po-section', pi:'pi-section', packing:'packing-list-section' };
+  const previousPreview = currentPreviewDoc;
 
-  // 2. Apply print-only-X class (or nothing for 'all')
-  document.body.className = which === 'all' ? '' : ('print-only-' + which);
+  // Set is-hidden-preview directly on each container, so the SAME visibility
+  // rules used on screen also apply during print. Don't try to special-case
+  // print with body classes — some browsers (Edge / WPS / native print dialogs)
+  // handle @media print + body class specificity inconsistently.
+  if (which === 'all') {
+    document.querySelectorAll('.document-container').forEach(d => d.classList.remove('is-hidden-preview'));
+    document.body.classList.add('export-all'); // for print CSS override
+  } else {
+    Object.entries(docMap).forEach(([key, id]) => {
+      const el = $(id);
+      if (!el) return;
+      el.classList.toggle('is-hidden-preview', key !== which);
+    });
+  }
 
-  // 3. Use rAF so the class actually paints before window.print is called
+  let cleanedUp = false;
   const cleanup = () => {
-    document.body.className = '';
-    // Restore preview state
-    switchPreview(currentPreviewDoc);
+    if (cleanedUp) return;
+    cleanedUp = true;
+    document.body.classList.remove('export-all');
+    // Restore the preview state the user was on before clicking export
+    switchPreview(previousPreview);
     window.removeEventListener('afterprint', cleanup);
   };
   window.addEventListener('afterprint', cleanup);
@@ -1517,7 +1518,7 @@ function exportPDF(which) {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       window.print();
-      // Some browsers don't fire afterprint reliably; cleanup as fallback.
+      // afterprint isn't fired reliably everywhere; backup timeout cleanup.
       setTimeout(cleanup, 1500);
     });
   });
