@@ -24,8 +24,8 @@
   "_status": "draft",
   "_total_usd": 345.6,
   "_created_at": "2026-05-19T12:37:38.933Z",
-  "_updated_at": "2026-05-22T10:33:20.787Z",
-  "_sku_list": "VK202212131750-040,VK202212141612-029",
+  "_updated_at": "2026-05-22T10:33:43.627Z",
+  "_sku_list": "VK202212131750-040",
   "bankFields": [
     "",
     "",
@@ -46,7 +46,7 @@
       "cbm": "0.000"
     },
     {
-      "sku": "VK202212141612-029",
+      "sku": "",
       "description": "Aven Spotlight\nSize: Set of10/Dia 13.2cm x H 12cm / ∅ 5.2″ x H 4.7″\nCOLOR:Black\nKELVIN RANGE:Warm Light",
       "qty": "1",
       "price": "189",
