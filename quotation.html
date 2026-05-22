@@ -197,6 +197,11 @@ body.show-dim #packing-list-section .pl-dim-col { display: table-cell; }
   background: none; color: #ef4444; border: none;
   font-size: 10px; padding: 2px 4px; margin-top: 2px;
 }
+#item-table select.image-size {
+  width: 100%; max-width: 100px; min-width: 70px;
+  border: 1px solid #cbd5e1; border-radius: 3px;
+  background: #fff; color: #475569;
+}
 .btn-add-item {
   background: #2563eb; color: #fff; border: none;
   padding: 8px 16px; border-radius: 6px;
@@ -414,7 +419,13 @@ body.show-dim #packing-list-section .pl-dim-col { display: table-cell; }
   background: #f8fafc; font-weight: 700; font-size: 10.5px;
   transition: background-color 0.3s;
 }
-.quote-item-image { max-width: 50px; max-height: 50px; object-fit: contain; }
+.quote-item-image { max-width: 50px; max-height: 50px; object-fit: contain; display: block; }
+.quote-item-image.size-medium { max-width: 130px; max-height: 130px; }
+.quote-item-image.size-large  { max-width: 230px; max-height: 230px; }
+.quote-item-image.size-xl     { max-width: 360px; max-height: 360px; }
+/* When using larger images, the image column needs to widen — let the table's
+   width:13% hint be exceeded so the picture isn't squashed. */
+.doc-table td:first-child { vertical-align: middle; }
 .total-section { margin-top: 12px; text-align: right; }
 .total-section p {
   font-size: 12px; margin: 3px 0; font-weight: 600;
@@ -559,6 +570,9 @@ body.show-dim #packing-list-section .pl-dim-col { display: table-cell; }
   .total-section p { font-size: 10.5px !important; margin: 1.5px 0 !important; }
   .signature-block { margin-top: 18px !important; padding-top: 10px !important; }
   .quote-item-image { max-width: 38px !important; max-height: 38px !important; }
+  .quote-item-image.size-medium { max-width: 110px !important; max-height: 110px !important; }
+  .quote-item-image.size-large  { max-width: 200px !important; max-height: 200px !important; }
+  .quote-item-image.size-xl     { max-width: 320px !important; max-height: 320px !important; }
   .manual-input { border-color: transparent !important; background: transparent !important; }
 }
 
@@ -1722,6 +1736,8 @@ function syncAndCalculate() {
     const priceInSelectedCurrency = parseFloat(row.querySelector('.price').value) || 0;
     const priceUSD = priceInSelectedCurrency / rate;
     const imageSrc = row.dataset.imageSrc || '';
+    const imageSize = (row.querySelector('.image-size') || {}).value || 'small';
+    const imgClass = `quote-item-image size-${imageSize}`;
     const cartonNo = row.querySelector('.carton-no').value;
     const length = parseFloat(row.querySelector('.length')?.value) || 0;
     const width  = parseFloat(row.querySelector('.width' )?.value) || 0;
@@ -1741,8 +1757,8 @@ function syncAndCalculate() {
     const safeCarton = cartonNo.replace(/</g, '&lt;');
 
     poRows.push(`<tr><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
-    piRows.push(`<tr><td>${imageSrc ? `<img src="${imageSrc}" class="quote-item-image">` : ''}</td><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
-    quoteRows.push(`<tr><td>${imageSrc ? `<img src="${imageSrc}" class="quote-item-image">` : ''}</td><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
+    piRows.push(`<tr><td>${imageSrc ? `<img src="${imageSrc}" class="${imgClass}">` : ''}</td><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
+    quoteRows.push(`<tr><td>${imageSrc ? `<img src="${imageSrc}" class="${imgClass}">` : ''}</td><td>${safeSku}</td><td style="white-space:pre-wrap;">${safeDesc}</td><td>${qty}</td><td>${convertedPrice.toFixed(2)}</td><td>${convertedLineTotal.toFixed(2)}</td></tr>`);
     const dimCells = showDimEarly
       ? `<td>${length ? length.toFixed(1) : ''}</td><td>${width ? width.toFixed(1) : ''}</td><td>${height ? height.toFixed(1) : ''}</td>`
       : '';
@@ -1835,6 +1851,12 @@ function addItem(item) {
     <td>
       <div class="paste-area" contenteditable="true" title="点击后按 Ctrl+V 粘贴图片 / Click then paste (Ctrl+V) an image">${item.imageSrc ? `<img src="${item.imageSrc}">` : '粘贴 / Paste'}</div>
       <button onclick="removeImage(this)" class="btn-row-remove-img${item.imageSrc ? '' : ' hidden'}">移除 / Remove</button>
+      <select class="image-size" onchange="scheduleSync()" title="图片显示尺寸 / Image display size" style="margin-top:4px;width:100%;font-size:11px;padding:2px 4px;">
+        <option value="small"  ${(item.imageSize||'small') === 'small'  ? 'selected' : ''}>小图 / Small</option>
+        <option value="medium" ${(item.imageSize||'small') === 'medium' ? 'selected' : ''}>中图 / Medium</option>
+        <option value="large"  ${(item.imageSize||'small') === 'large'  ? 'selected' : ''}>大图 / Large</option>
+        <option value="xl"     ${(item.imageSize||'small') === 'xl'     ? 'selected' : ''}>超大 / XL</option>
+      </select>
     </td>
     <td><input type="number" value="${item.qty}" class="qty"></td>
     <td><input type="number" value="${parseFloat(item.price || 0).toFixed(2)}" class="price" step="0.01"></td>
@@ -1907,6 +1929,7 @@ function collectFormData() {
       qty:        row.querySelector('.qty').value,
       price:      row.querySelector('.price').value,
       imageSrc:   row.dataset.imageSrc || '',
+      imageSize:  (row.querySelector('.image-size') || {}).value || 'small',
       cartonNo:   row.querySelector('.carton-no').value,
       length:     (row.querySelector('.length') || {}).value || '0',
       width:      (row.querySelector('.width')  || {}).value || '0',
