@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>销售自定义快递标签 · 阿里巴巴销售</title>
+<!-- 版本 2026.07.14-v1 · owner: cs 会话(与客服工作台打单模块同库同表,数据互通) -->
+<!-- 用途: 无API小快递(如 AusDirect 客户指定代理)手工录单 → 二维码面单;支持历史订单标签查询/重打 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f1f5f9;font-family:'PingFang SC','Microsoft YaHei',-apple-system,sans-serif;min-height:100vh;color:#1e293b}
+.wrap{padding:28px 14px;max-width:1080px;margin:0 auto}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.10);margin-bottom:18px}
+.hd{padding:18px 26px;background:#1e293b;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.hd h1{font-size:19px;font-weight:700}
+.hd .sub{font-size:12px;opacity:.6}
+.bd{padding:20px 26px}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{padding:8px 18px;border:1px solid #d1d5db;border-radius:8px;background:#fff;font-size:13.5px;cursor:pointer;font-weight:600;color:#475569}
+.tab.on{background:#1e293b;color:#fff;border-color:#1e293b}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.grid .full{grid-column:1/-1}
+label{display:block;font-size:12.5px;font-weight:600;color:#374151;margin-bottom:4px}
+label b{color:#dc2626}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid #d1d5db;border-radius:8px;font-size:13.5px;font-family:inherit;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.btn{padding:10px 22px;border:none;border-radius:8px;background:#1e293b;color:#fff;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn.sec{background:#fff;color:#334155;border:1px solid #cbd5e1}
+.btn:disabled{background:#94a3b8;cursor:default}
+.hint{font-size:11.5px;color:#94a3b8;margin-top:4px;line-height:1.5}
+.warn{background:#fefce8;border:1px solid #f59e0b;border-radius:9px;padding:9px 12px;font-size:12.5px;color:#92400e;line-height:1.6;margin-bottom:14px}
+table{width:100%;border-collapse:collapse}
+th{background:#1e293b;color:#fff;font-size:12px;padding:9px 10px;text-align:left;white-space:nowrap}
+td{border-bottom:1px solid #e2e8f0;padding:9px 10px;font-size:12.8px;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.mono{font-family:'SF Mono','Courier New',monospace}
+.empty{padding:34px;text-align:center;color:#94a3b8;font-size:13px}
+.toastbox{position:fixed;top:14px;right:14px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.tst{padding:10px 16px;border-radius:9px;color:#fff;font-size:13px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="toastbox" id="toast"></div>
+<div class="wrap">
+  <div class="card">
+    <div class="hd">
+      <div><h1>🏷 销售自定义快递标签</h1><div class="sub">阿里巴巴销售 · 无API小快递(客户指定代理)手工出单 · 与客服工作台打单台账互通</div></div>
+      <div class="row" style="align-items:center">
+        <input id="me" placeholder="你的名字(记录用)" style="width:140px;padding:7px 10px;font-size:12.5px">
+      </div>
+    </div>
+    <div class="bd">
+      <div class="tabs">
+        <button class="tab on" data-t="new">➕ 新建标签</button>
+        <button class="tab" data-t="his">🗂 历史标签查询</button>
+      </div>
+
+      <div id="v-new">
+        <div class="warn">📌 用法:客户每次给的单号(发票/PO号,如 <b>#SS354320 (Ellis)(A)</b>)原样填进「客户指定单号」→ 保存自动打印<b>二维码面单</b>(每箱一张)。二维码=订单号+指定单号+收件人三合一,仓库打包扫码核对,专治贴错。</div>
+        <div class="grid">
+          <div><label>快递公司/代理 <b>*</b></label>
+            <div class="row"><select id="f-carrier" style="flex:1"><option value="">加载中…</option></select>
+            <button class="btn sec" id="btn-addc" style="padding:9px 14px;flex-shrink:0">+ 新增</button></div></div>
+          <div><label>客户指定单号(发票/PO号) <b>*</b></label><input id="f-customno" placeholder="#SS354320 (Ellis)(A)"></div>
+          <div><label>我方订单号 <b>*</b></label><input id="f-order" placeholder="如 XM8T31253324 或 阿里订单号"></div>
+          <div><label>箱数</label><input id="f-boxes" type="number" min="1" value="1"></div>
+          <div><label>收件人 <b>*</b></label><input id="f-name" placeholder="Emily Ellis"></div>
+          <div><label>电话</label><input id="f-phone" placeholder="0439401271"></div>
+          <div class="full"><label>地址 <b>*</b></label><input id="f-addr" placeholder="109B Louisa Rd"></div>
+          <div><label>城市</label><input id="f-city" placeholder="Birchgrove"></div>
+          <div><label>州/省 + 邮编</label><div class="row"><input id="f-state" placeholder="NSW" style="flex:1"><input id="f-zip" placeholder="2041" style="flex:1"></div></div>
+          <div><label>国家</label><input id="f-country" value="Australia"></div>
+          <div><label>邮箱</label><input id="f-email" placeholder="e.ellisdesigns@gmail.com"></div>
+          <div class="full"><label>备注(打印在面单上,选填)</label><input id="f-remark" placeholder="如: Use pearl cotton packaging / Contact AusDirect"></div>
+        </div>
+        <div class="row" style="margin-top:16px">
+          <button class="btn" id="btn-save">💾 保存并打印二维码面单</button>
+          <span class="hint" id="save-hint"></span>
+        </div>
+      </div>
+
+      <div id="v-his" style="display:none">
+        <div class="row" style="margin-bottom:12px">
+          <input id="q" placeholder="搜 订单号 / 客户指定单号 / 收件人(支持旧单)" style="flex:1">
+          <button class="btn sec" id="btn-search">🔍 查询</button>
+          <button class="btn sec" id="btn-recent">近期全部</button>
+        </div>
+        <div id="his-body"><div class="empty">点「近期全部」或输入关键词查询</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var SB_URL='https://kwrajryhwyytkjkkidor.supabase.co';
+var SB_KEY='sb_publishable_6j-rSrv1V95FROe-iX6Yew_unE_Y6n9';
+var db=window.supabase.createClient(SB_URL,SB_KEY);
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function toast(m,t){var d=document.createElement('div');d.className='tst';d.style.background=t==='error'?'#dc2626':'#16a34a';d.textContent=m;$('toast').appendChild(d);setTimeout(function(){d.remove();},3800);}
+$('me').value=localStorage.getItem('sales_label_me')||'';
+$('me').addEventListener('change',function(){localStorage.setItem('sales_label_me',$('me').value.trim());});
+
+// tabs
+document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){
+  document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===b);});
+  $('v-new').style.display=b.dataset.t==='new'?'':'none';
+  $('v-his').style.display=b.dataset.t==='his'?'':'none';
+});});
+
+// 快递公司(与客服工作台同表 custom_carriers)
+var CARRIERS=[];
+function loadCarriers(){
+  db.from('custom_carriers').select('*').eq('active',true).order('id').then(function(r){
+    CARRIERS=r.data||[];
+    $('f-carrier').innerHTML='<option value="">选择快递公司</option>'+CARRIERS.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');
+  });
+}
+loadCarriers();
+$('btn-addc').addEventListener('click',function(){
+  var name=prompt('新快递公司名称(如: AusDirect / XX货代):');if(!name||!name.trim())return;
+  var note=prompt('备注(选填):')||'';
+  db.from('custom_carriers').insert({name:name.trim(),note:note.trim(),created_by:$('me').value.trim()||'销售'}).then(function(r){
+    if(r.error){toast('添加失败:'+r.error.message,'error');return;}
+    toast('✓ 已添加 '+name.trim());loadCarriers();
+  });
+});
+
+// 保存
+$('btn-save').addEventListener('click',function(){
+  var cid=$('f-carrier').value, car=CARRIERS.find(function(c){return String(c.id)===cid;});
+  var customNo=$('f-customno').value.trim(), no=$('f-order').value.trim();
+  var me=$('me').value.trim();
+  if(!me){toast('先在右上角填你的名字','error');$('me').focus();return;}
+  if(!car){toast('选快递公司(没有就点 +新增)','error');return;}
+  if(!customNo){toast('客户指定单号必填 —— 防贴错的关键','error');return;}
+  if(!no){toast('我方订单号必填','error');return;}
+  if(!$('f-name').value.trim()||!$('f-addr').value.trim()){toast('收件人和地址必填','error');return;}
+  var nb=Math.max(1,parseInt($('f-boxes').value)||1);
+  var payload={carrier:car.name,customNo:customNo,no:no,
+    consignee:$('f-name').value.trim(),phone:$('f-phone').value.trim(),email:$('f-email').value.trim(),
+    address:$('f-addr').value.trim(),address2:'',city:$('f-city').value.trim(),province:$('f-state').value.trim(),
+    postcode:$('f-zip').value.trim(),country:$('f-country').value.trim(),boxes:nb,remark:$('f-remark').value.trim(),goods:[]};
+  $('btn-save').disabled=true;$('save-hint').textContent='检查重复…';
+  db.from('waybills').select('id,order_no,tracking_no').or('order_no.eq.'+no+',tracking_no.eq.'+customNo.replace(/,/g,'')).eq('status','created').limit(3).then(function(dup){
+    if(dup.data&&dup.data.length){
+      var hit=dup.data[0];
+      if(!confirm('⚠ 系统里已有:订单 '+hit.order_no+' / 单号 '+hit.tracking_no+'\n\n单号或订单号重复极易贴错,确定继续?')){$('btn-save').disabled=false;$('save-hint').textContent='';return;}
+    }
+    db.from('waybills').insert({
+      order_no:no,channel_key:'MANUAL:'+car.id,carrier_name:'✍ '+car.name,tracking_no:customNo,
+      label_url:null,status:'created',weight_kg:1,dims_cm:{boxes:nb},zip:payload.postcode,
+      source:'manual',raw_req:payload,raw_resp:{manual:true,via:'sales-labels'},created_by:me
+    }).then(function(r){
+      $('btn-save').disabled=false;$('save-hint').textContent='';
+      if(r.error){toast('保存失败:'+r.error.message,'error');return;}
+      toast('✓ 已保存,面单已生成('+nb+'张)');
+      printLabel(payload);
+      $('f-customno').value='';
+    });
+  });
+});
+
+// 历史查询(与客服打单台账同表,能查所有旧手工单)
+function renderHis(rows){
+  if(!rows.length){$('his-body').innerHTML='<div class="empty">没有找到记录</div>';return;}
+  window.__rows=rows;
+  $('his-body').innerHTML='<table><thead><tr><th>时间</th><th>快递</th><th>客户指定单号</th><th>订单号</th><th>收件人</th><th>录入</th><th></th></tr></thead><tbody>'
+    +rows.map(function(w,i){
+      var p=w.raw_req||{};
+      return '<tr><td style="white-space:nowrap">'+esc(String(w.created_at||'').slice(0,16).replace('T',' '))+'</td>'
+        +'<td>'+esc((w.carrier_name||'').replace('✍ ',''))+'</td>'
+        +'<td class="mono" style="font-weight:700">'+esc(w.tracking_no||'')+'</td>'
+        +'<td class="mono">'+esc(w.order_no||'')+'</td>'
+        +'<td>'+esc(p.consignee||'')+(p.country?'<div style="font-size:11px;color:#94a3b8">'+esc([p.city,p.country].filter(Boolean).join(', '))+'</div>':'')+'</td>'
+        +'<td>'+esc(w.created_by||'')+'</td>'
+        +'<td><button class="btn sec" style="padding:5px 12px;font-size:12px" data-p="'+i+'">🏷 重打</button></td></tr>';
+    }).join('')+'</tbody></table>';
+  $('his-body').querySelectorAll('[data-p]').forEach(function(b){b.addEventListener('click',function(){
+    var w=window.__rows[+b.dataset.p];
+    if(w&&w.raw_req)printLabel(w.raw_req);else toast('该记录缺面单数据','error');
+  });});
+}
+function search(kw){
+  var q=db.from('waybills').select('*').eq('source','manual').order('created_at',{ascending:false}).limit(200);
+  if(kw)q=q.or('order_no.ilike.%'+kw+'%,tracking_no.ilike.%'+kw+'%');
+  q.then(function(r){
+    if(r.error){toast('查询失败:'+r.error.message,'error');return;}
+    var rows=r.data||[];
+    if(kw){var k=kw.toLowerCase();
+      // 收件人在 raw_req 里,前端补一层过滤(单号/订单号已在库里滤过,这里做并集)
+      db.from('waybills').select('*').eq('source','manual').order('created_at',{ascending:false}).limit(400).then(function(r2){
+        var extra=(r2.data||[]).filter(function(w){var p=w.raw_req||{};return String(p.consignee||'').toLowerCase().indexOf(k)>=0;});
+        var seen={};var all=rows.concat(extra).filter(function(w){if(seen[w.id])return false;seen[w.id]=1;return true;});
+        renderHis(all);
+      });
+    } else renderHis(rows);
+  });
+}
+$('btn-search').addEventListener('click',function(){search($('q').value.trim());});
+$('q').addEventListener('keydown',function(e){if(e.key==='Enter')search($('q').value.trim());});
+$('btn-recent').addEventListener('click',function(){$('q').value='';search('');});
+
+// 二维码面单(与客服工作台 fix515 同版式)
+function printLabel(p){
+  var now=new Date();var ts=(now.getMonth()+1+'').padStart(2,'0')+'-'+(now.getDate()+'').padStart(2,'0')+' '+(now.getHours()+'').padStart(2,'0')+':'+(now.getMinutes()+'').padStart(2,'0');
+  var qrText=(p.no||'')+'|'+(p.customNo||'')+'|'+(p.consignee||'');
+  var nb=+p.boxes||1;var pages='';
+  for(var i=1;i<=nb;i++){
+    pages+='<div class="pg">'
+      +'<div class="hd2"><div><div style="font-size:12px;color:#444">'+esc(p.carrier||'')+'</div>'
+      +'<div style="font-size:21px;font-weight:900;margin-top:2px;word-break:break-all">'+esc(p.customNo||'')+'</div></div>'
+      +'<div id="qr'+i+'" class="qr"></div></div>'
+      +'<div class="blk"><div class="cap">DELIVERY TO:</div>'
+      +'<div class="ln b">'+esc(p.consignee||'')+'</div>'
+      +'<div class="ln">'+esc(p.address||'')+(p.address2?' '+esc(p.address2):'')+'</div>'
+      +'<div class="ln">'+esc([p.city,p.province,p.postcode].filter(Boolean).join(' '))+'</div>'
+      +'<div class="ln b">'+esc(p.country||'')+'</div>'
+      +(p.phone?'<div class="ln">'+esc(p.phone)+'</div>':'')
+      +(p.email?'<div class="ln" style="font-size:11px">'+esc(p.email)+'</div>':'')+'</div>'
+      +'<div class="ft"><span>我方订单: <b>'+esc(p.no||'')+'</b></span><span style="font-size:16px;font-weight:900">'+i+' / '+nb+'</span></div>'
+      +(p.remark?'<div class="rm">'+esc(p.remark)+'</div>':'')
+      +'<div class="ts">打印 '+ts+' · 扫码核对: 订单号+指定单号+收件人 一致才贴</div></div>';
+  }
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>面单 '+esc(p.customNo||'')+'</title>'
+    +'<scr'+'ipt src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/scr'+'ipt>'
+    +'<style>@page{size:100mm 150mm;margin:5mm}body{font-family:system-ui,"Microsoft YaHei",sans-serif;margin:0;color:#000}'
+    +'.pg{width:90mm;height:140mm;page-break-after:always;display:flex;flex-direction:column;border:1.5px solid #000;padding:5mm;box-sizing:border-box}'
+    +'.hd2{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #000;padding-bottom:4mm;gap:4mm}'
+    +'.qr{flex-shrink:0}.qr img,.qr canvas{width:26mm!important;height:26mm!important}'
+    +'.blk{margin-top:5mm;flex:1}.cap{font-size:11px;font-weight:800;letter-spacing:.08em;margin-bottom:2mm}'
+    +'.ln{font-size:15px;line-height:1.5}.ln.b{font-weight:800;font-size:17px}'
+    +'.ft{display:flex;justify-content:space-between;align-items:center;border-top:1.5px solid #000;padding-top:2.5mm;font-size:12.5px}'
+    +'.rm{border:1px dashed #000;padding:2mm 3mm;font-size:11px;margin-top:2mm;line-height:1.4}'
+    +'.ts{font-size:9.5px;color:#555;margin-top:1.5mm}@media print{.np{display:none}}</style></head><body>'
+    +pages
+    +'<div class="np" style="padding:10px"><button onclick="print()" style="padding:8px 24px;font-size:14px">🖨 打印 '+nb+' 张</button></div>'
+    +'<scr'+'ipt>for(var i=1;i<='+nb+';i++){try{new QRCode(document.getElementById("qr"+i),{text:'+JSON.stringify(qrText)+',width:98,height:98,correctLevel:QRCode.CorrectLevel.M});}catch(e){}}<\/scr'+'ipt>'
+    +'</body></html>';
+  var w=window.open('','_blank');if(!w){toast('弹窗被拦截,允许后重打','error');return;}
+  w.document.write(html);w.document.close();
+}
+</script>
+</body>
+</html>
